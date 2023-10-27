@@ -1,0 +1,31 @@
+---
+import Record from "./icons/record.astro";
+---
+
+<main class="w-full h-full flex justify-center items-center">
+  <button
+    class="py-1 px-3 bg-purple-600 rounded-md flex items-center gap-2"
+    id="record"
+  >
+    <div class="w-5 aspect-square">
+      <Record />
+    </div>
+    <span>Start recording</span>
+  </button>
+</main>
+
+<script type="module">
+  const record = document.querySelector("button#record");
+  const video = [];
+
+  record.addEventListener("click", async (e) => {
+    const stream = await navigator.mediaDevices.getDisplayMedia();
+    const recorder = new MediaRecorder(stream);
+
+    stream.getTracks()[0].addEventListener("ended", () => console.log("here"));
+
+    recorder.start();
+
+    recorder.addEventListener("dataavailable", ({ data }) => video.push(data));
+  });
+</script>
