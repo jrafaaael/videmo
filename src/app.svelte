@@ -5,7 +5,7 @@
 </script>
 
 {#if $video}
-  <main class="w-full h-full">
+  <main class="w-full h-full bg-neutral-900">
     <Editor />
   </main>
 {:else}

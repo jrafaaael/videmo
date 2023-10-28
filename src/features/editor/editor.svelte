@@ -9,13 +9,13 @@
 </script>
 
 <header
-  class="h-16 mb-4 px-10 bg-neutral-900 flex justify-between items-center"
+  class="h-16 mb-4 px-10 border-b border-b-white/20 bg-neutral-800 flex justify-between items-center"
 >
   <button
-    class="p-2 bg-white/5 border border-white/10 rounded-md hover:bg-white/10"
+    class="p-2 rounded-md text-neutral-300 transition-all duration-300 hover:bg-white/[0.075] hover:text-neutral-200"
     on:click={handleDeleteVideo}
   >
-    <div class="w-5 aspect-square">
+    <div class="w-4 aspect-square">
       {@html Trash}
     </div>
   </button>
