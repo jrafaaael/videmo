@@ -1,8 +1,8 @@
 ---
 import AppLayout from "../layouts/app-layout.astro";
-import StartRecording from "../components/start-recording.astro";
+import App from "../app.svelte";
 ---
 
 <AppLayout>
-  <StartRecording />
+  <App client:load />
 </AppLayout>
