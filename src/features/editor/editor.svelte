@@ -34,3 +34,28 @@
 <section class="w-full max-w-5xl aspect-video m-auto">
   <video controls src={$video.blobUrl} />
 </section>
+
+<footer
+  class="w-full h-full mt-4 py-5 px-10 border-t border-t-white/20 bg-neutral-950 flex flex-col gap-6"
+>
+  <div
+    class="w-full h-12 bg-blue-500/30 rounded-md flex justify-between items-center overflow-hidden"
+  >
+    <button class="w-auto h-full px-2">
+      <div class="w-1 h-1/2 bg-white/75" />
+    </button>
+    <button class="w-auto h-full px-2">
+      <div class="w-1 h-1/2 bg-white/75" />
+    </button>
+  </div>
+  <div
+    class="w-full h-12 bg-emerald-500/30 rounded-md flex justify-between items-center overflow-hidden"
+  >
+    <button class="w-auto h-full px-2">
+      <div class="w-1 h-1/2 bg-white/75" />
+    </button>
+    <button class="w-auto h-full px-2">
+      <div class="w-1 h-1/2 bg-white/75" />
+    </button>
+  </div>
+</footer>
