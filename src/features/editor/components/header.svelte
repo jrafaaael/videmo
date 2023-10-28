@@ -9,7 +9,7 @@
 </script>
 
 <header
-  class="h-16 px-10 bg-neutral-800 border-b-2 border-b-white/5 flex justify-between items-center"
+  class="h-16 px-10 bg-neutral-800 border-b-2 border-b-white/5 shrink-0 flex justify-between items-center"
 >
   <button
     class="p-2 rounded-md text-neutral-300 transition-all hover:bg-white/[0.075] hover:text-neutral-200"

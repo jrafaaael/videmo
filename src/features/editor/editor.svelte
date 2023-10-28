@@ -5,11 +5,13 @@
   import Trimmer from "./components/trimmer.svelte";
 </script>
 
-<main class="w-full h-full bg-neutral-950 flex flex-col">
+<main
+  class="w-full h-full bg-neutral-950 grid grid-rows-[auto_minmax(0,1fr)_auto] gap-4"
+>
   <Header />
-  <section class="w-full max-w-5xl aspect-video m-auto">
+  <section class="w-full px-10 flex justify-center items-center">
     <!-- svelte-ignore a11y-media-has-caption -->
-    <video src={$video.blobUrl} />
+    <video class="w-full max-h-full aspect-video" src={$video.blobUrl} />
   </section>
   <footer class="w-full bg-neutral-900 border-t-2 border-t-white/5">
     <Timeline />
