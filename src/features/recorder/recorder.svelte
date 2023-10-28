@@ -46,12 +46,14 @@
   }
 </script>
 
-<button
-  class="py-1 px-3 bg-purple-600 rounded-md flex items-center gap-2"
-  on:click={handleClick}
->
-  <div class="w-5 aspect-square">
-    {@html Video}
-  </div>
-  <span>{isRecording ? "Stop" : "Start"} recording</span>
-</button>
+<main class="w-full h-full flex justify-center items-center">
+  <button
+    class="py-1 px-3 bg-purple-600 rounded-md flex items-center gap-2"
+    on:click={handleClick}
+  >
+    <div class="w-5 aspect-square">
+      {@html Video}
+    </div>
+    <span>{isRecording ? "Stop" : "Start"} recording</span>
+  </button>
+</main>
