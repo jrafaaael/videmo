@@ -3,7 +3,9 @@
   import Download from "../../../components/icons/download.svg?raw";
   import { video } from "../../../stores/video.store";
 
-  function handleDeleteVideo() {
+  function handleRetry() {
+    const blobUrl = $video.blobUrl;
+    URL.revokeObjectURL(blobUrl);
     video.set(null);
   }
 </script>
@@ -13,7 +15,7 @@
 >
   <button
     class="p-2 rounded-md text-neutral-300 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
-    on:click={handleDeleteVideo}
+    on:click={handleRetry}
   >
     <div class="w-4 aspect-square">
       {@html Trash}
