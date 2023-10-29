@@ -4,15 +4,18 @@
   import Controls from "./components/controls.svelte";
   import Timeline from "./components/timeline.svelte";
   import Trimmer from "./components/trimmer.svelte";
+  import { secondsToTime } from "./utils/seconds-to-time";
 
   let videoRef: HTMLVideoElement;
   let isPlaying: boolean = false;
+  let duration = 0;
 </script>
 
 <main
   class="w-full h-full bg-neutral-950 grid grid-rows-[auto_minmax(0,1fr)_auto] gap-4"
 >
   <Header />
+
   <section class="w-full px-10 flex justify-center items-center">
     <!-- svelte-ignore a11y-media-has-caption -->
     <video
@@ -22,8 +25,17 @@
       on:play={() => (isPlaying = true)}
       on:pause={() => (isPlaying = false)}
       on:ended={() => (isPlaying = false)}
+      on:loadedmetadata={(e) => {
+        e.currentTarget.currentTime = $video.estimatedDuration;
+      }}
+      on:durationchange={(e) => {
+        duration = isFinite(e.currentTarget.duration)
+          ? e.currentTarget.duration
+          : 0;
+      }}
     />
   </section>
+
   <footer class="w-full bg-neutral-900 border-t-2 border-t-white/5">
     <div
       class="h-12 px-4 border-b-2 border-b-white/5 flex justify-center items-center gap-12 relative"
@@ -35,7 +47,7 @@
           isPlaying ? videoRef.pause() : videoRef.play();
         }}
       />
-      <span class="text-white/50">01:30</span>
+      <span class="text-white/50">{secondsToTime(duration)}</span>
     </div>
     <Timeline />
     <div class="w-full py-6 px-10 bg-neutral-950 flex flex-col gap-4">
