@@ -1,9 +1,9 @@
 import { atom } from "nanostores";
 
-interface Video {
+interface Recording {
   blobUrl: string;
   id: string;
   estimatedDuration: number;
 }
 
-export const video = atom<Video | null>(null);
+export const recording = atom<Recording | null>(null);

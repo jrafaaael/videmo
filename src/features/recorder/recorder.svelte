@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { video } from "../../stores/video.store";
+  import { recording } from "../../stores/recording.store";
   import Video from "../../components/icons/video.svg?raw";
 
   let chunks = [];
@@ -23,7 +23,7 @@
         const endRecordingAt = new Date().getTime();
         const videoBlob = new Blob(chunks, { type: "video/webm" });
         const url = URL.createObjectURL(videoBlob);
-        video.set({
+        recording.set({
           blobUrl: url,
           id: stream.id,
           estimatedDuration: (endRecordingAt - startRecordingAt) / 1000,

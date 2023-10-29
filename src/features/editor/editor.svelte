@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { video } from "../../stores/video.store";
+  import { recording } from "../../stores/recording.store";
   import Header from "./components/header.svelte";
   import Controls from "./components/controls.svelte";
   import Timeline from "./components/timeline.svelte";
@@ -20,13 +20,13 @@
     <!-- svelte-ignore a11y-media-has-caption -->
     <video
       class="w-full max-h-full aspect-video"
-      src={$video.blobUrl}
+      src={$recording.blobUrl}
       bind:this={videoRef}
       on:play={() => (isPlaying = true)}
       on:pause={() => (isPlaying = false)}
       on:ended={() => (isPlaying = false)}
       on:loadedmetadata={(e) => {
-        e.currentTarget.currentTime = $video.estimatedDuration;
+        e.currentTarget.currentTime = $recording.estimatedDuration;
       }}
       on:durationchange={(e) => {
         duration = isFinite(e.currentTarget.duration)

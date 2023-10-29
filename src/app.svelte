@@ -1,10 +1,10 @@
 <script>
   import Editor from "./features/editor/editor.svelte";
   import Recorder from "./features/recorder/recorder.svelte";
-  import { video } from "./stores/video.store";
+  import { recording } from "./stores/recording.store";
 </script>
 
-{#if $video}
+{#if $recording}
   <Editor />
 {:else}
   <Recorder />

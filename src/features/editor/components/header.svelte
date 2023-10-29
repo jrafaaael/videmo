@@ -1,12 +1,12 @@
 <script lang="ts">
   import Trash from "../../../components/icons/trash.svg?raw";
   import Download from "../../../components/icons/download.svg?raw";
-  import { video } from "../../../stores/video.store";
+  import { recording } from "../../../stores/recording.store";
 
   function handleRetry() {
-    const blobUrl = $video.blobUrl;
+    const blobUrl = $recording.blobUrl;
     URL.revokeObjectURL(blobUrl);
-    video.set(null);
+    recording.set(null);
   }
 </script>
 
@@ -22,7 +22,7 @@
     </div>
   </button>
   <h1 class="text-xl font-bold">
-    <span>{$video.id}</span>
+    <span>{$recording.id}</span>
     <span class="text-neutral-500">.webm</span>
   </h1>
   <button class="py-1 px-3 bg-purple-600 rounded-md flex items-center gap-2">
