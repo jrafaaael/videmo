@@ -25,13 +25,11 @@
       on:play={() => (isPlaying = true)}
       on:pause={() => (isPlaying = false)}
       on:ended={() => (isPlaying = false)}
-      on:loadedmetadata={(e) => {
-        e.currentTarget.currentTime = $recording.estimatedDuration;
+      on:loadstart={() => {
+        videoRef.currentTime = $recording.estimatedDuration;
       }}
-      on:durationchange={(e) => {
-        duration = isFinite(e.currentTarget.duration)
-          ? e.currentTarget.duration
-          : 0;
+      on:durationchange={async () => {
+        duration = isFinite(videoRef.duration) ? videoRef.duration : 0;
       }}
     />
   </section>
