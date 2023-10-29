@@ -10,6 +10,7 @@
   async function startRecording() {
     try {
       stream = await navigator.mediaDevices.getDisplayMedia();
+      const startRecordingAt = new Date().getTime();
       recorder = new MediaRecorder(stream);
       isRecording = true;
 
@@ -19,9 +20,14 @@
         chunks.push(data)
       );
       recorder.addEventListener("stop", () => {
+        const endRecordingAt = new Date().getTime();
         const videoBlob = new Blob(chunks, { type: "video/webm" });
         const url = URL.createObjectURL(videoBlob);
-        video.set({ blobUrl: url, id: stream.id });
+        video.set({
+          blobUrl: url,
+          id: stream.id,
+          estimatedDuration: (endRecordingAt - startRecordingAt) / 1000,
+        });
       });
       stream.getTracks().forEach((track) => {
         track.addEventListener("ended", () => stopRecording());
