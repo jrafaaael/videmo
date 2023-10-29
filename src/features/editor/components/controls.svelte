@@ -1,29 +1,28 @@
 <script lang="ts">
-  import Timeline from "./timeline.svelte";
+  import Forward from "../../../components/icons/forward.svg?raw";
+  import Play from "../../../components/icons/play.svg?raw";
 </script>
 
-<footer class="w-full bg-neutral-900 border-t-2 border-t-white/5">
-  <Timeline />
-  <div class="w-full py-5 px-10 bg-neutral-950 flex flex-col gap-5">
-    <div
-      class="w-full h-12 bg-blue-500/30 rounded-md flex justify-between items-center overflow-hidden"
-    >
-      <button class="w-auto h-full px-2">
-        <div class="w-1 h-1/2 bg-white/50 rounded-full" />
-      </button>
-      <button class="w-auto h-full px-2">
-        <div class="w-1 h-1/2 bg-white/50 rounded-full" />
-      </button>
+<div class="flex justify-center items-center gap-2">
+  <button
+    class="p-2 rounded-md text-neutral-300 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
+  >
+    <div class="w-5 aspect-square -scale-100">
+      {@html Forward}
     </div>
-    <div
-      class="w-full h-12 bg-emerald-500/30 rounded-md flex justify-between items-center overflow-hidden"
-    >
-      <button class="w-auto h-full px-2">
-        <div class="w-1 h-1/2 bg-white/50 rounded-full" />
-      </button>
-      <button class="w-auto h-full px-2">
-        <div class="w-1 h-1/2 bg-white/50 rounded-full" />
-      </button>
+  </button>
+  <button
+    class="p-2 rounded-md text-neutral-300 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
+  >
+    <div class="w-5 aspect-square">
+      {@html Play}
     </div>
-  </div>
-</footer>
+  </button>
+  <button
+    class="p-2 rounded-md text-neutral-300 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
+  >
+    <div class="w-5 aspect-square">
+      {@html Forward}
+    </div>
+  </button>
+</div>
