@@ -9,6 +9,7 @@
   let videoRef: HTMLVideoElement;
   let isPlaying: boolean = false;
   let duration = 0;
+  let currentTime = 0;
 </script>
 
 <main
@@ -31,6 +32,7 @@
       on:durationchange={async () => {
         duration = isFinite(videoRef.duration) ? videoRef.duration : 0;
       }}
+      on:timeupdate={() => (currentTime = videoRef.currentTime)}
     />
   </section>
 
@@ -38,7 +40,7 @@
     <div
       class="h-12 px-4 border-b-2 border-b-white/5 flex justify-center items-center gap-12 relative"
     >
-      <span>00:29</span>
+      <span>{secondsToTime(currentTime)}</span>
       <Controls
         {isPlaying}
         on:changeVideoState={() => {
