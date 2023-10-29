@@ -4,6 +4,9 @@
   import Controls from "./components/controls.svelte";
   import Timeline from "./components/timeline.svelte";
   import Trimmer from "./components/trimmer.svelte";
+
+  let videoRef: HTMLVideoElement;
+  let isPlaying: boolean = false;
 </script>
 
 <main
@@ -12,14 +15,26 @@
   <Header />
   <section class="w-full px-10 flex justify-center items-center">
     <!-- svelte-ignore a11y-media-has-caption -->
-    <video class="w-full max-h-full aspect-video" src={$video.blobUrl} />
+    <video
+      class="w-full max-h-full aspect-video"
+      src={$video.blobUrl}
+      bind:this={videoRef}
+      on:play={() => (isPlaying = true)}
+      on:pause={() => (isPlaying = false)}
+      on:ended={() => (isPlaying = false)}
+    />
   </section>
   <footer class="w-full bg-neutral-900 border-t-2 border-t-white/5">
     <div
       class="h-12 px-4 border-b-2 border-b-white/5 flex justify-center items-center gap-12 relative"
     >
       <span>00:29</span>
-      <Controls />
+      <Controls
+        {isPlaying}
+        on:changeVideoState={() => {
+          isPlaying ? videoRef.pause() : videoRef.play();
+        }}
+      />
       <span class="text-white/50">01:30</span>
     </div>
     <Timeline />
