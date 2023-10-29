@@ -40,14 +40,14 @@
     <div
       class="h-12 px-4 border-b-2 border-b-white/5 flex justify-center items-center gap-12 relative"
     >
-      <span>{secondsToTime(currentTime)}</span>
+      <span class="tabular-nums">{secondsToTime(currentTime)}</span>
       <Controls
         {isPlaying}
         on:changeVideoState={() => {
           isPlaying ? videoRef.pause() : videoRef.play();
         }}
       />
-      <span class="text-white/50">{secondsToTime(duration)}</span>
+      <span class="text-white/50 tabular-nums">{secondsToTime(duration)}</span>
     </div>
     <Timeline />
     <div class="w-full py-6 px-10 bg-neutral-950 flex flex-col gap-4">
