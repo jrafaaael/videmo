@@ -3,7 +3,7 @@
 </script>
 
 <div
-  class="w-full pt-2 px-10 border-b-2 border-b-white/5 flex justify-between items-end"
+  class="w-full h-12 px-10 border-b-2 border-b-white/5 flex justify-between items-end"
 >
   {#each [...Array(10 + 1).keys()] as num}
     {#if num % 10 === 0}
