@@ -5,6 +5,7 @@
   import Timeline from "./components/timeline.svelte";
   import Trimmer from "./components/trimmer.svelte";
   import { secondsToTime } from "./utils/seconds-to-time";
+  import Seekbar from "./components/seekbar.svelte";
 
   let videoRef: HTMLVideoElement;
   let isPlaying: boolean = false;
@@ -47,10 +48,14 @@
         {secondsToTime($recording.duration)}
       </span>
     </div>
-    <Timeline />
-    <div class="w-full py-6 px-10 bg-neutral-950 flex flex-col gap-4">
-      <Trimmer />
-      <Trimmer />
+    <Timeline duration={+$recording.duration.toFixed(0)} />
+    <!-- <Timeline duration={50} /> -->
+    <div class="w-full px-10 bg-neutral-950">
+      <div class="w-full py-6 flex flex-col gap-4 relative">
+        <Seekbar />
+        <Trimmer />
+        <Trimmer />
+      </div>
     </div>
   </footer>
 </main>
