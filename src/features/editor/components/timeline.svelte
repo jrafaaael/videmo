@@ -7,8 +7,8 @@
 >
   {#each [...Array(10 + 1).keys()] as num}
     {#if num % 10 === 0}
-      <div class="flex flex-col items-center">
-        <span class="text-xs text-white/40">
+      <div class="flex flex-col items-center relative z-10">
+        <span class="text-xs text-white/40 absolute -top-4">
           {secondsToTime(num)}
         </span>
         <div class="w-1 h-4 bg-white/20 translate-y-1/2" />
