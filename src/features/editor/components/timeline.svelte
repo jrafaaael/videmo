@@ -11,10 +11,10 @@
         <span class="text-xs text-white/40 absolute -top-4">
           {secondsToTime(num)}
         </span>
-        <div class="w-1 h-4 bg-white/20 translate-y-1/2" />
+        <div class="w-0.5 h-4 bg-white/20 translate-y-1/2" />
       </div>
     {:else if num % 5 === 0}
-      <div class="w-1 h-2 bg-white/20 translate-y-0.5" />
+      <div class="w-0.5 h-2 bg-white/20 translate-y-0.5" />
     {/if}
   {/each}
 </div>
