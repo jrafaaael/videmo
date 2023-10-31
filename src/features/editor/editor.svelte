@@ -25,7 +25,6 @@
       bind:this={videoRef}
       on:play={() => (isPlaying = true)}
       on:pause={() => (isPlaying = false)}
-      on:ended={() => (isPlaying = false)}
       on:timeupdate={() => (currentTime = videoRef.currentTime)}
     />
   </section>
