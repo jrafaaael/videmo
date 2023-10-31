@@ -3,11 +3,13 @@
   import Header from "./components/header.svelte";
   import Controls from "./components/controls.svelte";
   import Timeline from "./components/timeline.svelte";
+  import Seekbar from "./components/seekbar.svelte";
   import Trimmer from "./components/trimmer.svelte";
   import { secondsToTime } from "./utils/seconds-to-time";
-  import Seekbar from "./components/seekbar.svelte";
+  import { secondsToPixels } from "./utils/seconds-to-pixels";
 
   let videoRef: HTMLVideoElement;
+  let editorRef: HTMLDivElement;
   let isPlaying: boolean = false;
   let currentTime = 0;
 </script>
@@ -50,8 +52,17 @@
     <Timeline duration={+$recording.duration.toFixed(0)} />
     <!-- <Timeline duration={50} /> -->
     <div class="w-full px-10 bg-neutral-950">
-      <div class="w-full py-6 flex flex-col gap-4 relative">
-        <Seekbar />
+      <div
+        class="w-full py-6 flex flex-col gap-4 relative"
+        bind:this={editorRef}
+      >
+        <Seekbar
+          position={secondsToPixels({
+            sec: currentTime,
+            totalPixels: editorRef?.getBoundingClientRect().width,
+            totalSeconds: $recording.duration,
+          })}
+        />
         <Trimmer />
         <Trimmer />
       </div>
