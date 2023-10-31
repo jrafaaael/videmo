@@ -3,7 +3,7 @@ import { atom } from "nanostores";
 interface Recording {
   blobUrl: string;
   id: string;
-  estimatedDuration: number;
+  duration: number;
 }
 
 export const recording = atom<Recording | null>(null);

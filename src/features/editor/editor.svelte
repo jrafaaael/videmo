@@ -8,7 +8,6 @@
 
   let videoRef: HTMLVideoElement;
   let isPlaying: boolean = false;
-  let duration = 0;
   let currentTime = 0;
 </script>
 
@@ -26,12 +25,6 @@
       on:play={() => (isPlaying = true)}
       on:pause={() => (isPlaying = false)}
       on:ended={() => (isPlaying = false)}
-      on:loadstart={() => {
-        videoRef.currentTime = $recording.estimatedDuration;
-      }}
-      on:durationchange={async () => {
-        duration = isFinite(videoRef.duration) ? videoRef.duration : 0;
-      }}
       on:timeupdate={() => (currentTime = videoRef.currentTime)}
     />
   </section>
@@ -47,7 +40,12 @@
           isPlaying ? videoRef.pause() : videoRef.play();
         }}
       />
-      <span class="text-white/50 tabular-nums">{secondsToTime(duration)}</span>
+      <span
+        class="text-white/50 tabular-nums"
+        title={$recording.duration.toString(10)}
+      >
+        {secondsToTime($recording.duration)}
+      </span>
     </div>
     <Timeline />
     <div class="w-full py-6 px-10 bg-neutral-950 flex flex-col gap-4">
