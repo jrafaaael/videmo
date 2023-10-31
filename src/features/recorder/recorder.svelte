@@ -1,6 +1,7 @@
 <script lang="ts">
   import { recording } from "../../stores/recording.store";
   import Video from "../../components/icons/video.svg?raw";
+  import getBlobDuration from "../editor/utils/get-blob-duration";
 
   let chunks = [];
   let isRecording = false;
@@ -19,10 +20,12 @@
       recorder.addEventListener("dataavailable", ({ data }) =>
         chunks.push(data)
       );
-      recorder.addEventListener("stop", () => {
+      recorder.addEventListener("stop", async () => {
         const endRecordingAt = new Date().getTime();
         const videoBlob = new Blob(chunks, { type: "video/webm" });
         const url = URL.createObjectURL(videoBlob);
+        const duration = await getBlobDuration(url);
+        console.log({ duration });
         recording.set({
           blobUrl: url,
           id: stream.id,
