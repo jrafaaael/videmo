@@ -35,7 +35,9 @@
     <div
       class="h-12 px-4 border-b-2 border-b-white/5 flex justify-center items-center gap-12 relative"
     >
-      <span class="tabular-nums">{secondsToTime(currentTime)}</span>
+      <span class="tabular-nums" title={currentTime.toString(10)}>
+        {secondsToTime(Math.floor(currentTime))}
+      </span>
       <Controls
         {isPlaying}
         on:changeVideoState={() => {
