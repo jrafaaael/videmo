@@ -3,7 +3,7 @@
   import { secondsToPixels } from "../utils/seconds-to-pixels";
   import { secondsToTime } from "../utils/seconds-to-time";
 
-  const seconds = [...Array(+$recording.duration.toFixed(0) + 1).keys()];
+  let seconds = [...Array(Math.floor($recording.duration) + 1).keys()];
 </script>
 
 <div

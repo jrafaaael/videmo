@@ -48,7 +48,7 @@
         class="text-white/50 tabular-nums"
         title={$recording.duration.toString(10)}
       >
-        {secondsToTime($recording.duration)}
+        {secondsToTime(Math.floor($recording.duration))}
       </span>
     </div>
     <Timeline />
