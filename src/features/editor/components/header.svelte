@@ -25,10 +25,14 @@
     <span>{$recording.id}</span>
     <span class="text-neutral-500">.webm</span>
   </h1>
-  <button class="py-1 px-3 bg-purple-600 rounded-md flex items-center gap-2">
+  <a
+    class="py-1 px-3 bg-purple-600 rounded-md flex items-center gap-2"
+    href={$recording.blobUrl}
+    download={$recording.id}
+  >
     <div class="w-5 aspect-square">
       {@html Download}
     </div>
     <span>Save</span>
-  </button>
+  </a>
 </header>
