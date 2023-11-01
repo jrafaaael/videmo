@@ -7,7 +7,6 @@
   onMount(() => {
     const observer = new ResizeObserver((entries) => {
       entries.forEach((entry) => {
-        console.log(entry);
         inlineSize = entry.contentRect.width;
       });
     });
