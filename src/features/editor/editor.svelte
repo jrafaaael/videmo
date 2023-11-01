@@ -10,7 +10,7 @@
 
   let videoRef: HTMLVideoElement;
   let editorRef: HTMLDivElement;
-  let isPlaying: boolean = false;
+  let isPlaying = false;
   let currentTime = 0;
 </script>
 
