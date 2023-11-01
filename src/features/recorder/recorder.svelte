@@ -11,7 +11,7 @@
   async function startRecording() {
     try {
       stream = await navigator.mediaDevices.getDisplayMedia();
-      recorder = new MediaRecorder(stream);
+      recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
       isRecording = true;
 
       recorder.start();
