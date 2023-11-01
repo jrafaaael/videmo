@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
+  export let element: HTMLElement | undefined = undefined;
   let containerRef: HTMLDivElement;
   let inlineSize: number;
 
@@ -11,7 +12,7 @@
       });
     });
 
-    observer.observe(containerRef);
+    observer.observe(element ?? containerRef);
 
     return () => observer.disconnect();
   });

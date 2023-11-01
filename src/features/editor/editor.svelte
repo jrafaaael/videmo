@@ -1,5 +1,4 @@
 <script lang="ts">
-  import ResizeObserver from "../../components/resize-observer.svelte";
   import { recording } from "../../stores/recording.store";
   import Header from "./components/header.svelte";
   import Controls from "./components/controls.svelte";
@@ -54,13 +53,11 @@
       <Timeline />
     </div>
     <div class="w-full px-10 bg-neutral-950">
-      <ResizeObserver let:inlineSize>
-        <div class="w-full py-6 flex flex-col gap-4 relative">
-          <Seekbar time={currentTime} containerWidth={inlineSize} />
-          <Trimmer />
-          <Trimmer />
-        </div>
-      </ResizeObserver>
+      <div class="w-full py-6 flex flex-col gap-4 relative">
+        <Seekbar time={currentTime} />
+        <Trimmer />
+        <Trimmer />
+      </div>
     </div>
   </footer>
 </main>
