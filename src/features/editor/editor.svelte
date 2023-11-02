@@ -22,10 +22,10 @@
     <video
       class="w-full max-h-full aspect-video"
       src={$recording.blobUrl}
-      bind:this={videoRef}
+      bind:currentTime
       on:play={() => (isPlaying = true)}
       on:pause={() => (isPlaying = false)}
-      on:timeupdate={() => (currentTime = videoRef.currentTime)}
+      bind:this={videoRef}
     />
   </section>
 
