@@ -1,13 +1,44 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import { recording } from "../../../stores/recording.store";
 
   export let time: number;
+  let isDragging = false;
+  let seekbarRef: HTMLButtonElement;
+  let dispatcher = createEventDispatcher();
   $: position = (time * 100) / $recording.duration;
+
+  function handleChangeTime(
+    e: MouseEvent & { currentTarget: EventTarget & Document }
+  ) {
+    if (isDragging) {
+      const constrains = seekbarRef.parentElement.getBoundingClientRect();
+      const positionInPx = Math.min(
+        Math.max(e.clientX - constrains.x, 0),
+        constrains.width
+      );
+      const positionInPercentage = (positionInPx * 100) / constrains.width;
+      const newTime = (positionInPercentage * $recording.duration) / 100;
+
+      position = positionInPercentage;
+
+      dispatcher("changeTime", { newTime });
+    }
+  }
 </script>
 
+<svelte:document
+  on:mousemove={handleChangeTime}
+  on:mouseup|preventDefault={() => (isDragging = false)}
+/>
+
 <button
-  class="h-[calc(100%+8px)] absolute bottom-0 z-50 transition-all ease-linear cursor-col-resize"
+  class="h-[calc(100%+8px)] absolute bottom-0 z-50 {isDragging
+    ? ''
+    : 'transition-all'} ease-linear cursor-col-resize"
   style="left: {position}%;"
+  on:mousedown|preventDefault={(e) => (isDragging = true)}
+  bind:this={seekbarRef}
 >
   <div class="h-full relative">
     <div
