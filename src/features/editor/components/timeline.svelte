@@ -28,7 +28,7 @@
 
 <div
   class="w-full max-w-[100vw] flex items-end"
-  style="gap: calc(({availableWidth}%/{seconds.length - 1}) - 2px)"
+  style="gap: calc(({availableWidth}%/{seconds.length - 1}) - 2px);"
 >
   {#each seconds as num}
     {#if num % INDICATORS_PER_DURATION[indicator ?? "default"].big === 0}
