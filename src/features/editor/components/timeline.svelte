@@ -13,12 +13,12 @@
     },
   };
 
-  let greatestSecondsLessThanDuration = Math.floor($recording.duration);
-  let seconds = [...Array(greatestSecondsLessThanDuration + 1).keys()];
+  let greatestSecondLessThanDuration = Math.floor($recording.duration);
+  let seconds = [...Array(greatestSecondLessThanDuration + 1).keys()];
   let availableWidth =
-    (greatestSecondsLessThanDuration * 100) / $recording.duration;
+    (greatestSecondLessThanDuration * 100) / $recording.duration;
   let indicator = Object.keys(INDICATORS_PER_DURATION).find(
-    (time) => +time >= greatestSecondsLessThanDuration
+    (time) => +time >= greatestSecondLessThanDuration
   );
 </script>
 
