@@ -3,6 +3,10 @@
   import { secondsToTime } from "../utils/seconds-to-time";
 
   const INDICATORS_PER_DURATION = {
+    10: {
+      big: 1,
+      small: 1,
+    },
     40: {
       big: 2,
       small: 1,
