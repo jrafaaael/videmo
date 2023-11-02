@@ -5,7 +5,7 @@
   $: position = (time * 100) / $recording.duration;
 </script>
 
-<div
+<button
   class="h-[calc(100%+8px)] absolute bottom-0 z-50 transition-all ease-linear cursor-col-resize"
   style="left: {position}%;"
 >
@@ -15,4 +15,4 @@
     />
     <div class="w-0.5 h-full bg-orange-hard" />
   </div>
-</div>
+</button>
