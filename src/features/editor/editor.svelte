@@ -9,6 +9,7 @@
 
   let videoRef: HTMLVideoElement;
   let paused = true;
+  let ended: boolean;
   let currentTime = 0;
 </script>
 
@@ -24,7 +25,13 @@
       src={$recording.blobUrl}
       bind:currentTime
       bind:paused
+      bind:ended
       bind:this={videoRef}
+      on:play={() => {
+        if (ended) {
+          currentTime = 0;
+        }
+      }}
     />
   </section>
 

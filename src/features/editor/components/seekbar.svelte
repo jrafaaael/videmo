@@ -33,9 +33,10 @@
 />
 
 <button
-  class="h-[calc(100%+8px)] px-2 absolute bottom-0 z-50 {isDragging
-    ? ''
-    : 'transition-all'} ease-linear cursor-col-resize"
+  class="h-[calc(100%+8px)] px-2 absolute bottom-0 z-50 cursor-col-resize {time <=
+    0 || isDragging
+    ? 'transition-none'
+    : 'transition-all ease-linear'}"
   style="--position: {position}%; left: calc(var(--position, 0%) - 8px);"
   on:mousedown|preventDefault={(e) => (isDragging = true)}
   bind:this={seekbarRef}
