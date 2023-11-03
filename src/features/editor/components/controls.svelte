@@ -4,7 +4,7 @@
   import Play from "../../../components/icons/play.svg?raw";
   import Pause from "../../../components/icons/pause.svg?raw";
 
-  export let isPlaying: boolean;
+  export let paused: boolean;
 
   let dispatch = createEventDispatcher();
 </script>
@@ -22,10 +22,10 @@
     on:click={() => dispatch("changeVideoState")}
   >
     <div class="w-5 aspect-square">
-      {#if isPlaying}
-        {@html Pause}
-      {:else}
+      {#if paused}
         {@html Play}
+      {:else}
+        {@html Pause}
       {/if}
     </div>
   </button>

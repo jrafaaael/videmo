@@ -8,7 +8,7 @@
   import { secondsToTime } from "./utils/seconds-to-time";
 
   let videoRef: HTMLVideoElement;
-  let isPlaying = false;
+  let paused = true;
   let currentTime = 0;
 </script>
 
@@ -23,8 +23,7 @@
       class="w-full max-h-full aspect-video"
       src={$recording.blobUrl}
       bind:currentTime
-      on:play={() => (isPlaying = true)}
-      on:pause={() => (isPlaying = false)}
+      bind:paused
       bind:this={videoRef}
     />
   </section>
@@ -37,9 +36,9 @@
         {secondsToTime(Math.floor(currentTime))}
       </span>
       <Controls
-        {isPlaying}
+        {paused}
         on:changeVideoState={() => {
-          isPlaying ? videoRef.pause() : videoRef.play();
+          paused ? videoRef.play() : videoRef.pause();
         }}
       />
       <span
