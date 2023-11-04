@@ -3,7 +3,7 @@
   import Header from "./components/header.svelte";
   import Controls from "./components/controls.svelte";
   import Timeline from "./components/timeline.svelte";
-  import Seekbar from "./components/seekbar.svelte";
+  import Seeker from "./components/seeker.svelte";
   import Trimmer from "./components/trimmer.svelte";
   import { secondsToTime } from "./utils/seconds-to-time";
 
@@ -21,7 +21,7 @@
   <section class="w-full px-10 flex justify-center items-center">
     <!-- svelte-ignore a11y-media-has-caption -->
     <video
-      class="w-full max-h-full aspect-video"
+      class="w-full max-h-full aspect-video blur-md"
       src={$recording.blobUrl}
       bind:currentTime
       bind:paused
@@ -60,7 +60,7 @@
     </div>
     <div class="w-full px-10 bg-neutral-950">
       <div class="w-full py-6 flex flex-col gap-4 relative">
-        <Seekbar
+        <Seeker
           time={currentTime}
           on:changeTime={({ detail }) => (currentTime = detail.newTime)}
         />
