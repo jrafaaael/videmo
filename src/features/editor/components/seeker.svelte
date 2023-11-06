@@ -38,7 +38,7 @@
     ? 'transition-none'
     : 'transition-all ease-linear'}"
   style="--position: {position}%; left: calc(var(--position, 0%) - 8px);"
-  on:mousedown|preventDefault={(e) => (isDragging = true)}
+  on:mousedown|preventDefault={() => (isDragging = true)}
   bind:this={seekbarRef}
 >
   <div class="h-full relative">
