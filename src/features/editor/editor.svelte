@@ -21,7 +21,7 @@
   <section class="w-full px-10 flex justify-center items-center">
     <!-- svelte-ignore a11y-media-has-caption -->
     <video
-      class="w-full max-h-full aspect-video blur-md"
+      class="w-full max-h-full aspect-video"
       src={$recording.blobUrl}
       bind:currentTime
       bind:paused
