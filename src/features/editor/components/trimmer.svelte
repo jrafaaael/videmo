@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { recording } from "../../../stores/recording.store";
+
   type Resizer = "right" | "left";
 
+  const MINIMUM_DURATION_IN_SECONDS = 0.5;
   let isResizing = false;
   let resizer: Resizer | null = null;
   let trimmerRef: HTMLDivElement;
@@ -37,8 +40,14 @@
         initialTrimmerRect.width + delta
       );
       const widthInPercentage = (width * 100) / constrains.width;
+      const duration = (widthInPercentage * $recording.duration) / 100;
 
-      trimmerRef.style.setProperty("width", widthInPercentage.toFixed(1) + "%");
+      if (duration >= MINIMUM_DURATION_IN_SECONDS) {
+        trimmerRef.style.setProperty(
+          "width",
+          widthInPercentage.toFixed(1) + "%"
+        );
+      }
     } else if (resizer === "left") {
       const delta = mousePositionWhenResizingStart - e.pageX;
       const left = initialTrimmerRect.left - delta - constrains.left;
@@ -48,9 +57,15 @@
           : Math.min(constrains.width, initialTrimmerRect.width + left + delta);
       const widthInPercentage = (width * 100) / constrains.width;
       const leftInPercentage = Math.max(0, (left * 100) / constrains.width);
+      const duration = (widthInPercentage * $recording.duration) / 100;
 
-      trimmerRef.style.setProperty("width", widthInPercentage.toFixed(1) + "%");
-      trimmerRef.style.setProperty("left", leftInPercentage.toFixed(1) + "%");
+      if (duration >= MINIMUM_DURATION_IN_SECONDS) {
+        trimmerRef.style.setProperty(
+          "width",
+          widthInPercentage.toFixed(1) + "%"
+        );
+        trimmerRef.style.setProperty("left", leftInPercentage.toFixed(1) + "%");
+      }
     }
   }
 </script>
