@@ -4,7 +4,7 @@
   let isResizing = false;
   let resizer: Resizer | null = null;
   let trimmerRef: HTMLDivElement;
-  let mousePositionWhenResizingStart = null;
+  let mousePositionWhenResizingStart: number | null = null;
   let initialTrimmerRect: DOMRect | null = null;
 
   function handleResizeStart(
