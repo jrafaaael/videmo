@@ -31,6 +31,7 @@
     if (resizer === "right") {
       const delta = e.pageX - mousePositionWhenResizingStart;
       const width = Math.min(
+        constrains.width,
         constrains.width - trimmerRect.left + constrains.left,
         initialTrimmerRect.width + delta
       );
