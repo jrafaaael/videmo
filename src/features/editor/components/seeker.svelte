@@ -2,13 +2,12 @@
   import { createEventDispatcher } from "svelte";
   import { recording } from "../../../stores/recording.store";
 
-  export let time: number;
-  export let isTrimming: boolean;
-  export let paused: boolean;
+  export let currentTime: number;
+  export let endAt = $recording.duration;
   let isDragging = false;
   let seekbarRef: HTMLButtonElement;
   let dispatcher = createEventDispatcher();
-  $: position = (time * 100) / $recording.duration;
+  $: position = (currentTime * 100) / $recording.duration;
 
   function handleChangeTime(
     e: MouseEvent & { currentTarget: EventTarget & Document }
@@ -35,10 +34,10 @@
 />
 
 <button
-  class="h-[calc(100%+8px)] px-2 absolute bottom-0 z-50 cursor-col-resize {time <=
+  class="h-[calc(100%+8px)] px-2 absolute bottom-0 z-50 cursor-col-resize {currentTime <=
     0 ||
   isDragging ||
-  isTrimming
+  endAt <= currentTime
     ? 'transition-none'
     : 'transition-all ease-linear'}"
   style="--position: {position}%; left: calc(var(--position, 0%) - 8px);"

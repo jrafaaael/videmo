@@ -12,6 +12,7 @@
   let ended: boolean;
   let isTrimming = false;
   let currentTime = 0;
+  let endAt = $recording.duration;
 </script>
 
 <main
@@ -62,16 +63,16 @@
     <div class="w-full px-10 bg-neutral-950">
       <div class="w-full py-6 flex flex-col gap-4 relative">
         <Seeker
-          {paused}
-          {isTrimming}
-          time={currentTime}
+          {currentTime}
+          {endAt}
           on:changeTime={({ detail }) => (currentTime = detail.newTime)}
         />
         <Trimmer
           bind:isTrimming
           on:resizeStart={() => videoRef.pause()}
-          on:resizeEnd={() => videoRef.play()}
           on:endChange={({ detail }) => {
+            endAt = detail.endAt;
+
             if (detail.endAt <= currentTime) {
               currentTime = detail.endAt;
             }
