@@ -8,7 +8,7 @@
   let resizer: Resizer | null = null;
   let trimmerRef: HTMLDivElement;
   let mousePositionWhenResizingStart: number | null = null;
-  let initialTrimmerRect: DOMRect | null = null;
+  let trimmerRectWhenResizingStart: DOMRect | null = null;
 
   function handleResizeStart(
     e: MouseEvent & {
@@ -16,7 +16,7 @@
     },
     direction: Resizer
   ) {
-    initialTrimmerRect = trimmerRef.getBoundingClientRect();
+    trimmerRectWhenResizingStart = trimmerRef.getBoundingClientRect();
     mousePositionWhenResizingStart = e.pageX;
     isResizing = true;
     resizer = direction;
@@ -37,7 +37,7 @@
       const width = Math.min(
         constrains.width,
         constrains.width - trimmerRect.left + constrains.left,
-        initialTrimmerRect.width + delta
+        trimmerRectWhenResizingStart.width + delta
       );
       const widthInPercentage = (width * 100) / constrains.width;
       const duration = (widthInPercentage * $recording.duration) / 100;
@@ -50,11 +50,11 @@
       }
     } else if (resizer === "left") {
       const delta = mousePositionWhenResizingStart - e.pageX;
-      const left = initialTrimmerRect.left - delta - constrains.left;
+      const left = trimmerRectWhenResizingStart.left - delta - constrains.left;
       const width =
         left >= 0
-          ? Math.min(constrains.width, initialTrimmerRect.width + delta)
-          : Math.min(constrains.width, initialTrimmerRect.width + left + delta);
+          ? Math.min(constrains.width, trimmerRectWhenResizingStart.width + delta)
+          : Math.min(constrains.width, trimmerRectWhenResizingStart.width + left + delta);
       const widthInPercentage = (width * 100) / constrains.width;
       const leftInPercentage = Math.max(0, (left * 100) / constrains.width);
       const duration = (widthInPercentage * $recording.duration) / 100;
