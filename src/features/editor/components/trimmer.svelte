@@ -1,5 +1,6 @@
 <script lang="ts">
   type Resizer = "right" | "left";
+
   let isResizing = false;
   let resizer: Resizer | null = null;
   let trimmerRef: HTMLDivElement;
@@ -35,8 +36,9 @@
         constrains.width - trimmerRect.left + constrains.left,
         initialTrimmerRect.width + delta
       );
+      const widthInPercentage = (width * 100) / constrains.width;
 
-      trimmerRef.style.width = width.toFixed(1) + "px";
+      trimmerRef.style.setProperty("width", widthInPercentage.toFixed(1) + "%");
     } else if (resizer === "left") {
       const delta = mousePositionWhenResizingStart - e.pageX;
       const left = initialTrimmerRect.left - delta - constrains.left;
@@ -44,9 +46,11 @@
         left >= 0
           ? Math.min(constrains.width, initialTrimmerRect.width + delta)
           : Math.min(constrains.width, initialTrimmerRect.width + left + delta);
+      const widthInPercentage = (width * 100) / constrains.width;
+      const leftInPercentage = Math.max(0, (left * 100) / constrains.width);
 
-      trimmerRef.style.left = Math.max(0, left).toFixed(1) + "px";
-      trimmerRef.style.width = width.toFixed(1) + "px";
+      trimmerRef.style.setProperty("width", widthInPercentage.toFixed(1) + "%");
+      trimmerRef.style.setProperty("left", leftInPercentage.toFixed(1) + "%");
     }
   }
 </script>
@@ -61,6 +65,7 @@
 
 <div
   class="w-full h-10 bg-blue-500/30 rounded-md flex justify-between items-center overflow-hidden relative"
+  style="width: var(--width, 100%); left: var(--left, 0)"
   bind:this={trimmerRef}
 >
   <button
