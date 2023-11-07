@@ -1,14 +1,16 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import { recording } from "../../../stores/recording.store";
 
   type Resizer = "right" | "left";
 
   const MINIMUM_DURATION_IN_SECONDS = 0.5;
-  let isResizing = false;
+  export let isTrimming: boolean = false;
   let resizer: Resizer | null = null;
   let trimmerRef: HTMLDivElement;
   let mousePositionWhenResizingStart: number | null = null;
   let trimmerRectWhenResizingStart: DOMRect | null = null;
+  let dispatcher = createEventDispatcher();
 
   function handleResizeStart(
     e: MouseEvent & {
@@ -18,14 +20,15 @@
   ) {
     trimmerRectWhenResizingStart = trimmerRef.getBoundingClientRect();
     mousePositionWhenResizingStart = e.pageX;
-    isResizing = true;
+    isTrimming = true;
     resizer = direction;
+    dispatcher("resizeStart");
   }
 
   function handleResize(
     e: MouseEvent & { currentTarget: EventTarget & Document }
   ) {
-    if (!isResizing || !resizer) {
+    if (!isTrimming || !resizer) {
       return;
     }
 
@@ -47,14 +50,27 @@
           "width",
           widthInPercentage.toFixed(1) + "%"
         );
+        const deltaWidth = width - trimmerRect.width;
+        const constrainPadding = document.body.clientWidth - constrains.right;
+        const endAt =
+          ((trimmerRect.right + deltaWidth - constrainPadding) *
+            $recording.duration) /
+          (constrains.right - constrainPadding);
+        dispatcher("endChange", { endAt });
       }
     } else if (resizer === "left") {
       const delta = mousePositionWhenResizingStart - e.pageX;
       const left = trimmerRectWhenResizingStart.left - delta - constrains.left;
       const width =
         left >= 0
-          ? Math.min(constrains.width, trimmerRectWhenResizingStart.width + delta)
-          : Math.min(constrains.width, trimmerRectWhenResizingStart.width + left + delta);
+          ? Math.min(
+              constrains.width,
+              trimmerRectWhenResizingStart.width + delta
+            )
+          : Math.min(
+              constrains.width,
+              trimmerRectWhenResizingStart.width + left + delta
+            );
       const widthInPercentage = (width * 100) / constrains.width;
       const leftInPercentage = Math.max(0, (left * 100) / constrains.width);
       const duration = (widthInPercentage * $recording.duration) / 100;
@@ -73,8 +89,9 @@
 <svelte:document
   on:mousemove={handleResize}
   on:mouseup={() => {
-    isResizing = false;
+    isTrimming = false;
     resizer = null;
+    dispatcher("resizeEnd");
   }}
 />
 

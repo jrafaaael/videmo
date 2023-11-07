@@ -10,6 +10,7 @@
   let videoRef: HTMLVideoElement;
   let paused = true;
   let ended: boolean;
+  let isTrimming = false;
   let currentTime = 0;
 </script>
 
@@ -61,11 +62,22 @@
     <div class="w-full px-10 bg-neutral-950">
       <div class="w-full py-6 flex flex-col gap-4 relative">
         <Seeker
+          {paused}
+          {isTrimming}
           time={currentTime}
           on:changeTime={({ detail }) => (currentTime = detail.newTime)}
         />
-        <Trimmer />
-        <Trimmer />
+        <Trimmer
+          bind:isTrimming
+          on:resizeStart={() => videoRef.pause()}
+          on:resizeEnd={() => videoRef.play()}
+          on:endChange={({ detail }) => {
+            if (detail.endAt <= currentTime) {
+              currentTime = detail.endAt;
+            }
+          }}
+        />
+        <!-- <Trimmer /> -->
       </div>
     </div>
   </footer>

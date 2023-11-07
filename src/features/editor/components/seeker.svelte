@@ -3,6 +3,8 @@
   import { recording } from "../../../stores/recording.store";
 
   export let time: number;
+  export let isTrimming: boolean;
+  export let paused: boolean;
   let isDragging = false;
   let seekbarRef: HTMLButtonElement;
   let dispatcher = createEventDispatcher();
@@ -34,7 +36,9 @@
 
 <button
   class="h-[calc(100%+8px)] px-2 absolute bottom-0 z-50 cursor-col-resize {time <=
-    0 || isDragging
+    0 ||
+  isDragging ||
+  isTrimming
     ? 'transition-none'
     : 'transition-all ease-linear'}"
   style="--position: {position}%; left: calc(var(--position, 0%) - 8px);"
