@@ -3,7 +3,8 @@
   import { recording } from "../../../stores/recording.store";
 
   export let currentTime: number;
-  export let endAt = $recording.duration;
+  export let startAt: number;
+  export let endAt: number;
   export let isTrimming: boolean;
   let isDragging = false;
   let seekbarRef: HTMLButtonElement;
@@ -20,11 +21,14 @@
         constrains.width
       );
       const positionInPercentage = (positionInPx * 100) / constrains.width;
+      const startPosition = (startAt * constrains.width) / $recording.duration;
+      const startPositionInPercentage =
+        (startPosition * 100) / constrains.width;
       const endPosition = (endAt * constrains.width) / $recording.duration;
       const endPositionInPercentage = (endPosition * 100) / constrains.width;
-      const newPosition = Math.min(
-        positionInPercentage,
-        endPositionInPercentage
+      const newPosition = Math.max(
+        startPositionInPercentage,
+        Math.min(positionInPercentage, endPositionInPercentage)
       );
       const newTime = (newPosition * $recording.duration) / 100;
 
@@ -42,9 +46,9 @@
 
 <button
   class="h-[calc(100%+8px)] px-2 absolute bottom-0 z-50 cursor-col-resize {currentTime <=
-    0 ||
+    startAt ||
   isDragging ||
-  (isTrimming && endAt <= currentTime)
+  (isTrimming && (endAt <= currentTime || startAt >= currentTime))
     ? 'transition-none'
     : 'transition-all ease-linear'}"
   style="--position: {position}%; left: calc(var(--position, 0%) - 8px);"

@@ -11,8 +11,9 @@
   let paused = true;
   let ended: boolean;
   let isTrimming = false;
+  let startAt = 0;
   let endAt = $recording.duration;
-  $: currentTime = Math.min(currentTime ?? Infinity, endAt);
+  $: currentTime = Math.max(startAt, Math.min(currentTime ?? Infinity, endAt));
 </script>
 
 <main
@@ -31,7 +32,7 @@
       bind:this={videoRef}
       on:play={() => {
         if (ended || currentTime >= endAt) {
-          currentTime = 0;
+          currentTime = startAt;
         }
       }}
       on:timeupdate={() => {
@@ -68,9 +69,10 @@
     <div class="w-full px-10 bg-neutral-950">
       <div class="w-full py-6 flex flex-col gap-4 relative">
         <Seeker
-          {isTrimming}
           {currentTime}
+          {startAt}
           {endAt}
+          {isTrimming}
           on:changeTime={({ detail }) => (currentTime = detail.newTime)}
         />
         <Trimmer
@@ -81,6 +83,13 @@
 
             if (endAt <= currentTime) {
               currentTime = detail.endAt;
+            }
+          }}
+          on:startChange={({ detail }) => {
+            startAt = detail.startAt;
+
+            if (startAt >= currentTime) {
+              currentTime = detail.startAt;
             }
           }}
         />

@@ -34,6 +34,7 @@
 
     const trimmerRect = trimmerRef.getBoundingClientRect();
     const constrains = trimmerRef.parentElement.getBoundingClientRect();
+    const constrainPadding = constrains.left;
 
     if (resizer === "right") {
       const delta = e.pageX - mousePositionWhenResizingStart;
@@ -50,27 +51,23 @@
           "width",
           widthInPercentage.toFixed(1) + "%"
         );
+
         const deltaWidth = width - trimmerRect.width;
-        const constrainPadding = document.body.clientWidth - constrains.right;
         const endAt =
           ((trimmerRect.right + deltaWidth - constrainPadding) *
             $recording.duration) /
           (constrains.right - constrainPadding);
+
         dispatcher("endChange", { endAt: +endAt.toFixed(4) });
       }
     } else if (resizer === "left") {
       const delta = mousePositionWhenResizingStart - e.pageX;
       const left = trimmerRectWhenResizingStart.left - delta - constrains.left;
-      const width =
-        left >= 0
-          ? Math.min(
-              constrains.width,
-              trimmerRectWhenResizingStart.width + delta
-            )
-          : Math.min(
-              constrains.width,
-              trimmerRectWhenResizingStart.width + left + delta
-            );
+      const width = Math.min(
+        constrains.width,
+        trimmerRectWhenResizingStart.width + delta,
+        trimmerRectWhenResizingStart.width + left + delta
+      );
       const widthInPercentage = (width * 100) / constrains.width;
       const leftInPercentage = Math.max(0, (left * 100) / constrains.width);
       const duration = (widthInPercentage * $recording.duration) / 100;
@@ -81,6 +78,14 @@
           widthInPercentage.toFixed(1) + "%"
         );
         trimmerRef.style.setProperty("left", leftInPercentage.toFixed(1) + "%");
+
+        const deltaWidth = width - trimmerRect.width;
+        const startAt =
+          ((trimmerRect.left - deltaWidth - constrainPadding) *
+            $recording.duration) /
+          (constrains.right - constrainPadding);
+
+        dispatcher("startChange", { startAt: +startAt.toFixed(4) });
       }
     }
   }
