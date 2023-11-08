@@ -11,8 +11,8 @@
   let paused = true;
   let ended: boolean;
   let isTrimming = false;
-  let currentTime = 0;
   let endAt = $recording.duration;
+  $: currentTime = Math.min(currentTime ?? Infinity, endAt);
 </script>
 
 <main
@@ -30,14 +30,13 @@
       bind:ended
       bind:this={videoRef}
       on:play={() => {
-        if (ended) {
+        if (ended || currentTime >= endAt) {
           currentTime = 0;
         }
       }}
       on:timeupdate={() => {
-        if (currentTime > endAt) {
+        if (currentTime >= endAt) {
           videoRef.pause();
-          currentTime = endAt;
         }
       }}
     />
@@ -80,7 +79,7 @@
           on:endChange={({ detail }) => {
             endAt = detail.endAt;
 
-            if (detail.endAt <= currentTime) {
+            if (endAt <= currentTime) {
               currentTime = detail.endAt;
             }
           }}
