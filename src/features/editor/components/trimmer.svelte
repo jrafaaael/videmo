@@ -56,7 +56,7 @@
           ((trimmerRect.right + deltaWidth - constrainPadding) *
             $recording.duration) /
           (constrains.right - constrainPadding);
-        dispatcher("endChange", { endAt });
+        dispatcher("endChange", { endAt: +endAt.toFixed(4) });
       }
     } else if (resizer === "left") {
       const delta = mousePositionWhenResizingStart - e.pageX;
