@@ -4,6 +4,7 @@
 
   export let currentTime: number;
   export let endAt = $recording.duration;
+  export let isTrimming: boolean;
   let isDragging = false;
   let seekbarRef: HTMLButtonElement;
   let dispatcher = createEventDispatcher();
@@ -43,7 +44,7 @@
   class="h-[calc(100%+8px)] px-2 absolute bottom-0 z-50 cursor-col-resize {currentTime <=
     0 ||
   isDragging ||
-  endAt <= currentTime
+  (isTrimming && endAt <= currentTime)
     ? 'transition-none'
     : 'transition-all ease-linear'}"
   style="--position: {position}%; left: calc(var(--position, 0%) - 8px);"
