@@ -15,13 +15,19 @@
     if (isDragging) {
       const constrains = seekbarRef.parentElement.getBoundingClientRect();
       const positionInPx = Math.min(
-        Math.max(e.clientX - constrains.x, 0),
+        Math.max(e.clientX - constrains.left, 0),
         constrains.width
       );
       const positionInPercentage = (positionInPx * 100) / constrains.width;
-      const newTime = (positionInPercentage * $recording.duration) / 100;
+      const endPosition = (endAt * constrains.width) / $recording.duration;
+      const endPositionInPercentage = (endPosition * 100) / constrains.width;
+      const newPosition = Math.min(
+        positionInPercentage,
+        endPositionInPercentage
+      );
+      const newTime = (newPosition * $recording.duration) / 100;
 
-      position = positionInPercentage;
+      position = newPosition;
 
       dispatcher("changeTime", { newTime });
     }
