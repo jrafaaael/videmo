@@ -5,7 +5,7 @@
   type Resizer = "right" | "left";
 
   const MINIMUM_DURATION_IN_SECONDS = 0.5;
-  export let isTrimming: boolean = false;
+  export let isTrimming: boolean;
   let resizer: Resizer | null = null;
   let trimmerRef: HTMLDivElement;
   let mousePositionWhenResizingStart: number | null = null;
@@ -101,7 +101,7 @@
 />
 
 <div
-  class="w-full h-10 bg-blue-500/30 rounded-md flex justify-between items-center overflow-hidden relative"
+  class="w-full h-10 bg-blue-500/30 rounded-md overflow-hidden relative"
   style="width: var(--width, 100%); left: var(--left, 0)"
   bind:this={trimmerRef}
 >
