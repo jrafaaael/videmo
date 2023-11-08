@@ -34,6 +34,12 @@
           currentTime = 0;
         }
       }}
+      on:timeupdate={() => {
+        if (currentTime > endAt) {
+          videoRef.pause();
+          currentTime = endAt;
+        }
+      }}
     />
   </section>
 
