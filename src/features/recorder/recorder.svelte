@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { toBlobURL } from "@ffmpeg/util";
   import Video from "../../components/icons/video.svg?raw";
+  import { ffmpeg } from "../../stores/ffmpeg.store";
   import { recording } from "../../stores/recording.store";
   import getBlobDuration from "../editor/utils/get-blob-duration";
 
@@ -31,6 +33,20 @@
       });
       stream.getTracks().forEach((track) => {
         track.addEventListener("ended", () => stopRecording());
+      });
+      const BASE_URL = "https://unpkg.com/@ffmpeg/core@0.12.4/dist/esm";
+      $ffmpeg.on("log", ({ message }) => {
+        console.log(message);
+      });
+      await $ffmpeg.load({
+        coreURL: await toBlobURL(
+          `${BASE_URL}/ffmpeg-core.js`,
+          "text/javascript"
+        ),
+        wasmURL: await toBlobURL(
+          `${BASE_URL}/ffmpeg-core.wasm`,
+          "application/wasm"
+        ),
       });
     } catch (error) {
       console.log(error);
