@@ -13,6 +13,8 @@
   "dependencies": {
     "@astrojs/svelte": "^4.0.3",
     "@astrojs/tailwind": "^5.0.2",
+    "@ffmpeg/ffmpeg": "^0.12.7",
+    "@ffmpeg/util": "^0.12.1",
     "astro": "^3.4.0",
     "nanostores": "^0.9.4",
     "svelte": "^4.0.0",
