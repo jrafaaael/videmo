@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { navigate } from "astro:transitions/client";
   import { onMount } from "svelte";
   import { FFmpeg } from "@ffmpeg/ffmpeg";
   import Video from "../../components/icons/video.svg?raw";
@@ -23,14 +24,17 @@
         chunks.push(data)
       );
       recorder.addEventListener("stop", async () => {
+        const id = stream.id;
         const videoBlob = new Blob(chunks, { type: "video/webm" });
         const url = URL.createObjectURL(videoBlob);
         const duration = await getBlobDuration(url);
         recording.set({
-          id: stream.id,
           url,
+          id,
           duration,
         });
+
+        navigate(id, { history: "push" });
       });
       stream.getTracks().forEach((track) => {
         track.addEventListener("ended", () => stopRecording());

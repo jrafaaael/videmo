@@ -1,0 +1,17 @@
+---
+import AppLayout from "../layouts/app-layout.astro";
+import Editor from "../features/editor/editor.svelte";
+---
+
+<AppLayout>
+  <Editor client:only />
+</AppLayout>
+
+<script>
+  import { navigate } from "astro:transitions/client";
+  import { recording } from "../stores/recording.store";
+
+  if (!recording.value) {
+    navigate("/");
+  }
+</script>
