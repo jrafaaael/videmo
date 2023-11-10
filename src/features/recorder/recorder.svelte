@@ -3,47 +3,18 @@
   import { onMount } from "svelte";
   import { FFmpeg } from "@ffmpeg/ffmpeg";
   import Video from "../../components/icons/video.svg?raw";
+  import VideoSlash from "../../components/icons/video-slash.svg?raw";
   import { ffmpeg } from "../../stores/ffmpeg.store";
   import { recording } from "../../stores/recording.store";
-  import getBlobDuration from "./utils/get-blob-duration";
+  import { recordScreen } from "./utils/record-screen";
 
-  let chunks = [];
-  let isRecording = false;
-  let stream: MediaStream;
-  let recorder: MediaRecorder;
-
-  async function startRecording() {
-    try {
-      stream = await navigator.mediaDevices.getDisplayMedia();
-      recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
-      isRecording = true;
-
-      recorder.start();
-
-      recorder.addEventListener("dataavailable", ({ data }) =>
-        chunks.push(data)
-      );
-      recorder.addEventListener("stop", async () => {
-        const id = stream.id;
-        const videoBlob = new Blob(chunks, { type: "video/webm" });
-        const url = URL.createObjectURL(videoBlob);
-        const duration = await getBlobDuration(url);
-        recording.set({
-          url,
-          id,
-          duration,
-        });
-
-        navigate(id, { history: "push" });
-      });
-      stream.getTracks().forEach((track) => {
-        track.addEventListener("ended", () => stopRecording());
-      });
-      const BASE_URL = "https://unpkg.com/@ffmpeg/core@0.12.4/dist/esm";
+  const recorder = recordScreen({
+    async onStart() {
       const { toBlobURL } = await import("@ffmpeg/util");
-      $ffmpeg.on("log", ({ message }) => {
-        console.log(message);
-      });
+      const BASE_URL = "https://unpkg.com/@ffmpeg/core@0.12.4/dist/esm";
+
+      $ffmpeg.on("log", ({ message }) => console.log(message));
+
       await $ffmpeg.load({
         coreURL: await toBlobURL(
           `${BASE_URL}/ffmpeg-core.js`,
@@ -54,22 +25,18 @@
           "application/wasm"
         ),
       });
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  function stopRecording() {
-    recorder?.stop();
-    stream?.getTracks().forEach((track) => track.stop());
-    isRecording = false;
-  }
+    },
+    onEnd(video) {
+      recording.set(video);
+      navigate(video.id, { history: "push" });
+    },
+  });
 
   function handleClick() {
-    if (isRecording) {
-      stopRecording();
+    if ($recorder.isRecording) {
+      recorder.stop();
     } else {
-      startRecording();
+      recorder.start();
     }
   }
 
@@ -84,8 +51,12 @@
     on:click={handleClick}
   >
     <div class="w-5 aspect-square">
-      {@html Video}
+      {#if $recorder.isRecording}
+        {@html VideoSlash}
+      {:else}
+        {@html Video}
+      {/if}
     </div>
-    <span>{isRecording ? "Stop" : "Start"} recording</span>
+    <span>{$recorder.isRecording ? "Stop" : "Start"} recording</span>
   </button>
 </main>
