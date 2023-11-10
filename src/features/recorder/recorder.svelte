@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { toBlobURL } from "@ffmpeg/util";
   import Video from "../../components/icons/video.svg?raw";
   import { ffmpeg } from "../../stores/ffmpeg.store";
   import { recording } from "../../stores/recording.store";
@@ -35,6 +34,7 @@
         track.addEventListener("ended", () => stopRecording());
       });
       const BASE_URL = "https://unpkg.com/@ffmpeg/core@0.12.4/dist/esm";
+      const { toBlobURL } = await import("@ffmpeg/util");
       $ffmpeg.on("log", ({ message }) => {
         console.log(message);
       });
