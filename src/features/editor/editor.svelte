@@ -25,7 +25,7 @@
     <!-- svelte-ignore a11y-media-has-caption -->
     <video
       class="w-full max-h-full aspect-video"
-      src={$recording.blobUrl}
+      src={$recording.url}
       bind:currentTime
       bind:paused
       bind:ended

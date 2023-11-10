@@ -26,8 +26,8 @@
         const url = URL.createObjectURL(videoBlob);
         const duration = await getBlobDuration(url);
         recording.set({
-          blobUrl: url,
           id: stream.id,
+          url,
           duration,
         });
       });
