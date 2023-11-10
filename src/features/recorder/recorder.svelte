@@ -3,7 +3,7 @@
   import Video from "../../components/icons/video.svg?raw";
   import { ffmpeg } from "../../stores/ffmpeg.store";
   import { recording } from "../../stores/recording.store";
-  import getBlobDuration from "../editor/utils/get-blob-duration";
+  import getBlobDuration from "./utils/get-blob-duration";
 
   let chunks = [];
   let isRecording = false;
