@@ -6,9 +6,9 @@
   import VideoSlash from "../../components/icons/video-slash.svg?raw";
   import { ffmpeg } from "../../stores/ffmpeg.store";
   import { recording } from "../../stores/recording.store";
-  import { recordScreen } from "./utils/record-screen";
+  import { createScreenRecorder } from "./utils/create-screen-recorder";
 
-  const recorder = recordScreen({
+  const recorder = createScreenRecorder({
     async onStart() {
       const { toBlobURL } = await import("@ffmpeg/util");
       const BASE_URL = "https://unpkg.com/@ffmpeg/core@0.12.4/dist/esm";

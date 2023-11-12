@@ -7,7 +7,7 @@ interface Params {
   onStart?: () => void;
 }
 
-export function recordScreen(params: Params) {
+export function createScreenRecorder(params?: Params) {
   const { subscribe, set } = writable({ isRecording: false });
   let chunks = [];
   let stream: MediaStream;
@@ -17,7 +17,7 @@ export function recordScreen(params: Params) {
     try {
       stream = await navigator.mediaDevices.getDisplayMedia();
       recorder = new MediaRecorder(stream, {
-        mimeType: 'video/webm; codecs="vp9,opus"',
+        mimeType: "video/webm",
       });
 
       recorder.start();
@@ -29,7 +29,7 @@ export function recordScreen(params: Params) {
 
       recorder.addEventListener("stop", async () => {
         const videoBlob = new Blob(chunks, {
-          type: 'video/webm; codecs="vp9,opus"',
+          type: "video/webm",
         });
         const url = URL.createObjectURL(videoBlob);
         const duration = await getBlobDuration(url);
