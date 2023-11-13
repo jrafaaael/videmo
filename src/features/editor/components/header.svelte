@@ -4,6 +4,7 @@
   import Download from "../../../components/icons/download.svg?raw";
   import { recording } from "../../../stores/recording.store";
   import { ffmpeg } from "../../../stores/ffmpeg.store";
+  import { edits } from "../stores/edits.store";
 
   async function process() {
     console.log("here");
@@ -11,9 +12,9 @@
       await $ffmpeg.writeFile("input.webm", await fetchFile($recording.url));
       await $ffmpeg.exec([
         "-ss",
-        "0",
+        $edits.startAt.toString(10),
         "-to",
-        "3",
+        $edits.endAt.toString(10),
         "-i",
         "input.webm",
         "-c",
