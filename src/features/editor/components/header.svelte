@@ -7,7 +7,6 @@
   import { edits } from "../stores/edits.store";
 
   async function process() {
-    console.log("here");
     try {
       await $ffmpeg.writeFile("input.webm", await fetchFile($recording.url));
       await $ffmpeg.exec([
@@ -24,12 +23,13 @@
       ]);
       const video = await $ffmpeg.readFile($recording.id + ".webm");
       const downloadElement = document.createElement("a");
-      const url = URL.createObjectURL(new Blob([video], { type: "video/webm" }));
+      const url = URL.createObjectURL(
+        new Blob([video], { type: "video/webm" })
+      );
       downloadElement.href = url;
       downloadElement.download = $recording.id + ".webm";
       downloadElement.click();
       URL.revokeObjectURL(url);
-      console.log("here2");
     } catch (e) {
       console.log(e);
     }
