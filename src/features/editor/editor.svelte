@@ -6,14 +6,16 @@
   import Seeker from "./components/seeker.svelte";
   import Trimmer from "./components/trimmer.svelte";
   import { secondsToTime } from "./utils/seconds-to-time";
+  import { edits } from "./stores/edits.store";
 
   let videoRef: HTMLVideoElement;
   let paused = true;
   let ended: boolean;
   let isTrimming = false;
-  let startAt = 0;
-  let endAt = $recording.duration;
-  $: currentTime = Math.max(startAt, Math.min(currentTime ?? Infinity, endAt));
+  $: currentTime = Math.max(
+    $edits.startAt,
+    Math.min(currentTime ?? Infinity, $edits.endAt)
+  );
 </script>
 
 <main
@@ -31,12 +33,12 @@
       bind:ended
       bind:this={videoRef}
       on:play={() => {
-        if (ended || currentTime >= endAt) {
-          currentTime = startAt;
+        if (ended || currentTime >= $edits.endAt) {
+          currentTime = $edits.startAt;
         }
       }}
       on:timeupdate={() => {
-        if (currentTime >= endAt) {
+        if (currentTime >= $edits.endAt) {
           videoRef.pause();
         }
       }}
@@ -70,26 +72,26 @@
       <div class="w-full py-6 flex flex-col gap-4 relative">
         <Seeker
           {currentTime}
-          {startAt}
-          {endAt}
+          startAt={$edits.startAt}
+          endAt={$edits.endAt}
           {isTrimming}
           on:changeTime={({ detail }) => (currentTime = detail.newTime)}
         />
         <Trimmer
           bind:isTrimming
           on:resizeStart={() => videoRef.pause()}
-          on:endChange={({ detail }) => {
-            endAt = detail.endAt;
+          on:startChange={({ detail }) => {
+            $edits.startAt = detail.startAt;
 
-            if (endAt <= currentTime) {
-              currentTime = detail.endAt;
+            if ($edits.startAt >= currentTime) {
+              currentTime = detail.startAt;
             }
           }}
-          on:startChange={({ detail }) => {
-            startAt = detail.startAt;
+          on:endChange={({ detail }) => {
+            $edits.endAt = detail.endAt;
 
-            if (startAt >= currentTime) {
-              currentTime = detail.startAt;
+            if ($edits.endAt <= currentTime) {
+              currentTime = detail.endAt;
             }
           }}
         />
