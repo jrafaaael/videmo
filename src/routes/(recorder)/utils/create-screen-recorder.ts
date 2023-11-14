@@ -9,7 +9,7 @@ interface Params {
 
 export function createScreenRecorder(params?: Params) {
 	const { subscribe, set } = writable({ isRecording: false });
-	let chunks: Blob[] = [];
+	const chunks: Blob[] = [];
 	let stream: MediaStream;
 	let recorder: MediaRecorder;
 
@@ -33,7 +33,7 @@ export function createScreenRecorder(params?: Params) {
 				const duration = await getBlobDuration(url);
 
 				params?.onEnd?.({
-					id: stream?.id!,
+					id: stream?.id,
 					url: url,
 					duration
 				});
