@@ -45,7 +45,7 @@
 	isDragging ||
 	(isTrimming && (endAt <= currentTime || startAt >= currentTime))
 		? 'transition-none'
-		: 'transition-all ease-linear'}"
+		: 'transition-[left] ease-linear duration-100'}"
 	style="--position: {position}%; left: calc(var(--position, 0%) - 8px);"
 	on:mousedown|preventDefault={() => (isDragging = true)}
 	bind:this={seekbarRef}
