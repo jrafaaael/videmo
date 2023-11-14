@@ -2,6 +2,7 @@
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
 	import Header from './components/header.svelte';
+	import Video from './components/video.svelte';
 	import Controls from './components/controls.svelte';
 	import Timeline from './components/timeline.svelte';
 	import Seeker from './components/seeker.svelte';
@@ -9,35 +10,17 @@
 	import { secondsToTime } from './utils/seconds-to-time';
 
 	let videoRef: HTMLVideoElement;
+	let currentTime = 0;
 	let paused = true;
 	let ended: boolean;
 	let isTrimming = false;
-	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 </script>
 
 <main class="w-full h-full bg-neutral-950 grid grid-rows-[auto_minmax(0,1fr)_auto] gap-4">
 	<Header />
 
-	<section class="w-full px-10 flex justify-center items-center">
-		<!-- svelte-ignore a11y-media-has-caption -->
-		<video
-			class="w-full max-h-full aspect-video"
-			src={$recording?.url}
-			bind:currentTime
-			bind:paused
-			bind:ended
-			bind:this={videoRef}
-			on:play={() => {
-				if (ended || currentTime >= $edits.endAt) {
-					currentTime = $edits.startAt;
-				}
-			}}
-			on:timeupdate={() => {
-				if (currentTime >= $edits.endAt) {
-					videoRef.pause();
-				}
-			}}
-		/>
+	<section class="w-full px-10">
+		<Video bind:videoRef bind:currentTime bind:ended bind:paused />
 	</section>
 
 	<footer class="w-full bg-neutral-900 border-t-2 border-t-white/5">
