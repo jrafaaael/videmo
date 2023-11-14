@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { recording } from '$lib/stores/recording.store';
 	import { ffmpeg } from '$lib/stores/ffmpeg.store';
-	import { edits } from '../stores/edits.store';
+	import { edits } from '$lib/stores/edits.store';
 	import Download from './icons/download.svelte';
 	import Trash from './icons/trash.svelte';
 
@@ -16,8 +16,7 @@
 				'-ss',
 				$edits.startAt.toString(10),
 				'-to',
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				$edits.endAt!.toString(10),
+				$edits.endAt.toString(10),
 				'-i',
 				'input.webm',
 				'-c',

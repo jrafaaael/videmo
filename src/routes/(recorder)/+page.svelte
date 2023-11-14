@@ -4,6 +4,7 @@
 	import { FFmpeg } from '@ffmpeg/ffmpeg';
 	import { ffmpeg } from '$lib/stores/ffmpeg.store';
 	import { recording } from '$lib/stores/recording.store';
+	import { edits } from '$lib/stores/edits.store';
 	import Video from './components/icons/video.svelte';
 	import VideoSlash from './components/icons/video-slash.svelte';
 	import { createScreenRecorder } from './utils/create-screen-recorder';
@@ -22,6 +23,7 @@
 		},
 		onEnd(video) {
 			recording.set(video);
+			edits.set({ startAt: 0, endAt: video.duration });
 			goto(video.id);
 		}
 	});

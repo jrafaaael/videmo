@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { recording } from '$lib/stores/recording.store';
+	import { edits } from '$lib/stores/edits.store';
 	import Header from './components/header.svelte';
 	import Controls from './components/controls.svelte';
 	import Timeline from './components/timeline.svelte';
 	import Seeker from './components/seeker.svelte';
 	import Trimmer from './components/trimmer.svelte';
 	import { secondsToTime } from './utils/seconds-to-time';
-	import { edits } from './stores/edits.store';
 
 	let videoRef: HTMLVideoElement;
 	let paused = true;

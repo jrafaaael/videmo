@@ -1,10 +1,9 @@
-import { get, writable } from 'svelte/store';
-import { recording } from '$lib/stores/recording.store';
+import { writable } from 'svelte/store';
 
 function createEdits() {
 	const { set, subscribe } = writable({
 		startAt: 0,
-		endAt: get(recording)?.duration ?? 1
+		endAt: Number.MAX_SAFE_INTEGER
 	});
 
 	return {
