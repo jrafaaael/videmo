@@ -1,5 +1,5 @@
 export interface Recording {
-  url: string;
-  id: string;
-  duration: number;
+	url: string;
+	id: string;
+	duration: number;
 }
