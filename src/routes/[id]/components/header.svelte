@@ -8,24 +8,33 @@
 	async function process() {
 		try {
 			const { fetchFile } = await import('@ffmpeg/util');
-			await $ffmpeg?.writeFile('input.webm', await fetchFile($recording.url));
+
+			const filename = $recording?.id + '.webm';
+
+			await $ffmpeg?.writeFile('input.webm', await fetchFile($recording?.url));
 			await $ffmpeg?.exec([
 				'-ss',
 				$edits.startAt.toString(10),
 				'-to',
-				$edits.endAt.toString(10),
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				$edits.endAt!.toString(10),
 				'-i',
 				'input.webm',
 				'-c',
 				'copy',
 				'-copyts',
-				$recording.id + '.webm'
+				filename
 			]);
-			const video = await $ffmpeg?.readFile($recording.id + '.webm');
+			const video = await $ffmpeg?.readFile(filename);
+
+			if (!video) {
+				throw new Error('something went wrong');
+			}
+
 			const downloadElement = document.createElement('a');
-			const url = URL.createObjectURL(new Blob([video!], { type: 'video/webm' }));
+			const url = URL.createObjectURL(new Blob([video], { type: 'video/webm' }));
 			downloadElement.href = url;
-			downloadElement.download = $recording.id + '.webm';
+			downloadElement.download = filename;
 			downloadElement.click();
 			URL.revokeObjectURL(url);
 		} catch (e) {
@@ -47,7 +56,7 @@
 	</a>
 	<h1 class="text-xl font-bold flex">
 		<span class="line-clamp-1 break-all grow shrink-0 basis-0">
-			{$recording.id}
+			{$recording?.id}
 		</span>
 		<span class="text-neutral-500 grow-0 shrink basis-1">.webm</span>
 	</h1>

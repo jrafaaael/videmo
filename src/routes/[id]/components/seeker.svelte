@@ -9,22 +9,24 @@
 	let isDragging = false;
 	let seekbarRef: HTMLButtonElement;
 	let dispatcher = createEventDispatcher();
-	$: position = (currentTime * 100) / $recording.duration;
+	$: totalVideoDuration = $recording?.duration ?? 0;
+	$: position = (currentTime * 100) / totalVideoDuration;
 
 	function handleChangeTime(e: MouseEvent & { currentTarget: EventTarget & Document }) {
 		if (isDragging) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const constrains = seekbarRef.parentElement!.getBoundingClientRect();
 			const positionInPx = Math.min(Math.max(e.clientX - constrains.left, 0), constrains.width);
 			const positionInPercentage = (positionInPx * 100) / constrains.width;
-			const startPosition = (startAt * constrains.width) / $recording.duration;
+			const startPosition = (startAt * constrains.width) / totalVideoDuration;
 			const startPositionInPercentage = (startPosition * 100) / constrains.width;
-			const endPosition = (endAt * constrains.width) / $recording.duration;
+			const endPosition = (endAt * constrains.width) / totalVideoDuration;
 			const endPositionInPercentage = (endPosition * 100) / constrains.width;
 			const newPosition = Math.max(
 				startPositionInPercentage,
 				Math.min(positionInPercentage, endPositionInPercentage)
 			);
-			const newTime = (newPosition * $recording.duration) / 100;
+			const newTime = (newPosition * totalVideoDuration) / 100;
 
 			position = newPosition;
 
