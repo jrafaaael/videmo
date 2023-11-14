@@ -4,7 +4,7 @@ import { recording } from '$lib/stores/recording.store';
 function createEdits() {
 	const { set, subscribe } = writable({
 		startAt: 0,
-		endAt: get(recording)?.duration
+		endAt: get(recording)?.duration ?? 1
 	});
 
 	return {

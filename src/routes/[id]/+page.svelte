@@ -22,7 +22,7 @@
 		<!-- svelte-ignore a11y-media-has-caption -->
 		<video
 			class="w-full max-h-full aspect-video"
-			src={$recording.url}
+			src={$recording?.url}
 			bind:currentTime
 			bind:paused
 			bind:ended
@@ -53,8 +53,8 @@
 					paused ? videoRef.play() : videoRef.pause();
 				}}
 			/>
-			<span class="text-white/50 tabular-nums" title={$recording.duration.toString(10)}>
-				{secondsToTime(Math.floor($recording.duration))}
+			<span class="text-white/50 tabular-nums" title={$recording?.duration.toString(10)}>
+				{secondsToTime(Math.floor($recording?.duration ?? 0))}
 			</span>
 		</div>
 		<div class="w-full h-12 px-10 border-b-2 border-b-white/5 flex items-end">

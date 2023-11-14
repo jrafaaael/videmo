@@ -17,9 +17,10 @@
 		}
 	};
 
-	let greatestSecondLessThanDuration = Math.floor($recording.duration);
+	let totalVideoDuration = $recording?.duration ?? 1;
+	let greatestSecondLessThanDuration = Math.floor(totalVideoDuration);
 	let seconds = [...Array(greatestSecondLessThanDuration + 1).keys()];
-	let availableWidth = (greatestSecondLessThanDuration * 100) / $recording.duration;
+	let availableWidth = (greatestSecondLessThanDuration * 100) / totalVideoDuration;
 	let indicator = (Object.keys(INDICATORS_PER_DURATION).find(
 		(time) => +time >= greatestSecondLessThanDuration
 	) ?? 'default') as keyof typeof INDICATORS_PER_DURATION;
