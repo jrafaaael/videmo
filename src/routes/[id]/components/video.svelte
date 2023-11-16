@@ -7,6 +7,7 @@
 	export let ended: boolean;
 	export let videoRef: HTMLVideoElement;
 	let canvasRef: HTMLCanvasElement;
+	let animationId: number;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
 	function handleSetCanvasSize() {
@@ -23,7 +24,7 @@
 
 		ctx?.drawImage(videoRef, 0, 0, canvasRef.width, canvasRef.height);
 
-		window?.requestAnimationFrame(updateCanvas);
+		animationId = window?.requestAnimationFrame(updateCanvas);
 	}
 </script>
 
@@ -38,10 +39,20 @@
 		bind:this={videoRef}
 		on:loadedmetadata={handleSetCanvasSize}
 		on:play={() => {
-			updateCanvas();
+			window?.requestAnimationFrame(updateCanvas);
 
 			if (ended || currentTime >= $edits.endAt) {
 				currentTime = $edits.startAt;
+			}
+		}}
+		on:pause={() => {
+			if (animationId) {
+				window.cancelAnimationFrame(animationId);
+			}
+		}}
+		on:ended={() => {
+			if (animationId) {
+				window.cancelAnimationFrame(animationId);
 			}
 		}}
 		on:timeupdate={() => {
