@@ -12,26 +12,42 @@
 
 	function handleSetCanvasSize() {
 		if (videoRef && canvasRef) {
-			const videoRect = videoRef?.getBoundingClientRect();
-			canvasRef.width = videoRect.width;
-			canvasRef.height = videoRect.height;
+			canvasRef.width = 1280;
+			canvasRef.height = 720;
+			canvasRef.style.width = '100%';
+			canvasRef.style.height = '100%';
+			canvasRef.style.objectFit = 'cover';
+			canvasRef.style.position = 'absolute';
+			canvasRef.style.top = '0';
+			canvasRef.style.left = '0';
 			videoRef.style.display = 'none';
+
+			const ctx = canvasRef?.getContext('2d');
+			ctx!.fillStyle = 'blue';
+			ctx!.fillRect(0, 0, canvasRef.width, canvasRef.height);
 		}
 	}
 
 	function updateCanvas() {
 		const ctx = canvasRef?.getContext('2d');
+		const scale = canvasRef.width / canvasRef.height;
+		const padding = 50 * 2;
+		const height = canvasRef.height - padding;
+		const width = height * scale - padding;
+		const left = (canvasRef.width - width) / 2;
+		const top = (canvasRef.height - height) / 2;
 
-		ctx?.drawImage(videoRef, 0, 0, canvasRef.width, canvasRef.height);
+		ctx?.drawImage(videoRef, left, top, width, height);
 
 		animationId = window?.requestAnimationFrame(updateCanvas);
 	}
 </script>
 
-<div class="w-full h-full flex justify-center items-center">
+<div class="w-auto h-full aspect-video relative">
 	<!-- svelte-ignore a11y-media-has-caption -->
 	<video
-		class="w-full max-h-full aspect-video"
+		playsinline
+		class="max-w-full maw-h-full"
 		src={$recording?.url}
 		bind:currentTime
 		bind:paused
