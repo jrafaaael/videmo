@@ -8,6 +8,7 @@
 	export let videoRef: HTMLVideoElement;
 	let canvasRef: HTMLCanvasElement;
 	let animationId: number;
+	let padding: number = 32;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
 	function handleSetCanvasSize() {
@@ -18,25 +19,37 @@
 			canvasRef.style.height = '100%';
 			canvasRef.style.objectFit = 'contain';
 			videoRef.style.display = 'none';
-
-			const ctx = canvasRef?.getContext('2d');
-			ctx!.fillStyle = 'blue';
-			ctx!.fillRect(0, 0, canvasRef.width, canvasRef.height);
+			videoRef.play();
+			redraw();
 		}
 	}
 
-	function updateCanvas() {
+	function redraw() {
 		const ctx = canvasRef?.getContext('2d');
-		const scale = canvasRef.width / canvasRef.height;
-		const padding = 50 * 2;
-		const height = canvasRef.height - padding;
-		const width = height * scale - padding;
-		const left = (canvasRef.width - width) / 2;
-		const top = (canvasRef.height - height) / 2;
+		const scale = canvasRef?.width / canvasRef?.height;
+		const p = padding * 2;
+		const width = canvasRef?.width - p;
+		const height = width / scale;
+		const left = (canvasRef?.width - width) / 2;
+		const top = (canvasRef?.height - height) / 2;
 
+		ctx!.fillStyle = 'blue';
+		ctx!.fillRect(0, 0, canvasRef.width, canvasRef.height);
 		ctx?.drawImage(videoRef, left, top, width, height);
+	}
 
-		animationId = window?.requestAnimationFrame(updateCanvas);
+	function updateCanvas() {
+		redraw();
+
+		if (!paused) {
+			animationId = window?.requestAnimationFrame(updateCanvas);
+		}
+	}
+
+	function increasePadding() {
+		const ctx = canvasRef?.getContext('2d');
+		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
+		redraw();
 	}
 </script>
 
@@ -75,4 +88,6 @@
 		}}
 	/>
 	<canvas bind:this={canvasRef} />
+	<input type="range" min="0" max="100" step="1" bind:value={padding} on:input={increasePadding} />
+	<output>{padding}</output>
 </div>
