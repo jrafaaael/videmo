@@ -13,8 +13,8 @@
 
 	function handleSetCanvasSize() {
 		if (videoRef && canvasRef) {
-			canvasRef.width = 1280;
-			canvasRef.height = 720;
+			canvasRef.width = 1920;
+			canvasRef.height = 1080;
 			canvasRef.style.width = '100%';
 			canvasRef.style.height = '100%';
 			canvasRef.style.objectFit = 'contain';
