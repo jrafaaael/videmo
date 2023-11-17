@@ -16,10 +16,7 @@
 			canvasRef.height = 720;
 			canvasRef.style.width = '100%';
 			canvasRef.style.height = '100%';
-			canvasRef.style.objectFit = 'cover';
-			canvasRef.style.position = 'absolute';
-			canvasRef.style.top = '0';
-			canvasRef.style.left = '0';
+			canvasRef.style.objectFit = 'contain';
 			videoRef.style.display = 'none';
 
 			const ctx = canvasRef?.getContext('2d');
