@@ -53,7 +53,7 @@
 	}
 </script>
 
-<div class="w-auto h-full aspect-video relative">
+<div class="w-auto h-full relative">
 	<!-- svelte-ignore a11y-media-has-caption -->
 	<video
 		playsinline
