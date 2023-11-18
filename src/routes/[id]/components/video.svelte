@@ -15,8 +15,9 @@
 		if (videoRef && canvasRef) {
 			canvasRef.width = 1920;
 			canvasRef.height = 1080;
-			canvasRef.style.width = '100%';
-			canvasRef.style.height = '100%';
+			canvasRef.style.maxWidth = '100%';
+			canvasRef.style.height = 'fit-content';
+			canvasRef.style.maxHeight = '100%';
 			canvasRef.style.objectFit = 'contain';
 			videoRef.style.display = 'none';
 			videoRef.play();
@@ -54,7 +55,7 @@
 	}
 </script>
 
-<div class="w-auto h-full relative">
+<div class="w-auto h-full flex justify-center items-center relative">
 	<!-- svelte-ignore a11y-media-has-caption -->
 	<video
 		playsinline
