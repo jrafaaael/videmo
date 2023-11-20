@@ -7,30 +7,44 @@
 	export let paused: boolean;
 	export let ended: boolean;
 	export let videoRef: HTMLVideoElement;
+	const START_TIME = 4;
+	const END_TIME = 6;
+	const MAX_ZOOM_LEVEL = 2;
+	const ZOOM_DURATION = 1;
 	let canvasRef: HTMLCanvasElement;
 	let animationId: number;
-	let padding: number = 32;
+	let padding = 0;
+	let zoom = 1;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
-	}
-
-	function redraw() {
-		const MINIMUM_PADDING = 100;
-		const ctx = canvasRef?.getContext('2d');
-		const scale = canvasRef?.width / canvasRef?.height;
-		const p = padding * 4;
-		const width = canvasRef?.width - p - MINIMUM_PADDING;
-		const height = (canvasRef?.width - p) / scale;
-		const left = (canvasRef?.width - width) / 2;
-		const top = (canvasRef?.height - height) / 2;
-
-		ctx!.fillStyle = 'blue';
-		ctx!.fillRect(0, 0, canvasRef.width, canvasRef.height);
-		ctx?.drawImage(videoRef, left, top, width, height);
+	function easeInOutCubic(t: number) {
+		return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 	}
 
 	function updateCanvas() {
-		redraw();
+		const MINIMUM_PADDING = 100;
+		const ctx = canvasRef.getContext('2d')!;
+		const aspectRatio = canvasRef?.width / canvasRef?.height;
+		const p = padding * 4;
+		const width = canvasRef?.width - p - MINIMUM_PADDING;
+		const height = (canvasRef?.width - p) / aspectRatio;
+		const left = (canvasRef?.width - width) / 2;
+		const top = (canvasRef?.height - height) / 2;
+
+		if (currentTime >= START_TIME - ZOOM_DURATION && currentTime <= END_TIME) {
+			const t = currentTime - (START_TIME - 1);
+			zoom += ((25 * MAX_ZOOM_LEVEL) / 1000) * easeInOutCubic(t);
+			if (zoom >= 2) zoom = 2;
+		} else if (currentTime >= END_TIME && currentTime <= END_TIME + ZOOM_DURATION) {
+			const t = currentTime - END_TIME;
+			zoom -= ((25 * MAX_ZOOM_LEVEL) / 1000) * easeInOutCubic(t);
+			if (zoom <= 1) zoom = 1;
+		}
+
+		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
+		ctx.fillStyle = 'blue';
+		ctx.fillRect(0, 0, canvasRef.width, canvasRef.height);
+		ctx?.drawImage(videoRef, left, top, width * zoom, height * zoom);
 
 		if (!paused) {
 			animationId = window?.requestAnimationFrame(updateCanvas);
