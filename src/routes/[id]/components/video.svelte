@@ -58,6 +58,7 @@
 <div class="w-auto h-full flex justify-center items-center relative">
 	<!-- svelte-ignore a11y-media-has-caption -->
 	<video
+		autoplay
 		playsinline
 		class="max-w-full maw-h-full"
 		src={$recording?.url}
@@ -66,6 +67,10 @@
 		bind:ended
 		bind:this={videoRef}
 		on:loadedmetadata={handleSetCanvasSize}
+		on:loadeddata={() => {
+			videoRef.pause();
+			updateCanvas();
+		}}
 		on:play={() => {
 			window?.requestAnimationFrame(updateCanvas);
 
