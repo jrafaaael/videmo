@@ -70,7 +70,7 @@
 			updateCanvas();
 		}}
 		on:play={() => {
-			window?.requestAnimationFrame(updateCanvas);
+			animationId = window?.requestAnimationFrame(updateCanvas);
 
 			if (ended || currentTime >= $edits.endAt) {
 				currentTime = $edits.startAt;
