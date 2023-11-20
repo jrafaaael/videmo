@@ -37,11 +37,6 @@
 		}
 	}
 
-	function increasePadding() {
-		const ctx = canvasRef?.getContext('2d');
-		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
-		redraw();
-	}
 	onMount(() => {
 		if (videoRef && canvasRef) {
 			canvasRef.width = 1920;
@@ -81,11 +76,6 @@
 				window.cancelAnimationFrame(animationId);
 			}
 		}}
-		on:ended={() => {
-			if (animationId) {
-				window.cancelAnimationFrame(animationId);
-			}
-		}}
 		on:timeupdate={() => {
 			if (currentTime >= $edits.endAt) {
 				videoRef.pause();
@@ -93,6 +83,4 @@
 		}}
 	/>
 	<canvas bind:this={canvasRef} />
-	<input type="range" min="0" max="100" step="1" bind:value={padding} on:input={increasePadding} />
-	<output>{padding}</output>
 </div>
