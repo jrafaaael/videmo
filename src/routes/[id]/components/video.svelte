@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
+	import { onMount } from 'svelte';
 
 	export let currentTime: number;
 	export let paused: boolean;
@@ -11,18 +12,6 @@
 	let padding: number = 32;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
-	function handleSetCanvasSize() {
-		if (videoRef && canvasRef) {
-			canvasRef.width = 1920;
-			canvasRef.height = 1080;
-			canvasRef.style.maxWidth = '100%';
-			canvasRef.style.height = 'fit-content';
-			canvasRef.style.maxHeight = '100%';
-			canvasRef.style.objectFit = 'contain';
-			videoRef.style.display = 'none';
-			videoRef.play();
-			redraw();
-		}
 	}
 
 	function redraw() {
@@ -53,6 +42,16 @@
 		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
 		redraw();
 	}
+	onMount(() => {
+		if (videoRef && canvasRef) {
+			canvasRef.width = 1920;
+			canvasRef.height = 1080;
+			canvasRef.style.maxWidth = '100%';
+			canvasRef.style.height = 'fit-content';
+			canvasRef.style.maxHeight = '100%';
+			canvasRef.style.objectFit = 'contain';
+		}
+	});
 </script>
 
 <div class="w-auto h-full flex justify-center items-center relative">
@@ -60,13 +59,12 @@
 	<video
 		autoplay
 		playsinline
-		class="max-w-full maw-h-full"
+		class="max-w-full maw-h-full hidden"
 		src={$recording?.url}
 		bind:currentTime
 		bind:paused
 		bind:ended
 		bind:this={videoRef}
-		on:loadedmetadata={handleSetCanvasSize}
 		on:loadeddata={() => {
 			videoRef.pause();
 			updateCanvas();
