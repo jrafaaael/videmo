@@ -102,5 +102,5 @@
 			}
 		}}
 	/>
-	<canvas width="1920" height="1080" bind:this={canvasRef} />
+	<canvas width="1920" height="1080" class="rounded-md" bind:this={canvasRef} />
 </div>
