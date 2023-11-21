@@ -23,14 +23,15 @@
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
 	function updateCanvas() {
-		const MINIMUM_PADDING = 100;
+		const VIDEO_NATURAL_WIDTH = videoRef.videoWidth;
+		const VIDEO_NATURAL_HEIGHT = videoRef.videoHeight;
+		const VIDEO_NATURAL_ASPECT_RATIO = VIDEO_NATURAL_WIDTH / VIDEO_NATURAL_HEIGHT;
 		const ctx = canvasRef.getContext('2d')!;
-		const aspectRatio = canvasRef?.width / canvasRef?.height;
 		const p = padding * 4;
-		const width = canvasRef?.width - p - MINIMUM_PADDING;
-		const height = (canvasRef?.width - p) / aspectRatio;
-		const left = (canvasRef?.width - width) / 2;
-		const top = (canvasRef?.height - height) / 2;
+		const width = Math.min(ctx.canvas.height * VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.width) - p;
+		const height = Math.min(width / VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.height);
+		const left = (ctx.canvas.width - width) / 2;
+		const top = (ctx.canvas.height - height) / 2;
 
 		if (currentTime >= START_TIME && currentTime <= END_TIME) {
 			const t = currentTime - START_TIME;
@@ -73,7 +74,7 @@
 	<video
 		autoplay
 		playsinline
-		class="max-w-full maw-h-full hidden"
+		class="hidden"
 		src={$recording?.url}
 		bind:currentTime
 		bind:paused
