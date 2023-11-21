@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { sineIn, sineOut } from 'svelte/easing';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
 	import { onMount } from 'svelte';
@@ -17,10 +18,6 @@
 	let zoom = 1;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
-	function easeInOutCubic(t: number) {
-		return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-	}
-
 	function updateCanvas() {
 		const MINIMUM_PADDING = 100;
 		const ctx = canvasRef.getContext('2d')!;
@@ -33,11 +30,11 @@
 
 		if (currentTime >= START_TIME - ZOOM_DURATION && currentTime <= END_TIME) {
 			const t = currentTime - (START_TIME - 1);
-			zoom += ((25 * MAX_ZOOM_LEVEL) / 1000) * easeInOutCubic(t);
+			zoom += ((25 * MAX_ZOOM_LEVEL) / 1000) * sineIn(t);
 			if (zoom >= 2) zoom = 2;
 		} else if (currentTime >= END_TIME && currentTime <= END_TIME + ZOOM_DURATION) {
 			const t = currentTime - END_TIME;
-			zoom -= ((25 * MAX_ZOOM_LEVEL) / 1000) * easeInOutCubic(t);
+			zoom -= ((25 * MAX_ZOOM_LEVEL) / 1000) * sineOut(t);
 			if (zoom <= 1) zoom = 1;
 		}
 
