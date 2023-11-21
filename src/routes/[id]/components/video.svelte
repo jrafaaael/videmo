@@ -60,8 +60,6 @@
 
 	onMount(() => {
 		if (videoRef && canvasRef) {
-			canvasRef.width = 1920;
-			canvasRef.height = 1080;
 			canvasRef.style.maxWidth = '100%';
 			canvasRef.style.height = 'fit-content';
 			canvasRef.style.maxHeight = '100%';
@@ -103,5 +101,5 @@
 			}
 		}}
 	/>
-	<canvas bind:this={canvasRef} />
+	<canvas width="1920" height="1080" bind:this={canvasRef} />
 </div>
