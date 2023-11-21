@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { sineIn, sineOut } from 'svelte/easing';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
-	import { onMount } from 'svelte';
 
 	export let currentTime: number;
 	export let paused: boolean;
