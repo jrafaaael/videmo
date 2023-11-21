@@ -12,6 +12,10 @@
 	const END_TIME = 6;
 	const MAX_ZOOM_LEVEL = 2;
 	const ZOOM_DURATION = 1;
+	const COORD = {
+		x: 0,
+		y: 540
+	};
 	let canvasRef: HTMLCanvasElement;
 	let animationId: number;
 	let padding = 0;
@@ -41,7 +45,13 @@
 		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
 		ctx.fillStyle = 'blue';
 		ctx.fillRect(0, 0, canvasRef.width, canvasRef.height);
-		ctx?.drawImage(videoRef, left, top, width * zoom, height * zoom);
+		ctx?.drawImage(
+			videoRef,
+			left - COORD.x * (zoom - 1),
+			top - COORD.y * (zoom - 1),
+			width * zoom,
+			height * zoom
+		);
 
 		if (!paused) {
 			animationId = window?.requestAnimationFrame(updateCanvas);
