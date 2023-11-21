@@ -28,8 +28,8 @@
 		const left = (canvasRef?.width - width) / 2;
 		const top = (canvasRef?.height - height) / 2;
 
-		if (currentTime >= START_TIME - ZOOM_DURATION && currentTime <= END_TIME) {
-			const t = currentTime - (START_TIME - 1);
+		if (currentTime >= START_TIME && currentTime <= END_TIME) {
+			const t = currentTime - START_TIME;
 			zoom += ((25 * MAX_ZOOM_LEVEL) / 1000) * sineIn(t);
 			if (zoom >= 2) zoom = 2;
 		} else if (currentTime >= END_TIME && currentTime <= END_TIME + ZOOM_DURATION) {
