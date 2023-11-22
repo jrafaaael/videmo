@@ -43,7 +43,7 @@
 </script>
 
 <header
-	class="h-16 px-10 bg-neutral-800 border-b-2 border-b-white/5 shrink-0 flex justify-between items-center gap-8"
+	class="h-16 px-10 bg-neutral-900 border-b-2 border-b-white/5 shrink-0 flex justify-between items-center gap-8"
 >
 	<a
 		href="/"
