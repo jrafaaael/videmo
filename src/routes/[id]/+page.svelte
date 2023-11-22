@@ -16,61 +16,65 @@
 	let isTrimming = false;
 </script>
 
-<main class="w-full h-full bg-neutral-950 grid grid-rows-[auto_minmax(0,1fr)_auto] gap-4">
-	<Header />
+<Header />
 
-	<section class="w-full px-10">
-		<Video bind:videoRef bind:currentTime bind:ended bind:paused />
-	</section>
+<main class="w-full h-[calc(100%-4rem)] bg-neutral-950 flex">
+	<aside class="basis-1/5" />
 
-	<footer class="w-full bg-neutral-900 border-t-2 border-t-white/5">
-		<div
-			class="h-12 px-4 border-b-2 border-b-white/5 flex justify-center items-center gap-12 relative"
-		>
-			<span class="tabular-nums" title={currentTime.toString(10)}>
-				{secondsToTime(Math.floor(currentTime))}
-			</span>
-			<Controls
-				{paused}
-				on:changeVideoState={() => {
-					paused ? videoRef.play() : videoRef.pause();
-				}}
-			/>
-			<span class="text-white/50 tabular-nums" title={$recording?.duration.toString(10)}>
-				{secondsToTime(Math.floor($recording?.duration ?? 0))}
-			</span>
+	<section class="w-full flex-1 grid grid-rows-[minmax(0,1fr)_auto]">
+		<div class="p-10">
+			<Video bind:videoRef bind:currentTime bind:ended bind:paused />
 		</div>
-		<div class="w-full h-12 px-10 border-b-2 border-b-white/5 flex items-end">
-			<Timeline />
-		</div>
-		<div class="w-full px-10 bg-neutral-950">
-			<div class="w-full py-6 flex flex-col gap-4 relative">
-				<Seeker
-					{currentTime}
-					startAt={$edits.startAt}
-					endAt={$edits.endAt}
-					{isTrimming}
-					on:changeTime={({ detail }) => (currentTime = detail.newTime)}
-				/>
-				<Trimmer
-					bind:isTrimming
-					on:resizeStart={() => videoRef.pause()}
-					on:startChange={({ detail }) => {
-						$edits.startAt = detail.startAt;
 
-						if ($edits.startAt >= currentTime) {
-							currentTime = detail.startAt;
-						}
-					}}
-					on:endChange={({ detail }) => {
-						$edits.endAt = detail.endAt;
-
-						if ($edits.endAt <= currentTime) {
-							currentTime = detail.endAt;
-						}
+		<footer class="w-full bg-neutral-900 border-t-2 border-t-white/5">
+			<div
+				class="h-12 px-4 border-b-2 border-b-white/5 flex justify-center items-center gap-12 relative"
+			>
+				<span class="tabular-nums" title={currentTime.toString(10)}>
+					{secondsToTime(Math.floor(currentTime))}
+				</span>
+				<Controls
+					{paused}
+					on:changeVideoState={() => {
+						paused ? videoRef.play() : videoRef.pause();
 					}}
 				/>
+				<span class="text-white/50 tabular-nums" title={$recording?.duration.toString(10)}>
+					{secondsToTime(Math.floor($recording?.duration ?? 0))}
+				</span>
 			</div>
-		</div>
-	</footer>
+			<div class="w-full h-12 px-10 border-b-2 border-b-white/5 flex items-end">
+				<Timeline />
+			</div>
+			<div class="w-full px-10 bg-neutral-950">
+				<div class="w-full py-6 flex flex-col gap-4 relative">
+					<Seeker
+						{currentTime}
+						startAt={$edits.startAt}
+						endAt={$edits.endAt}
+						{isTrimming}
+						on:changeTime={({ detail }) => (currentTime = detail.newTime)}
+					/>
+					<Trimmer
+						bind:isTrimming
+						on:resizeStart={() => videoRef.pause()}
+						on:startChange={({ detail }) => {
+							$edits.startAt = detail.startAt;
+
+							if ($edits.startAt >= currentTime) {
+								currentTime = detail.startAt;
+							}
+						}}
+						on:endChange={({ detail }) => {
+							$edits.endAt = detail.endAt;
+
+							if ($edits.endAt <= currentTime) {
+								currentTime = detail.endAt;
+							}
+						}}
+					/>
+				</div>
+			</div>
+		</footer>
+	</section>
 </main>
