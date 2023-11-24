@@ -1,17 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { sineIn, sineOut } from 'svelte/easing';
+	import { sineIn } from 'svelte/easing';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
+	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
 
 	export let currentTime: number;
 	export let paused: boolean;
 	export let ended: boolean;
 	export let videoRef: HTMLVideoElement;
-	const START_TIME = 4;
-	const END_TIME = 6;
-	const MAX_ZOOM_LEVEL = 2;
-	const ZOOM_DURATION = 1;
 	const COORD = {
 		x: 0,
 		y: 540
@@ -19,7 +16,6 @@
 	let canvasRef: HTMLCanvasElement;
 	let animationId: number;
 	let padding = 0;
-	let zoom = 1;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
 	function updateCanvas() {
@@ -32,16 +28,13 @@
 		const height = Math.min(width / VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.height);
 		const left = (ctx.canvas.width - width) / 2;
 		const top = (ctx.canvas.height - height) / 2;
-
-		if (currentTime >= START_TIME && currentTime <= END_TIME) {
-			const t = currentTime - START_TIME;
-			zoom += ((25 * MAX_ZOOM_LEVEL) / 1000) * sineIn(t);
-			if (zoom >= 2) zoom = 2;
-		} else if (currentTime >= END_TIME && currentTime <= END_TIME + ZOOM_DURATION) {
-			const t = currentTime - END_TIME;
-			zoom -= ((25 * MAX_ZOOM_LEVEL) / 1000) * sineOut(t);
-			if (zoom <= 1) zoom = 1;
-		}
+		const zoom = sineIn(
+			interpolateZoomLevel({
+				time: currentTime,
+				zoomInStartTime: 2,
+				zoomOutStartTime: 4
+			})
+		);
 
 		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
 		ctx.fillStyle = 'blue';
@@ -101,6 +94,7 @@
 				videoRef.pause();
 			}
 		}}
+		on:seeking={updateCanvas}
 	/>
 	<canvas width="1920" height="1080" class="rounded-md" bind:this={canvasRef} />
 </div>
