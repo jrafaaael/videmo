@@ -60,7 +60,7 @@
 		<span class="text-neutral-500 grow-0 shrink basis-1">.webm</span>
 	</h1>
 	<button class="py-1 px-3 bg-purple-600 rounded-md flex items-center gap-2" on:click={process}>
-		<div class="w-5 aspect-square">
+		<div class="w-4 aspect-square">
 			<Download />
 		</div>
 		<span>Save</span>

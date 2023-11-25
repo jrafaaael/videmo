@@ -53,7 +53,10 @@
 						startAt={$edits.startAt}
 						endAt={$edits.endAt}
 						{isTrimming}
-						on:changeTime={({ detail }) => (currentTime = detail.newTime)}
+						on:changeTime={({ detail }) => {
+							videoRef.pause();
+							currentTime = detail.newTime;
+						}}
 					/>
 					<Trimmer
 						bind:isTrimming
