@@ -1,26 +1,40 @@
-<script>
-	let padding = 0;
+<script lang="ts">
+	import * as Accordion from '$lib/components/accordion';
+	import ChevronDown from './icons/chevron-down.svelte';
 
-	// function redraw() {
-	// 	const MINIMUM_PADDING = 100;
-	// 	const ctx = canvasRef?.getContext('2d');
-	// 	const scale = canvasRef?.width / canvasRef?.height;
-	// 	const p = padding * 4;
-	// 	const width = canvasRef?.width - p - MINIMUM_PADDING;
-	// 	const height = (canvasRef?.width - p) / scale;
-	// 	const left = (canvasRef?.width - width) / 2;
-	// 	const top = (canvasRef?.height - height) / 2;
-
-	// 	ctx!.fillStyle = 'blue';
-	// 	ctx!.fillRect(0, 0, canvasRef.width, canvasRef.height);
-	// 	ctx?.drawImage(videoRef, left, top, width, height);
-	// }
-
-	// function updateCanvas() {
-	// 	redraw();
-
-	// 	if (!paused) {
-	// 		animationId = window?.requestAnimationFrame(updateCanvas);
-	// 	}
-	// }
+	const options = [
+		{
+			id: 'background',
+			label: 'Background',
+			content: 'BackgroundEditor'
+		},
+		{
+			id: 'appearance',
+			label: 'Appearance',
+			content: 'BackgroundEditor'
+		}
+	];
 </script>
+
+<aside class="bg-neutral-900 border-r-2 border-r-white/5 basis-1/5">
+	<Accordion.Root>
+		<div class="w-full">
+			{#each options as item}
+				<Accordion.Item class="w-full border-b border-b-white/10" id={item.id}>
+					<Accordion.Trigger
+						class="w-full h-16 px-4 flex justify-start items-center gap-2 relative"
+						id={item.id}
+					>
+						<div class="w-4 aspect-square text-neutral-500">
+							<ChevronDown />
+						</div>
+						{item.label}
+					</Accordion.Trigger>
+					<Accordion.Content class="px-4 pb-4" id={item.id}>
+						{item.content}
+					</Accordion.Content>
+				</Accordion.Item>
+			{/each}
+		</div>
+	</Accordion.Root>
+</aside>

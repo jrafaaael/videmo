@@ -2,6 +2,7 @@
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
 	import Header from './components/header.svelte';
+	import Sidebar from './components/sidebar.svelte';
 	import Video from './components/video.svelte';
 	import Controls from './components/controls.svelte';
 	import Timeline from './components/timeline.svelte';
@@ -19,7 +20,7 @@
 <Header />
 
 <main class="w-full h-[calc(100%-4rem)] bg-neutral-950 flex">
-	<aside class="basis-1/5" />
+	<Sidebar />
 
 	<section class="w-full flex-1 grid grid-rows-[minmax(0,1fr)_auto]">
 		<div class="p-10">
