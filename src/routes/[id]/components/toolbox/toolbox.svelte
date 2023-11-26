@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Accordion from '$lib/components/accordion';
-	import ChevronDown from './icons/chevron-down.svelte';
+	import ChevronDown from '../icons/chevron-down.svelte';
 
 	const options = [
 		{
