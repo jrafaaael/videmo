@@ -10,9 +10,9 @@
 		{@const wallpaperName = wallpaper.split('.').at(0)}
 
 		<label
-			class="rounded-lg overflow-hidden border-2 border-offset-2 cursor-pointer transition-transform hover:scale-95 focus-within:scale-95
-			{selected === wallpaper ? 'border-white/90 hover:scale-100' : 'border-transparent'}"
 			for={wallpaperName}
+			class="rounded-lg overflow-hidden outline outline-2 outline-offset-2 cursor-pointer transition-transform hover:scale-95 focus-within:scale-95
+			{selected === wallpaper.name ? 'outline-white/90 hover:scale-100' : 'outline-transparent'}"
 		>
 			<img
 				class="w-10 aspect-square object-fill"
