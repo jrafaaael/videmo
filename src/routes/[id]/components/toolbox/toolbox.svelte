@@ -15,11 +15,11 @@
 			label: 'Appearance',
 			content: AppearanceEditor
 		}
-	];
+	] as const;
 </script>
 
-<aside class="bg-neutral-900 border-r-2 border-r-white/5 basis-1/5">
-	<Accordion.Root>
+<aside class="min-w-[350px] bg-neutral-900 border-r-2 border-r-white/5 basis-1/5">
+	<Accordion.Root defaultValue={options.at(0)?.id}>
 		<div class="w-full">
 			{#each options as item}
 				<Accordion.Item class="w-full border-b border-b-white/10" id={item.id}>
