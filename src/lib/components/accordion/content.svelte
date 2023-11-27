@@ -3,6 +3,7 @@
 	import { getAccordionContext } from './context';
 
 	export let id: string;
+	let classes = $$restProps.class;
 
 	const {
 		elements: { content },
@@ -10,8 +11,10 @@
 	} = getAccordionContext();
 </script>
 
-{#if $isSelected(id)}
-	<div use:melt={$content(id)} {...$$restProps}>
-		<slot />
-	</div>
-{/if}
+<div
+	use:melt={$content(id)}
+	{...$$restProps}
+	class="{classes} {$isSelected(id) ? 'block' : 'hidden'}"
+>
+	<slot />
+</div>
