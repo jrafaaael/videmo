@@ -3,6 +3,7 @@
 	import { sineIn } from 'svelte/easing';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
+	import { background } from '../stores/background.store';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
 
 	export let currentTime: number;
@@ -14,13 +15,20 @@
 		y: 540
 	};
 	let canvasRef: HTMLCanvasElement;
+	let backgroundImageRef: HTMLImageElement = new Image();
 	let animationId: number;
 	let padding = 0;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
-	function updateCanvas() {
-		const VIDEO_NATURAL_WIDTH = videoRef.videoWidth;
-		const VIDEO_NATURAL_HEIGHT = videoRef.videoHeight;
+	function updateBackground() {
+		backgroundImageRef.src = $background.url;
+
+		backgroundImageRef.addEventListener('load', () => draw());
+	}
+
+	function draw() {
+		const VIDEO_NATURAL_WIDTH = videoRef?.videoWidth;
+		const VIDEO_NATURAL_HEIGHT = videoRef?.videoHeight;
 		const VIDEO_NATURAL_ASPECT_RATIO = VIDEO_NATURAL_WIDTH / VIDEO_NATURAL_HEIGHT;
 		const ctx = canvasRef.getContext('2d')!;
 		const p = padding * 4;
@@ -37,8 +45,7 @@
 		);
 
 		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
-		ctx.fillStyle = 'blue';
-		ctx.fillRect(0, 0, canvasRef.width, canvasRef.height);
+		ctx?.drawImage(backgroundImageRef, 0, 0, ctx.canvas.width, ctx.canvas.height);
 		ctx?.drawImage(
 			videoRef,
 			left - COORD.x * (zoom - 1),
@@ -46,9 +53,13 @@
 			width * zoom,
 			height * zoom
 		);
+	}
+
+	function animate() {
+		draw();
 
 		if (!paused) {
-			animationId = window?.requestAnimationFrame(updateCanvas);
+			animationId = window?.requestAnimationFrame(animate);
 		}
 	}
 
@@ -59,6 +70,10 @@
 			canvasRef.style.maxHeight = '100%';
 			canvasRef.style.objectFit = 'contain';
 		}
+
+		const unsubscribe = background.subscribe(updateBackground);
+
+		return () => unsubscribe();
 	});
 </script>
 
@@ -75,10 +90,10 @@
 		bind:this={videoRef}
 		on:loadeddata={() => {
 			videoRef.pause();
-			updateCanvas();
+			draw();
 		}}
 		on:play={() => {
-			animationId = window?.requestAnimationFrame(updateCanvas);
+			animationId = window?.requestAnimationFrame(animate);
 
 			if (ended || currentTime >= $edits.endAt) {
 				currentTime = $edits.startAt;
@@ -94,7 +109,7 @@
 				videoRef.pause();
 			}
 		}}
-		on:seeking={updateCanvas}
+		on:seeking={draw}
 	/>
 	<canvas width="1920" height="1080" class="rounded-md" bind:this={canvasRef} />
 </div>
