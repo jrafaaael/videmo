@@ -9,3 +9,5 @@ export const WALLPAPERS = [
 	{ name: 'ventura', url: ventura },
 	{ name: 'monterey', url: monterey }
 ] as const;
+
+export type WallpaperNames = typeof WALLPAPERS[number]['name'];
