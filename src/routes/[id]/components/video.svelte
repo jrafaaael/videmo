@@ -4,6 +4,7 @@
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
 	import { background } from '../stores/background.store';
+	import { appearence } from '../stores/general-appearance.store';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
 
 	export let currentTime: number;
@@ -17,7 +18,6 @@
 	let canvasRef: HTMLCanvasElement;
 	let backgroundImageRef: HTMLImageElement = new Image();
 	let animationId: number;
-	let padding = 0;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
 	function updateBackground() {
@@ -31,7 +31,7 @@
 		const VIDEO_NATURAL_HEIGHT = videoRef?.videoHeight;
 		const VIDEO_NATURAL_ASPECT_RATIO = VIDEO_NATURAL_WIDTH / VIDEO_NATURAL_HEIGHT;
 		const ctx = canvasRef.getContext('2d')!;
-		const p = padding * 4;
+		const p = $appearence.padding * 4;
 		const width = Math.min(ctx.canvas.height * VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.width) - p;
 		const height = Math.min(width / VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.height);
 		const left = (ctx.canvas.width - width) / 2;
@@ -71,9 +71,13 @@
 			canvasRef.style.objectFit = 'contain';
 		}
 
-		const unsubscribe = background.subscribe(updateBackground);
+		const unsubscribeBackgroundStore = background.subscribe(updateBackground);
+		const unsubscribeAppearenceStore = appearence.subscribe(draw);
 
-		return () => unsubscribe();
+		return () => {
+			unsubscribeBackgroundStore();
+			unsubscribeAppearenceStore();
+		};
 	});
 </script>
 
