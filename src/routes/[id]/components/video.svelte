@@ -16,7 +16,7 @@
 		y: 540
 	};
 	let canvasRef: HTMLCanvasElement;
-	let backgroundImageRef: HTMLImageElement = new Image();
+	let backgroundImageRef = new Image();
 	let animationId: number;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
