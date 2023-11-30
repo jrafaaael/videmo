@@ -10,11 +10,11 @@
 	export let currentTime: number;
 	export let paused: boolean;
 	export let ended: boolean;
-	export let videoRef: HTMLVideoElement;
 	const COORD = {
 		x: 0,
 		y: 540
 	};
+	let videoRef: HTMLVideoElement;
 	let canvasRef: HTMLCanvasElement;
 	let backgroundImageRef = new Image();
 	let animationId: number;
@@ -61,6 +61,14 @@
 		if (!paused) {
 			animationId = window?.requestAnimationFrame(animate);
 		}
+	}
+
+	export function play() {
+		videoRef.play();
+	}
+
+	export function pause() {
+		videoRef.pause();
 	}
 
 	onMount(() => {

@@ -10,7 +10,7 @@
 	import Trimmer from './components/trimmer.svelte';
 	import { secondsToTime } from './utils/seconds-to-time';
 
-	let videoRef: HTMLVideoElement;
+	let videoRef: Video;
 	let currentTime = 0;
 	let paused = true;
 	let ended: boolean;
@@ -24,7 +24,7 @@
 
 	<section class="w-full flex-1 grid grid-rows-[minmax(0,1fr)_auto]">
 		<div class="p-10">
-			<Video bind:videoRef bind:currentTime bind:ended bind:paused />
+			<Video bind:this={videoRef} bind:currentTime bind:ended bind:paused />
 		</div>
 
 		<footer class="w-full bg-neutral-900 border-t-2 border-t-white/5">
