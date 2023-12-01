@@ -71,6 +71,10 @@
 		videoRef.pause();
 	}
 
+	export function exportFrameAsImage() {
+		return canvasRef.toDataURL('image/png');
+	}
+
 	onMount(() => {
 		if (videoRef && canvasRef) {
 			canvasRef.style.maxWidth = '100%';

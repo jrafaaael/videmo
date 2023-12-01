@@ -17,7 +17,7 @@
 	let isTrimming = false;
 </script>
 
-<Header />
+<Header getFrameAsImage={videoRef?.exportFrameAsImage} />
 
 <main class="w-full h-[calc(100%-4rem)] bg-neutral-950 flex">
 	<Toolbox />
