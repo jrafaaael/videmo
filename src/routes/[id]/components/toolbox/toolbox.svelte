@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Accordion from '$lib/components/accordion';
-	import ChevronDown from '../icons/chevron-down.svelte';
+	import ChevronDown from '../icons/chevron-down.filled.svelte';
 	import BackgroundEditor from './background-editor.svelte';
 	import AppearanceEditor from './appearance-editor.svelte';
 
