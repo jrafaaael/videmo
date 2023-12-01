@@ -4,7 +4,7 @@
 	import BackgroundEditor from './background-editor.svelte';
 	import AppearanceEditor from './appearance-editor.svelte';
 
-	const options = [
+	const OPTIONS = [
 		{
 			id: 'background',
 			label: 'Background',
@@ -19,9 +19,9 @@
 </script>
 
 <aside class="min-w-[350px] bg-neutral-900 border-r-2 border-r-white/5 basis-1/5">
-	<Accordion.Root defaultValue={options.at(0)?.id}>
+	<Accordion.Root defaultValue={OPTIONS.at(0)?.id}>
 		<div class="w-full">
-			{#each options as item}
+			{#each OPTIONS as item}
 				<Accordion.Item class="w-full border-b border-b-white/10" id={item.id}>
 					<Accordion.Trigger
 						class="w-full h-16 px-4 flex justify-start items-center gap-2 relative"
