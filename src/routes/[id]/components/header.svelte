@@ -48,9 +48,9 @@
 				class="bg-neutral-800 border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden"
 			>
 				{#each EXPORT_OPTIONS as option}
-					<Select.Item class="py-1 pl-4 px-16 cursor-pointer hover:bg-neutral-600/30" {...option}>
+					<Select.Option class="py-1 pl-4 px-16 cursor-pointer hover:bg-neutral-600/30" {...option}>
 						{option.label}
-					</Select.Item>
+					</Select.Option>
 				{/each}
 			</Select.Menu>
 		</Select.Root>
