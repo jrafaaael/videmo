@@ -7,12 +7,13 @@
 
 	const {
 		elements: { option },
-		states: { open }
+		states: { open },
+		helpers: { isSelected }
 	} = getSelectContext();
 </script>
 
 {#if $open}
 	<div use:melt={$option({ value, label })} {...$$restProps}>
-		<slot />
+		<slot isSelected={$isSelected(value)} />
 	</div>
 {/if}
