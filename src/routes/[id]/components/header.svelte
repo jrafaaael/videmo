@@ -7,6 +7,7 @@
 	import Trash from './icons/trash.svelte';
 	import ChrevronDown from './icons/chevron-down.outlined.svelte';
 	import Download from './icons/download.svelte';
+	import Check from './icons/check.svelte';
 
 	export let getFrameAsImage: () => string;
 	let extension = writable(EXPORT_OPTIONS.at(0));
@@ -36,7 +37,7 @@
 		<Select.Root
 			selected={extension}
 			defaultSelected={$extension}
-			positioning={{ placement: 'bottom-start' }}
+			positioning={{ placement: 'bottom-start', gutter: 12 }}
 		>
 			<Select.Trigger class="grow-0 shrink flex items-center gap-1">
 				<span>{$extension?.label}</span>
@@ -45,11 +46,20 @@
 				</div>
 			</Select.Trigger>
 			<Select.Menu
-				class="bg-neutral-800 border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden"
+				class="bg-neutral-800/80 backdrop-blur-lg border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden"
 			>
 				{#each EXPORT_OPTIONS as option}
-					<Select.Option class="py-1 pl-4 px-16 cursor-pointer hover:bg-neutral-600/30" {...option}>
-						{option.label}
+					<Select.Option
+						let:isSelected
+						class="w-36 py-1 px-4 flex justify-between items-center gap-4 cursor-pointer data-[highlighted]:bg-white/10"
+						{...option}
+					>
+						<span class={isSelected ? 'font-bold' : 'font-normal'}>{option.label}</span>
+						<div class={isSelected ? 'block' : 'hidden'}>
+							<div class="w-3 aspect-square">
+								<Check />
+							</div>
+						</div>
 					</Select.Option>
 				{/each}
 			</Select.Menu>
