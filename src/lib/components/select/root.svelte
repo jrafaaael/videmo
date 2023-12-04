@@ -16,4 +16,4 @@
 	});
 </script>
 
-<slot selected={$selected} />
+<slot />
