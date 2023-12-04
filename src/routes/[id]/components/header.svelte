@@ -15,6 +15,25 @@
 	function save() {
 		if ($extension.value === '.png') {
 			download($recording?.id ?? 'image' + $extension.value, getFrameAsImage());
+		} else if ($extension.value === '.mp4') {
+			console.log('mp4');
+
+			const encoder = new VideoEncoder({
+				output(chunk, metadata) {
+					console.log(chunk, metadata);
+				},
+				error(e) {
+					console.error(e);
+				}
+			});
+
+			encoder.configure({
+				codec: 'vp8',
+				width: 1920,
+				height: 1080,
+				bitrate: 2_000_000, // 2 Mbps
+				framerate: 30
+			});
 		}
 	}
 </script>
