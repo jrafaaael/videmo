@@ -8,17 +8,17 @@
 	import ChrevronDown from './icons/chevron-down.outlined.svelte';
 	import Download from './icons/download.svelte';
 	import Check from './icons/check.svelte';
-	import { createMp4 } from '../utils/create-mp4';
-	import { background } from '../stores/background.store';
 
 	export let getFrameAsImage: () => string;
+	export let getMP4: () => Promise<string>;
 	let extension = writable(EXPORT_OPTIONS.at(0));
 
-	function save() {
+	async function save() {
 		if ($extension.value === '.png') {
-			download($recording?.id ?? 'image' + $extension.value, getFrameAsImage());
+			download(($recording?.id ?? 'image') + $extension.value, getFrameAsImage());
 		} else if ($extension.value === '.mp4') {
-			createMp4($recording?.url, $background.url);
+			const mp4 = await getMP4();
+			download(($recording?.id ?? 'video') + $extension.value, mp4);
 		}
 	}
 </script>
