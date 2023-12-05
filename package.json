@@ -14,7 +14,8 @@
 	},
 	"dependencies": {
 		"@ffmpeg/ffmpeg": "^0.12.7",
-		"@ffmpeg/util": "^0.12.1"
+		"@ffmpeg/util": "^0.12.1",
+		"mp4-muxer": "^3.0.2"
 	},
 	"devDependencies": {
 		"@melt-ui/pp": "^0.1.4",

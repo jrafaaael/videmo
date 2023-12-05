@@ -8,6 +8,8 @@
 	import ChrevronDown from './icons/chevron-down.outlined.svelte';
 	import Download from './icons/download.svelte';
 	import Check from './icons/check.svelte';
+	import { createMp4 } from '../utils/create-mp4';
+	import { background } from '../stores/background.store';
 
 	export let getFrameAsImage: () => string;
 	let extension = writable(EXPORT_OPTIONS.at(0));
@@ -16,24 +18,7 @@
 		if ($extension.value === '.png') {
 			download($recording?.id ?? 'image' + $extension.value, getFrameAsImage());
 		} else if ($extension.value === '.mp4') {
-			console.log('mp4');
-
-			const encoder = new VideoEncoder({
-				output(chunk, metadata) {
-					console.log(chunk, metadata);
-				},
-				error(e) {
-					console.error(e);
-				}
-			});
-
-			encoder.configure({
-				codec: 'vp8',
-				width: 1920,
-				height: 1080,
-				bitrate: 2_000_000, // 2 Mbps
-				framerate: 30
-			});
+			createMp4($recording?.url, $background.url);
 		}
 	}
 </script>
