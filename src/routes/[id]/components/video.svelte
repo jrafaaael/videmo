@@ -103,7 +103,7 @@
 				animationId = window.requestAnimationFrame(encode);
 			}
 
-			currentTime = 0;
+			currentTime = $edits.startAt;
 			setTimeout(() => {
 				play();
 				animationId = window.requestAnimationFrame(encode);
