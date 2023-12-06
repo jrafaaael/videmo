@@ -46,7 +46,13 @@
 		);
 
 		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
+
+		ctx.imageSmoothingEnabled = true;
+		ctx.imageSmoothingQuality = 'high';
 		ctx?.drawImage(backgroundImageRef, 0, 0, ctx.canvas.width, ctx.canvas.height);
+
+		ctx.imageSmoothingEnabled = true;
+		ctx.imageSmoothingQuality = 'high';
 		ctx?.drawImage(
 			videoRef,
 			left - COORD.x * (zoom - 1),
