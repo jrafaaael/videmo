@@ -34,7 +34,7 @@ export function createScreenRecorder(params?: Params) {
 
 				params?.onEnd?.({
 					id: stream?.id,
-					url: url,
+					url,
 					duration
 				});
 			});
@@ -49,7 +49,7 @@ export function createScreenRecorder(params?: Params) {
 		}
 	}
 
-	async function stop() {
+	function stop() {
 		recorder?.stop();
 		stream?.getTracks().forEach((track) => track.stop());
 		set({ isRecording: false });
