@@ -1,4 +1,4 @@
-export default async function getBlobDuration(blob: string): Promise<number> {
+export async function getBlobDuration(blob: string): Promise<number> {
 	const tmpVideo = document.createElement('video');
 
 	const duration = new Promise((resolve: (value: number) => void) => {

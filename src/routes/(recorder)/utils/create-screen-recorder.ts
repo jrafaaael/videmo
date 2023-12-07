@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import type { Recording } from '$lib/types/recording';
-import getBlobDuration from './get-blob-duration';
+import { getBlobDuration } from './get-blob-duration';
 
 interface Params {
 	onEnd?: (recording: Recording) => void;
