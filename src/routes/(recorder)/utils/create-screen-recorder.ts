@@ -9,6 +9,8 @@ interface Params {
 	onStart?: () => void;
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 export function createScreenRecorder(params?: Params) {
 	const { subscribe, set } = writable({ isRecording: false });
 	let worker: Worker;
@@ -46,12 +48,20 @@ export function createScreenRecorder(params?: Params) {
 				worker.postMessage({ type: 'end' });
 			});
 
+			recorder.start();
+
+			// In Chrome, when recording a tab or a window, If I get the track settings inmediatelly, the `height` value is equals
+			// to the screen height (not tab/window height). Also, a small "header" is shown when user is recording a tab.
+			// The problem is: in the result video, I get a black rectangle at bottom because, at some point, the stream "fallbacks"
+			// to the tab/window height. When recording a tab, the "header"'s height is removed too a few ms later. However, If I
+			// wait a few seconds and then get the track details, I get the correct height value (only tab/window height).
+			// TODO: Handle wait time in UI
+			await sleep(1000);
 			const track = stream.getVideoTracks()[0];
 			const trackProcessor = new MediaStreamTrackProcessor({ track });
 			const trackStream: ReadableStream = trackProcessor.readable;
 			const trackSettings = track.getSettings();
 
-			recorder.start();
 			worker.postMessage(
 				{
 					type: 'start',
