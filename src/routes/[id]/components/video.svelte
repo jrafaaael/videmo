@@ -27,12 +27,41 @@
 		backgroundImageRef.addEventListener('load', () => draw());
 	}
 
+	function roundCorners({
+		ctx,
+		width,
+		height,
+		top,
+		left,
+		radius
+	}: {
+		ctx: CanvasRenderingContext2D;
+		width: number;
+		height: number;
+		top: number;
+		left: number;
+		radius: number;
+	}) {
+		ctx.beginPath();
+		ctx.moveTo(left + radius, top);
+		ctx.lineTo(left + width - radius, top);
+		ctx.quadraticCurveTo(left + width, top, left + width, top + radius);
+		ctx.lineTo(left + width, top + height - radius);
+		ctx.quadraticCurveTo(left + width, top + height, left + width - radius, top + height);
+		ctx.lineTo(left + radius, top + height);
+		ctx.quadraticCurveTo(left, top + height, left, top + height - radius);
+		ctx.lineTo(left, top + radius);
+		ctx.quadraticCurveTo(left, top, left + radius, top);
+		ctx.closePath();
+	}
+
 	function draw() {
 		const VIDEO_NATURAL_WIDTH = videoRef?.videoWidth;
 		const VIDEO_NATURAL_HEIGHT = videoRef?.videoHeight;
 		const VIDEO_NATURAL_ASPECT_RATIO = VIDEO_NATURAL_WIDTH / VIDEO_NATURAL_HEIGHT;
 		const ctx = canvasRef.getContext('2d')!;
 		const p = $appearence.padding * 4;
+		const cornerRadius = $appearence.cornerRadius;
 		const width = Math.min(ctx.canvas.height * VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.width) - p;
 		const height = Math.min(width / VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.height);
 		const left = (ctx.canvas.width - width) / 2;
@@ -44,6 +73,10 @@
 				zoomOutStartTime: 4
 			})
 		);
+		const widthWithZoom = width * zoom;
+		const heightWithZoom = height * zoom;
+		const leftWithZoom = left - COORD.x * (zoom - 1);
+		const topWithZoom = top - COORD.y * (zoom - 1);
 
 		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
 
@@ -51,15 +84,20 @@
 		ctx.imageSmoothingQuality = 'high';
 		ctx?.drawImage(backgroundImageRef, 0, 0, ctx.canvas.width, ctx.canvas.height);
 
+		ctx.save();
+		roundCorners({
+			ctx,
+			width: widthWithZoom,
+			height: heightWithZoom,
+			top: topWithZoom,
+			left: leftWithZoom,
+			radius: cornerRadius
+		});
+		ctx.clip();
 		ctx.imageSmoothingEnabled = true;
 		ctx.imageSmoothingQuality = 'high';
-		ctx?.drawImage(
-			videoRef,
-			left - COORD.x * (zoom - 1),
-			top - COORD.y * (zoom - 1),
-			width * zoom,
-			height * zoom
-		);
+		ctx?.drawImage(videoRef, leftWithZoom, topWithZoom, widthWithZoom, heightWithZoom);
+		ctx.restore();
 	}
 
 	function animate() {
