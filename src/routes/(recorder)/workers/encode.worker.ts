@@ -1,6 +1,8 @@
 import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
 import { FPS } from '../utils/constants';
 
+// https://aws.amazon.com/es/blogs/media/part-1-back-to-basics-gops-explained/
+const GOP = 512;
 let muxer = null;
 let encoder: VideoEncoder | null = null;
 
@@ -60,7 +62,7 @@ function onStartEnconding({
 
 		frames++;
 
-		if (frames >= 128) {
+		if (frames >= GOP) {
 			frames = 0;
 		}
 
