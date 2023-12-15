@@ -6,7 +6,7 @@ const GOP = 512;
 let muxer = null;
 let encoder: VideoEncoder | null = null;
 
-function onStartEnconding({
+function onStartRecording({
 	trackStream,
 	trackSettings
 }: {
@@ -87,7 +87,7 @@ async function onStopRecording() {
 }
 
 const MESSAGE_HANLDER = {
-	start: onStartEnconding,
+	start: onStartRecording,
 	end: onStopRecording,
 	default: () => {
 		throw new Error('This type of message is not available');
