@@ -7,7 +7,14 @@ let demuxer: MP4Demuxer | null = null;
 function onStartDecoding({ url }: { url: string }) {
 	decoder = new VideoDecoder({
 		output(frame) {
-			console.log({ frame });
+			self.postMessage(
+				{
+					type: 'frame',
+					data: frame
+				},
+				{ transfer: [frame] }
+			);
+
 			frame.close();
 		},
 		error(e) {
@@ -18,11 +25,9 @@ function onStartDecoding({ url }: { url: string }) {
 	demuxer = new MP4Demuxer(url, {
 		onConfig(config) {
 			config.codec = CODEC;
-			console.log(config);
 			decoder?.configure(config);
 		},
 		onChunk(chunk) {
-			console.log(chunk);
 			decoder?.decode(chunk);
 		},
 		setStatus(status) {
