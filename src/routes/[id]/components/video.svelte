@@ -5,8 +5,8 @@
 	import { edits } from '$lib/stores/edits.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
+	import EncodeWorker from '../workers/decode.worker?worker';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
-	import { createMP4 } from '../utils/create-mp4';
 
 	export let currentTime: number;
 	export let paused: boolean;
@@ -121,34 +121,9 @@
 	}
 
 	export function exportMP4() {
-		const { addFrame, finalize, result } = createMP4({
-			startTime: document.timeline.currentTime as number
-		});
-		const mp4 = new Promise((resolve: (value: string) => void) => {
-			async function encode() {
-				if (ended || currentTime >= $edits.endAt) {
-					window.cancelAnimationFrame(animationId);
-					await finalize();
+		const decodeWorker = new EncodeWorker();
 
-					resolve(result());
-
-					return;
-				}
-
-				draw();
-				addFrame(canvasRef);
-
-				animationId = window.requestAnimationFrame(encode);
-			}
-
-			currentTime = $edits.startAt;
-			setTimeout(() => {
-				play();
-				animationId = window.requestAnimationFrame(encode);
-			}, 1000);
-		});
-
-		return mp4;
+		decodeWorker.postMessage({ type: 'start', url: $recording?.url });
 	}
 
 	onMount(() => {
