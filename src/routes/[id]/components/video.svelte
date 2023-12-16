@@ -5,7 +5,7 @@
 	import { edits } from '$lib/stores/edits.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
-	import EncodeWorker from '../workers/decode.worker?worker';
+	import DecodeWorker from '../workers/decode.worker?worker';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
 
 	export let currentTime: number;
@@ -121,7 +121,7 @@
 	}
 
 	export function exportMP4() {
-		const decodeWorker = new EncodeWorker();
+		const decodeWorker = new DecodeWorker();
 
 		decodeWorker.addEventListener('message', (e) => {
 			const { type, ...rest } = e.data;
