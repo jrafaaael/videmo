@@ -1,4 +1,5 @@
 import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
+import { CODEC } from '$lib/utils/constants';
 import { FPS } from '../utils/constants';
 
 // https://aws.amazon.com/es/blogs/media/part-1-back-to-basics-gops-explained/
@@ -42,7 +43,7 @@ function onStartEnconding({
 	});
 
 	encoder.configure({
-		codec: 'avc1.F4E034',
+		codec: CODEC,
 		width,
 		height,
 		displayWidth: width,
