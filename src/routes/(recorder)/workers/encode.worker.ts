@@ -3,7 +3,7 @@ import { FPS } from '../utils/constants';
 
 // https://aws.amazon.com/es/blogs/media/part-1-back-to-basics-gops-explained/
 const GOP = 512;
-let muxer = null;
+let muxer: Muxer<FileSystemWritableFileStreamTarget> | null = null;
 let encoder: VideoEncoder | null = null;
 
 function onStartRecording({
@@ -34,7 +34,7 @@ function onStartRecording({
 
 	encoder = new VideoEncoder({
 		output(chunk, metadata) {
-			muxer.addVideoChunk(chunk, metadata);
+			muxer?.addVideoChunk(chunk, metadata);
 		},
 		error(e) {
 			console.error(e);
