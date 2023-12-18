@@ -2,7 +2,7 @@
 	import { writable } from 'svelte/store';
 	import * as Select from '$lib/components/select';
 	import { recording } from '$lib/stores/recording.store';
-	import { EXPORT_OPTIONS } from '../utils/export-options';
+	import { EXPORT_OPTIONS, Status } from '../utils/export-options';
 	import { download } from '../utils/download';
 	import Trash from './icons/trash.svelte';
 	import ChrevronDown from './icons/chevron-down.outlined.svelte';
@@ -53,9 +53,11 @@
 				class="bg-neutral-800/80 backdrop-blur-lg border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden"
 			>
 				{#each EXPORT_OPTIONS as option}
+					{@const disabled = option.status === Status.SOON}
 					<Select.Option
 						let:isSelected
-						class="w-36 py-1 px-4 flex justify-between items-center gap-4 cursor-pointer data-[highlighted]:bg-white/10"
+						{disabled}
+						class="w-36 py-1 px-4 flex justify-between items-center gap-4 cursor-pointer data-[highlighted]:bg-white/10 data-[disabled]:text-neutral-400 data-[disabled]:cursor-not-allowed"
 						{...option}
 					>
 						<span class={isSelected ? 'font-bold' : 'font-normal'}>{option.label}</span>

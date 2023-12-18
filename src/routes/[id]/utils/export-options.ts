@@ -1,17 +1,23 @@
+export enum Status {
+	AVAILABLE = 'available',
+	WIP = 'wip',
+	SOON = 'soon'
+}
+
 export const EXPORT_OPTIONS = [
 	{
 		label: '.png',
 		value: '.png',
-		available: true
+		status: Status.AVAILABLE
 	},
 	{
 		label: '.mp4',
 		value: '.mp4',
-		available: false
+		status: Status.WIP
 	},
 	{
 		label: '.webm',
 		value: '.webm',
-		available: false
+		status: Status.SOON
 	}
 ] as const;
