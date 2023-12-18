@@ -3,6 +3,7 @@ import { FPS } from '../utils/constants';
 
 // https://aws.amazon.com/es/blogs/media/part-1-back-to-basics-gops-explained/
 const GOP = 512;
+let reader: ReadableStreamDefaultReader<VideoFrame> | null = null;
 let muxer: Muxer<FileSystemWritableFileStreamTarget> | null = null;
 let encoder: VideoEncoder | null = null;
 
@@ -13,9 +14,9 @@ function onStartRecording({
 	trackStream: ReadableStream<VideoFrame>;
 	trackSettings: MediaTrackSettings;
 }) {
-	const reader = trackStream.getReader();
 	const { width, height } = trackSettings;
 	let frames = 0;
+	reader = trackStream.getReader();
 
 	if (!width || !height) {
 		throw new Error('`width` and `height` needs to be specified');
@@ -69,11 +70,12 @@ function onStartRecording({
 		encoder?.encode(frame, { keyFrame });
 		frame.close();
 
-		reader.read().then(processFrame);
+		reader?.read().then(processFrame);
 	});
 }
 
 async function onStopRecording() {
+	await reader?.cancel();
 	await encoder?.flush();
 	muxer?.finalize();
 
