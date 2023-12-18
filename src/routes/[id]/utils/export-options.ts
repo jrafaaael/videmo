@@ -16,8 +16,8 @@ export const EXPORT_OPTIONS = [
 		status: Status.WIP
 	},
 	{
-		label: '.webm',
-		value: '.webm',
+		label: '.gif',
+		value: '.gif',
 		status: Status.SOON
 	}
 ] as const;
