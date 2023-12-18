@@ -81,7 +81,7 @@
 			type="number"
 			name="shadow-offset-x"
 			id="shadow-offset-x"
-			min="0"
+			min="-100"
 			max="100"
 			class="py-1 px-2 bg-transparent border-2 border-white/10 rounded-md"
 			bind:value={$appearence.shadow.x}
@@ -94,7 +94,7 @@
 			type="number"
 			name="shadow-offset-y"
 			id="shadow-offset-y"
-			min="0"
+			min="-100"
 			max="100"
 			class="py-1 px-2 bg-transparent border-2 border-white/10 rounded-md"
 			bind:value={$appearence.shadow.y}
