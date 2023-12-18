@@ -61,11 +61,13 @@
 						{...option}
 					>
 						<span class={isSelected ? 'font-bold' : 'font-normal'}>{option.label}</span>
-						<div class={isSelected ? 'block' : 'hidden'}>
+						{#if isSelected}
 							<div class="w-3 aspect-square">
 								<Check />
 							</div>
-						</div>
+						{:else if option.status !== Status.AVAILABLE}
+							<span class="text-xs uppercase">{option.status}</span>
+						{/if}
 					</Select.Option>
 				{/each}
 			</Select.Menu>
