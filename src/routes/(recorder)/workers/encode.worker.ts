@@ -1,4 +1,4 @@
-import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
+import { Muxer, FileSystemWritableFileStreamTarget } from 'mp4-muxer';
 import { FPS } from '../utils/constants';
 
 // https://aws.amazon.com/es/blogs/media/part-1-back-to-basics-gops-explained/
@@ -6,24 +6,34 @@ const GOP = 512;
 let reader: ReadableStreamDefaultReader<VideoFrame> | null = null;
 let muxer: Muxer<FileSystemWritableFileStreamTarget> | null = null;
 let encoder: VideoEncoder | null = null;
+let fileHandle: FileSystemFileHandle | null = null;
 
-function onStartRecording({
+async function getFileHandle(filename: string) {
+	const root = await navigator.storage.getDirectory();
+	return await root.getFileHandle(filename, { create: true });
+}
+
+async function onStartRecording({
 	trackStream,
-	trackSettings
+	trackSettings,
+	id
 }: {
 	trackStream: ReadableStream<VideoFrame>;
 	trackSettings: MediaTrackSettings;
+	id: string;
 }) {
 	const { width, height } = trackSettings;
-	let frames = 0;
-	reader = trackStream.getReader();
 
 	if (!width || !height) {
 		throw new Error('`width` and `height` needs to be specified');
 	}
 
+	let frames = 0;
+	reader = trackStream.getReader();
+	fileHandle = await getFileHandle(id + '.mp4');
+
 	muxer = new Muxer({
-		target: new ArrayBufferTarget(),
+		target: new FileSystemWritableFileStreamTarget(await fileHandle.createWritable()),
 		video: {
 			codec: 'avc',
 			width,
@@ -49,7 +59,6 @@ function onStartRecording({
 		displayWidth: width,
 		displayHeight: height,
 		framerate: FPS,
-		bitrateMode: 'variable',
 		latencyMode: 'quality'
 	});
 
@@ -78,9 +87,10 @@ async function onStopRecording() {
 	await reader?.cancel();
 	await encoder?.flush();
 	muxer?.finalize();
+	await muxer?.target.stream.close();
 
-	const { buffer } = muxer.target;
-	const mp4 = URL.createObjectURL(new Blob([buffer], { type: 'video/mp4' }));
+	const file = await fileHandle?.getFile();
+	const mp4 = URL.createObjectURL(file);
 
 	self.postMessage({
 		type: 'result',
