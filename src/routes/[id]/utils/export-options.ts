@@ -13,7 +13,7 @@ export const EXPORT_OPTIONS = [
 	{
 		label: '.mp4',
 		value: '.mp4',
-		status: Status.WIP
+		status: Status.SOON
 	},
 	{
 		label: '.gif',
