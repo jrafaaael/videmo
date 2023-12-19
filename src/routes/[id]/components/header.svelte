@@ -10,15 +10,11 @@
 	import Check from './icons/check.svelte';
 
 	export let getFrameAsImage: () => string;
-	export let getMP4: () => Promise<string>;
 	let extension = writable(EXPORT_OPTIONS.at(0));
 
 	async function save() {
 		if ($extension.value === '.png') {
 			download(($recording?.id ?? 'image') + $extension.value, getFrameAsImage());
-		} else if ($extension.value === '.mp4') {
-			const mp4 = await getMP4();
-			download(($recording?.id ?? 'video') + $extension.value, mp4);
 		}
 	}
 </script>
