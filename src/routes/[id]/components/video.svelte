@@ -55,7 +55,7 @@
 		ctx.closePath();
 	}
 
-	function draw() {
+	function draw(frame?: CanvasImageSource) {
 		const VIDEO_NATURAL_WIDTH = videoRef?.videoWidth;
 		const VIDEO_NATURAL_HEIGHT = videoRef?.videoHeight;
 		const VIDEO_NATURAL_ASPECT_RATIO = VIDEO_NATURAL_WIDTH / VIDEO_NATURAL_HEIGHT;
@@ -103,7 +103,7 @@
 		ctx.clip();
 		ctx.imageSmoothingEnabled = true;
 		ctx.imageSmoothingQuality = 'high';
-		ctx?.drawImage(videoRef, leftWithZoom, topWithZoom, widthWithZoom, heightWithZoom);
+		ctx?.drawImage(frame ?? videoRef, leftWithZoom, topWithZoom, widthWithZoom, heightWithZoom);
 		ctx.restore();
 	}
 
@@ -136,7 +136,7 @@
 			if (type === 'frame') {
 				const frame: VideoFrame = rest.frame;
 
-				console.log(frame);
+				draw(frame);
 
 				frame.close();
 			}
@@ -154,7 +154,7 @@
 		}
 
 		const unsubscribeBackgroundStore = background.subscribe(updateBackground);
-		const unsubscribeAppearenceStore = appearence.subscribe(draw);
+		const unsubscribeAppearenceStore = appearence.subscribe(() => draw());
 
 		return () => {
 			unsubscribeBackgroundStore();
@@ -195,7 +195,7 @@
 				videoRef.pause();
 			}
 		}}
-		on:seeking={draw}
+		on:seeking={() => draw()}
 	/>
 	<canvas width="1920" height="1080" class="rounded-md" bind:this={canvasRef} />
 </div>
