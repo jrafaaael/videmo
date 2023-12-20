@@ -15,6 +15,7 @@
 	"dependencies": {
 		"@ffmpeg/ffmpeg": "^0.12.7",
 		"@ffmpeg/util": "^0.12.1",
+		"gifenc": "^1.0.3",
 		"mp4-muxer": "^3.0.2",
 		"mp4box": "^0.5.2"
 	},
