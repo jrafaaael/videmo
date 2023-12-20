@@ -10,11 +10,14 @@
 	import Check from './icons/check.svelte';
 
 	export let getFrameAsImage: () => string;
+	export let getGif: () => void;
 	let extension = writable(EXPORT_OPTIONS.at(0));
 
 	async function save() {
 		if ($extension.value === '.png') {
 			download(($recording?.id ?? 'image') + $extension.value, getFrameAsImage());
+		} else if ($extension.value === '.gif') {
+			getGif();
 		}
 	}
 </script>

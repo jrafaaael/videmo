@@ -126,6 +126,10 @@
 		return canvasRef.toDataURL('image/png');
 	}
 
+	export function exportAsGif() {
+		console.log('export as gif');
+	}
+
 	onMount(() => {
 		if (videoRef && canvasRef) {
 			canvasRef.style.maxWidth = '100%';
