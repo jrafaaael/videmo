@@ -7,6 +7,7 @@
 	import { appearence } from '../stores/general-appearance.store';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
 	import DecodeWorker from '../workers/decode.worker?worker';
+	import GifEncoderWorker from '../workers/gif-encoder.worker?worker';
 
 	export let currentTime: number;
 	export let paused: boolean;
@@ -59,7 +60,7 @@
 		const VIDEO_NATURAL_WIDTH = videoRef?.videoWidth;
 		const VIDEO_NATURAL_HEIGHT = videoRef?.videoHeight;
 		const VIDEO_NATURAL_ASPECT_RATIO = VIDEO_NATURAL_WIDTH / VIDEO_NATURAL_HEIGHT;
-		const ctx = canvasRef.getContext('2d')!;
+		const ctx = canvasRef.getContext('2d', { willReadFrequently: true })!;
 		const p = $appearence.padding * 4;
 		const cornerRadius = $appearence.cornerRadius;
 		const shadow = $appearence.shadow;
@@ -129,20 +130,39 @@
 
 	export function exportAsGif() {
 		const decodeWorker = new DecodeWorker();
+		const gifEncoderWorker = new GifEncoderWorker();
 
 		decodeWorker.addEventListener('message', ({ data }) => {
 			const { type, ...rest } = data;
 
 			if (type === 'frame') {
-				const frame: VideoFrame = rest.frame;
+				const recordingFrame: VideoFrame = rest.frame;
 
-				draw(frame);
+				draw(recordingFrame);
 
-				frame.close();
+				recordingFrame.close();
+
+				const ctx = canvasRef?.getContext('2d', { willReadFrequently: true });
+				const frame = ctx?.getImageData(0, 0, 1920, 1080).data;
+
+				gifEncoderWorker.postMessage({ type: 'encode', frame });
+			}
+		});
+
+		gifEncoderWorker.addEventListener('message', ({ data }) => {
+			const { type, ...rest } = data;
+			if (type === 'result') {
+				const result = rest.url;
+
+				console.log(result);
 			}
 		});
 
 		decodeWorker.postMessage({ type: 'start', url: $recording?.url });
+
+		setTimeout(() => {
+			gifEncoderWorker.postMessage({ type: 'end' });
+		}, $recording?.duration * 1000);
 	}
 
 	onMount(() => {
