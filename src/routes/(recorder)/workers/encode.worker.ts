@@ -90,7 +90,7 @@ async function onStopRecording() {
 	await muxer?.target.stream.close();
 
 	const file = await fileHandle?.getFile();
-	const mp4 = URL.createObjectURL(file);
+	const mp4 = URL.createObjectURL(new Blob([file!], { type: 'video/mp4' }));
 
 	self.postMessage({
 		type: 'result',
