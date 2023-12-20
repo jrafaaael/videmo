@@ -18,6 +18,6 @@ export const EXPORT_OPTIONS = [
 	{
 		label: '.gif',
 		value: '.gif',
-		status: Status.SOON
+		status: Status.WIP
 	}
 ] as const;
