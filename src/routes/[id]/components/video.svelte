@@ -6,6 +6,7 @@
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
+	import DecodeWorker from '../workers/decode.worker?worker';
 
 	export let currentTime: number;
 	export let paused: boolean;
@@ -127,7 +128,21 @@
 	}
 
 	export function exportAsGif() {
-		console.log('export as gif');
+		const decodeWorker = new DecodeWorker();
+
+		decodeWorker.addEventListener('message', ({ data }) => {
+			const { type, ...rest } = data;
+
+			if (type === 'frame') {
+				const frame: VideoFrame = rest.frame;
+
+				console.log(frame);
+
+				frame.close();
+			}
+		});
+
+		decodeWorker.postMessage({ type: 'start', url: $recording?.url });
 	}
 
 	onMount(() => {
