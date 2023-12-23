@@ -17,8 +17,9 @@
 		if ($extension.value === '.png') {
 			download(($recording?.id ?? 'image') + $extension.value, getFrameAsImage());
 		} else if ($extension.value === '.mp4') {
-			const mp4 = await getMP4();
-			download(($recording?.id ?? 'video') + $extension.value, mp4);
+			getMP4();
+			// const mp4 = await getMP4();
+			// download(($recording?.id ?? 'video') + $extension.value, mp4);
 		}
 	}
 </script>

@@ -19,6 +19,7 @@
 	let canvasRef: HTMLCanvasElement;
 	let backgroundImageRef = new Image();
 	let animationId: number;
+	let frames: VideoFrame[] = [];
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
 	function roundCorners({
@@ -123,13 +124,23 @@
 			if (type === 'frame') {
 				const frame: VideoFrame = rest.data;
 
-				draw(frame);
-
-				frame.close();
+				frames.push(frame);
 			}
 		});
 
 		decodeWorker.postMessage({ type: 'start', url: $recording?.url });
+
+		setTimeout(async () => {
+			frames.forEach(async (recordingFrame, idx) => {
+				const { timestamp, duration } = recordingFrame;
+
+				draw(recordingFrame);
+
+				recordingFrame.close();
+			});
+
+			frames = [];
+		}, 10_000);
 	}
 
 	onMount(() => {
