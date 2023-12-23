@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { sineIn } from 'svelte/easing';
+	import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
+	import { CODEC } from '$lib/utils/constants';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
-	import DecodeWorker from '../workers/decode.worker?worker';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
+	import DecodeWorker from '../workers/decode.worker?worker';
 
 	export let currentTime: number;
 	export let paused: boolean;
@@ -117,6 +119,34 @@
 
 	export function exportMP4() {
 		const decodeWorker = new DecodeWorker();
+		const width = 1920;
+		const height = 1080;
+		const muxer = new Muxer({
+			target: new ArrayBufferTarget(),
+			video: {
+				codec: 'avc',
+				width,
+				height
+			},
+			fastStart: 'in-memory'
+		});
+
+		const encoder = new VideoEncoder({
+			output(chunk, metadata) {
+				muxer.addVideoChunk(chunk, metadata);
+			},
+			error(e) {
+				console.error(e);
+			}
+		});
+
+		encoder.configure({
+			codec: CODEC,
+			width,
+			height,
+			alpha: 'discard',
+			latencyMode: 'quality'
+		});
 
 		decodeWorker.addEventListener('message', (e) => {
 			const { type, ...rest } = e.data;
@@ -136,11 +166,32 @@
 
 				draw(recordingFrame);
 
+				const frame = new VideoFrame(canvasRef, {
+					timestamp,
+					duration,
+					alpha: 'discard'
+				});
+
+				encoder.encode(frame, { keyFrame: idx % 2 === 0 });
+
 				recordingFrame.close();
+				frame.close();
 			});
 
 			frames = [];
 		}, 10_000);
+
+		setTimeout(async () => {
+			await encoder?.flush();
+			muxer?.finalize();
+
+			const { buffer } = muxer.target;
+			const mp4 = URL.createObjectURL(new Blob([buffer], { type: 'video/mp4' }));
+
+			console.log(mp4);
+
+			decodeWorker.terminate();
+		}, 30_000);
 	}
 
 	onMount(() => {
