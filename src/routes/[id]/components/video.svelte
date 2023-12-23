@@ -21,12 +21,6 @@
 	let animationId: number;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
-	function updateBackground() {
-		backgroundImageRef.src = $background.url;
-
-		backgroundImageRef.addEventListener('load', () => draw());
-	}
-
 	function roundCorners({
 		ctx,
 		width,
@@ -146,12 +140,19 @@
 			canvasRef.style.objectFit = 'contain';
 		}
 
-		const unsubscribeBackgroundStore = background.subscribe(updateBackground);
+		const unsubscribeBackgroundStore = background.subscribe(
+			() => (backgroundImageRef.src = $background.url)
+		);
 		const unsubscribeAppearenceStore = appearence.subscribe(() => draw());
+		const controller = new AbortController();
+		const signal = controller.signal;
+
+		backgroundImageRef.addEventListener('load', () => draw(), { signal });
 
 		return () => {
 			unsubscribeBackgroundStore();
 			unsubscribeAppearenceStore();
+			controller.abort();
 		};
 	});
 </script>
