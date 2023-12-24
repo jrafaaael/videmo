@@ -19,6 +19,7 @@
 	};
 	let videoRef: HTMLVideoElement;
 	let canvasRef: HTMLCanvasElement;
+	let ctx: CanvasRenderingContext2D;
 	let backgroundImageRef = new Image();
 	let animationId: number;
 	let frames: VideoFrame[] = [];
@@ -56,7 +57,6 @@
 		const VIDEO_NATURAL_WIDTH = videoRef?.videoWidth;
 		const VIDEO_NATURAL_HEIGHT = videoRef?.videoHeight;
 		const VIDEO_NATURAL_ASPECT_RATIO = VIDEO_NATURAL_WIDTH / VIDEO_NATURAL_HEIGHT;
-		const ctx = canvasRef.getContext('2d')!;
 		const p = $appearence.padding * 4;
 		const cornerRadius = $appearence.cornerRadius;
 		const width = Math.min(ctx.canvas.height * VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.width) - p;
@@ -201,6 +201,8 @@
 			canvasRef.style.maxHeight = '100%';
 			canvasRef.style.objectFit = 'contain';
 		}
+
+		ctx = canvasRef.getContext('2d', { alpha: false })!;
 
 		const unsubscribeBackgroundStore = background.subscribe(
 			() => (backgroundImageRef.src = $background.url)
