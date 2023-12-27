@@ -8,7 +8,7 @@
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
-	import DecodeWorker from '../workers/decode.worker?worker';
+	import { FPS } from '../../(recorder)/utils/constants';
 
 	export let currentTime: number;
 	export let paused: boolean;
@@ -22,7 +22,8 @@
 	let ctx: CanvasRenderingContext2D;
 	let backgroundImageRef = new Image();
 	let animationId: number;
-	let frames: VideoFrame[] = [];
+	let intervalId: number;
+	let encodedFrames = 0;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
 	function roundCorners({
@@ -53,7 +54,7 @@
 		ctx.closePath();
 	}
 
-	function draw(frame?: CanvasImageSource) {
+	function draw(frame?: CanvasImageSource, frameTime?: number) {
 		const VIDEO_NATURAL_WIDTH = videoRef?.videoWidth;
 		const VIDEO_NATURAL_HEIGHT = videoRef?.videoHeight;
 		const VIDEO_NATURAL_ASPECT_RATIO = VIDEO_NATURAL_WIDTH / VIDEO_NATURAL_HEIGHT;
@@ -65,7 +66,7 @@
 		const top = (ctx.canvas.height - height) / 2;
 		const zoom = sineIn(
 			interpolateZoomLevel({
-				time: currentTime,
+				time: frameTime ?? currentTime,
 				zoomInStartTime: 2,
 				zoomOutStartTime: 4
 			})
@@ -117,8 +118,7 @@
 		return canvasRef.toDataURL('image/png');
 	}
 
-	export function exportMP4() {
-		const decodeWorker = new DecodeWorker();
+	export async function exportMP4() {
 		const width = 1920;
 		const height = 1080;
 		const muxer = new Muxer({
@@ -130,7 +130,6 @@
 			},
 			fastStart: 'in-memory'
 		});
-
 		const encoder = new VideoEncoder({
 			output(chunk, metadata) {
 				muxer.addVideoChunk(chunk, metadata);
@@ -148,50 +147,44 @@
 			latencyMode: 'quality'
 		});
 
-		decodeWorker.addEventListener('message', (e) => {
-			const { type, ...rest } = e.data;
+		async function encode() {
+			const time = encodedFrames / FPS;
 
-			if (type === 'frame') {
-				const frame: VideoFrame = rest.data;
-
-				frames.push(frame);
+			if (time >= $edits.endAt) {
+				await mux();
+				return;
 			}
-		});
 
-		decodeWorker.postMessage({ type: 'start', url: $recording?.url });
+			draw(undefined, time);
 
-		setTimeout(async () => {
-			frames.forEach(async (recordingFrame, idx) => {
-				const { timestamp, duration } = recordingFrame;
+			const timestamp = (encodedFrames * 1_000_000) / FPS;
 
-				draw(recordingFrame);
-
-				const frame = new VideoFrame(canvasRef, {
-					timestamp,
-					duration,
-					alpha: 'discard'
-				});
-
-				encoder.encode(frame, { keyFrame: idx % 2 === 0 });
-
-				recordingFrame.close();
-				frame.close();
+			const frame = new VideoFrame(canvasRef, {
+				timestamp
 			});
 
-			frames = [];
-		}, 10_000);
+			encodedFrames++;
 
-		setTimeout(async () => {
-			await encoder?.flush();
-			muxer?.finalize();
+			encoder.encode(frame, { keyFrame: encodedFrames % 2 === 0 });
+
+			frame.close();
+		}
+
+		async function mux() {
+			console.log('end');
+			clearInterval(intervalId);
+
+			await encoder.flush();
+			muxer.finalize();
 
 			const { buffer } = muxer.target;
 			const mp4 = URL.createObjectURL(new Blob([buffer], { type: 'video/mp4' }));
 
 			console.log(mp4);
+		}
 
-			decodeWorker.terminate();
-		}, 30_000);
+		encode();
+		intervalId = setInterval(encode, 1_000 / FPS);
 	}
 
 	onMount(() => {
