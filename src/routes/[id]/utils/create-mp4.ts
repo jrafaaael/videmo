@@ -41,12 +41,12 @@ export function createMP4({
 			console.error(e);
 		}
 	});
-	const decodeWorker = new DecodeWorker();
-	const pendingFrames: VideoFrame[] = [];
-	let intervalId: number;
+	let decodeWorker: Worker | null = null;
+	let pendingFrames: VideoFrame[] = [];
+	let frameToDraw: VideoFrame | null = null;
+	let intervalId: number | null = null;
 	let encodedFrames = 0;
 	let nextFrameTimestamp = -Infinity;
-	let frameToDraw: VideoFrame | null = null;
 
 	encoder.configure({
 		codec: CODEC,
@@ -57,6 +57,8 @@ export function createMP4({
 	});
 
 	function start() {
+		decodeWorker = new DecodeWorker();
+
 		decodeWorker.addEventListener('message', ({ data }) => {
 			const { type, ...rest } = data;
 
@@ -105,7 +107,7 @@ export function createMP4({
 	}
 
 	async function _mux() {
-		clearInterval(intervalId);
+		intervalId && clearInterval(intervalId);
 		decodeWorker?.terminate();
 
 		await encoder.flush();
@@ -115,6 +117,13 @@ export function createMP4({
 		const mp4 = URL.createObjectURL(new Blob([buffer], { type: 'video/mp4' }));
 
 		onResult({ result: mp4 });
+
+		pendingFrames = [];
+		decodeWorker = null;
+		intervalId = null;
+		encodedFrames = 0;
+		nextFrameTimestamp = -Infinity;
+		frameToDraw = null;
 	}
 
 	return {
