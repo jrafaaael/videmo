@@ -54,7 +54,7 @@
 		ctx.closePath();
 	}
 
-	function draw(frame?: CanvasImageSource, frameTime?: number) {
+	function draw(frame: CanvasImageSource, frameTime: number) {
 		const VIDEO_NATURAL_WIDTH = videoRef?.videoWidth;
 		const VIDEO_NATURAL_HEIGHT = videoRef?.videoHeight;
 		const VIDEO_NATURAL_ASPECT_RATIO = VIDEO_NATURAL_WIDTH / VIDEO_NATURAL_HEIGHT;
@@ -66,7 +66,7 @@
 		const top = (ctx.canvas.height - height) / 2;
 		const zoom = sineIn(
 			interpolateZoomLevel({
-				time: frameTime ?? currentTime,
+				time: frameTime,
 				zoomInStartTime: 2,
 				zoomOutStartTime: 4
 			})
@@ -94,12 +94,12 @@
 		ctx.clip();
 		ctx.imageSmoothingEnabled = true;
 		ctx.imageSmoothingQuality = 'high';
-		ctx?.drawImage(frame ?? videoRef, leftWithZoom, topWithZoom, widthWithZoom, heightWithZoom);
+		ctx?.drawImage(frame, leftWithZoom, topWithZoom, widthWithZoom, heightWithZoom);
 		ctx.restore();
 	}
 
 	function animate() {
-		draw();
+		draw(videoRef, currentTime);
 
 		if (!paused) {
 			animationId = window?.requestAnimationFrame(animate);
@@ -155,7 +155,7 @@
 				return;
 			}
 
-			draw(undefined, time);
+			draw(videoRef, time);
 
 			const timestamp = (encodedFrames * 1_000_000) / FPS;
 
@@ -200,11 +200,11 @@
 		const unsubscribeBackgroundStore = background.subscribe(
 			() => (backgroundImageRef.src = $background.url)
 		);
-		const unsubscribeAppearenceStore = appearence.subscribe(() => draw());
+		const unsubscribeAppearenceStore = appearence.subscribe(() => draw(videoRef, currentTime));
 		const controller = new AbortController();
 		const signal = controller.signal;
 
-		backgroundImageRef.addEventListener('load', () => draw(), { signal });
+		backgroundImageRef.addEventListener('load', () => draw(videoRef, currentTime), { signal });
 
 		return () => {
 			unsubscribeBackgroundStore();
@@ -227,7 +227,7 @@
 		bind:this={videoRef}
 		on:loadeddata={() => {
 			videoRef.pause();
-			draw();
+			draw(videoRef, currentTime);
 		}}
 		on:play={() => {
 			animationId = window?.requestAnimationFrame(animate);
@@ -246,7 +246,7 @@
 				videoRef.pause();
 			}
 		}}
-		on:seeking={() => draw()}
+		on:seeking={() => draw(videoRef, currentTime)}
 	/>
 	<canvas width="1920" height="1080" class="rounded-md" bind:this={canvasRef} />
 </div>
