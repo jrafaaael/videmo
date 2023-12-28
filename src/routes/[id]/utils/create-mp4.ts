@@ -14,6 +14,7 @@ interface CreateMP4Params {
 
 const WIDTH = 1920;
 const HEIGHT = 1080;
+const MICROSECONDS_PER_SECOND = 1_000_000;
 
 export function createMP4({
 	canvas,
@@ -83,7 +84,7 @@ export function createMP4({
 			return;
 		}
 
-		if (time * 1_000_000 >= nextFrameTimestamp) {
+		if (time * MICROSECONDS_PER_SECOND >= nextFrameTimestamp) {
 			frameToDraw && frameToDraw?.close();
 
 			frameToDraw = pendingFrames.shift() ?? null;
@@ -92,9 +93,8 @@ export function createMP4({
 
 		renderer(frameToDraw, time);
 
-		const timestamp = (encodedFrames * 1_000_000) / fps;
 		const frame = new VideoFrame(canvas, {
-			timestamp
+			timestamp: time * MICROSECONDS_PER_SECOND
 		});
 
 		encoder.encode(frame, { keyFrame: encodedFrames % 2 === 0 });
