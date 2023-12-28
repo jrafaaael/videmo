@@ -1,29 +1,20 @@
 import { ArrayBufferTarget, Muxer } from 'mp4-muxer';
-import { CODEC } from '$lib/utils/constants';
+import { CODEC, MICROSECONDS_PER_SECOND } from '$lib/utils/constants';
 import DecodeWorker from '../workers/decode.worker?worker';
 import { FPS } from '../../(recorder)/utils/constants';
 
 interface CreateMP4Params {
-	canvas: HTMLCanvasElement;
 	videoUrl: string;
 	fps?: number;
 	endAt: number;
-	renderer: (frame: VideoFrame, time: number) => void;
+	renderer: (frame: VideoFrame, time: number) => VideoFrame;
 	onResult: ({ result }: { result: string }) => void;
 }
 
 const WIDTH = 1920;
 const HEIGHT = 1080;
-const MICROSECONDS_PER_SECOND = 1_000_000;
 
-export function createMP4({
-	canvas,
-	videoUrl,
-	fps = FPS,
-	endAt,
-	renderer,
-	onResult
-}: CreateMP4Params) {
+export function createMP4({ videoUrl, fps = FPS, endAt, renderer, onResult }: CreateMP4Params) {
 	const muxer = new Muxer({
 		target: new ArrayBufferTarget(),
 		video: {
@@ -93,11 +84,7 @@ export function createMP4({
 			nextFrameTimestamp = pendingFrames.at(0)?.timestamp ?? Infinity;
 		}
 
-		renderer(frameToDraw, time);
-
-		const frame = new VideoFrame(canvas, {
-			timestamp: time * MICROSECONDS_PER_SECOND
-		});
+		const frame = renderer(frameToDraw, time);
 
 		encoder.encode(frame, { keyFrame: encodedFrames % 2 === 0 });
 

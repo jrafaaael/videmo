@@ -3,6 +3,7 @@
 	import { sineIn } from 'svelte/easing';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
+	import { MICROSECONDS_PER_SECOND } from '$lib/utils/constants';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
@@ -117,10 +118,15 @@
 	export function exportMP4(): Promise<string> {
 		return new Promise((resolve) => {
 			const { start } = createMP4({
-				canvas: canvasRef,
 				videoUrl: $recording?.url ?? '',
 				endAt: $edits.endAt,
-				renderer: draw,
+				renderer: (frame, time) => {
+					draw(frame, time);
+
+					return new VideoFrame(canvasRef, {
+						timestamp: time * MICROSECONDS_PER_SECOND
+					});
+				},
 				onResult({ result }) {
 					resolve(result);
 				}
