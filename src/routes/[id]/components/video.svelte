@@ -8,6 +8,7 @@
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
+	import DecodeWorker from '../workers/decode.worker?worker';
 	import { FPS } from '../../(recorder)/utils/constants';
 
 	export let currentTime: number;
@@ -24,6 +25,9 @@
 	let animationId: number;
 	let intervalId: number;
 	let encodedFrames = 0;
+	let frames: VideoFrame[] = [];
+	let nextFrameTimestamp = -Infinity;
+	let frameToDraw: VideoFrame | null = null;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
 	function roundCorners({
@@ -121,6 +125,7 @@
 	export async function exportMP4() {
 		const width = 1920;
 		const height = 1080;
+		const decodeWorker = new DecodeWorker();
 		const muxer = new Muxer({
 			target: new ArrayBufferTarget(),
 			video: {
@@ -147,6 +152,16 @@
 			latencyMode: 'quality'
 		});
 
+		decodeWorker.addEventListener('message', ({ data }) => {
+			const { type, ...rest } = data;
+
+			if (type === 'frame') {
+				const frame: VideoFrame = rest.data;
+
+				frames.push(frame);
+			}
+		});
+
 		async function encode() {
 			const time = encodedFrames / FPS;
 
@@ -155,24 +170,30 @@
 				return;
 			}
 
-			draw(videoRef, time);
+			if (time * 1_000_000 >= nextFrameTimestamp) {
+				frameToDraw && frameToDraw?.close();
+
+				frameToDraw = frames.shift() ?? null;
+				nextFrameTimestamp = frames.at(0)?.timestamp ?? Infinity;
+			}
+
+			draw(frameToDraw, time);
 
 			const timestamp = (encodedFrames * 1_000_000) / FPS;
-
 			const frame = new VideoFrame(canvasRef, {
 				timestamp
 			});
 
-			encodedFrames++;
-
 			encoder.encode(frame, { keyFrame: encodedFrames % 2 === 0 });
 
 			frame.close();
+
+			encodedFrames++;
 		}
 
 		async function mux() {
-			console.log('end');
 			clearInterval(intervalId);
+			decodeWorker?.terminate();
 
 			await encoder.flush();
 			muxer.finalize();
@@ -183,7 +204,8 @@
 			console.log(mp4);
 		}
 
-		encode();
+		decodeWorker.postMessage({ type: 'start', url: $recording?.url });
+
 		intervalId = setInterval(encode, 1_000 / FPS);
 	}
 
