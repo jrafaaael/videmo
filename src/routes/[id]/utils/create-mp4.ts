@@ -96,21 +96,21 @@ export function createMP4({ videoUrl, fps = FPS, endAt, renderer, onResult }: Cr
 	async function _mux() {
 		intervalId && clearInterval(intervalId);
 		decodeWorker?.terminate();
-
 		await encoder.flush();
 		muxer.finalize();
+		encoder.close();
 
 		const { buffer } = muxer.target;
 		const mp4 = URL.createObjectURL(new Blob([buffer], { type: 'video/mp4' }));
 
 		onResult({ result: mp4 });
 
-		pendingFrames = [];
 		decodeWorker = null;
+		pendingFrames = [];
+		frameToDraw = null;
 		intervalId = null;
 		encodedFrames = 0;
 		nextFrameTimestamp = -Infinity;
-		frameToDraw = null;
 	}
 
 	return {
