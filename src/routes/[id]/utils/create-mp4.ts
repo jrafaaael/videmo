@@ -13,6 +13,7 @@ interface CreateMP4Params {
 
 const WIDTH = 1920;
 const HEIGHT = 1080;
+const KEYFRAME_SEPARATION_IN_SECONDS = 0.5;
 
 export function createMP4({ videoUrl, fps = FPS, endAt, renderer, onResult }: CreateMP4Params) {
 	const muxer = new Muxer({
@@ -38,6 +39,7 @@ export function createMP4({ videoUrl, fps = FPS, endAt, renderer, onResult }: Cr
 	let intervalId: number | null = null;
 	let encodedFrames = 0;
 	let nextFrameTimestamp = -Infinity;
+	let nextKeyFrameTimestamp = -Infinity;
 
 	encoder.configure({
 		codec: CODEC,
@@ -85,8 +87,14 @@ export function createMP4({ videoUrl, fps = FPS, endAt, renderer, onResult }: Cr
 		}
 
 		const frame = renderer(frameToDraw, time);
+		let keyFrame = false;
 
-		encoder.encode(frame, { keyFrame: encodedFrames % 2 === 0 });
+		if (frame.timestamp >= nextKeyFrameTimestamp) {
+			keyFrame = true;
+			nextKeyFrameTimestamp = frame.timestamp + KEYFRAME_SEPARATION_IN_SECONDS * 1_000_000;
+		}
+
+		encoder.encode(frame, { keyFrame });
 
 		frame.close();
 
@@ -111,6 +119,7 @@ export function createMP4({ videoUrl, fps = FPS, endAt, renderer, onResult }: Cr
 		intervalId = null;
 		encodedFrames = 0;
 		nextFrameTimestamp = -Infinity;
+		nextKeyFrameTimestamp = -Infinity;
 	}
 
 	return {
