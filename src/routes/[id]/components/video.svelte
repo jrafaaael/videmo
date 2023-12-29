@@ -119,6 +119,7 @@
 		return new Promise((resolve) => {
 			const { start } = createMP4({
 				videoUrl: $recording?.url ?? '',
+				startAt: $edits.startAt,
 				endAt: $edits.endAt,
 				renderer: (frame, time) => {
 					draw(frame, time);

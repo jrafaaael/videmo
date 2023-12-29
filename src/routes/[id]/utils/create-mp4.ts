@@ -6,6 +6,7 @@ import { MICROSECONDS_PER_SECOND } from './constants';
 interface CreateMP4Params {
 	videoUrl: string;
 	fps?: number;
+	startAt: number;
 	endAt: number;
 	renderer: (frame: VideoFrame, time: number) => VideoFrame;
 	onResult: ({ result }: { result: string }) => void;
@@ -15,7 +16,14 @@ const WIDTH = 1920;
 const HEIGHT = 1080;
 const KEYFRAME_SEPARATION_IN_SECONDS = 0.5;
 
-export function createMP4({ videoUrl, fps = FPS, endAt, renderer, onResult }: CreateMP4Params) {
+export function createMP4({
+	videoUrl,
+	fps = FPS,
+	startAt,
+	endAt,
+	renderer,
+	onResult
+}: CreateMP4Params) {
 	const muxer = new Muxer({
 		target: new ArrayBufferTarget(),
 		video: {
@@ -23,7 +31,8 @@ export function createMP4({ videoUrl, fps = FPS, endAt, renderer, onResult }: Cr
 			width: WIDTH,
 			height: HEIGHT
 		},
-		fastStart: 'in-memory'
+		fastStart: 'in-memory',
+		firstTimestampBehavior: 'offset'
 	});
 	const encoder = new VideoEncoder({
 		output(chunk, metadata) {
@@ -58,7 +67,15 @@ export function createMP4({ videoUrl, fps = FPS, endAt, renderer, onResult }: Cr
 			if (type === 'frame') {
 				const frame: VideoFrame = rest.data;
 
-				pendingFrames.push(frame);
+				if (
+					frame.timestamp / MICROSECONDS_PER_SECOND >= startAt &&
+					frame.timestamp / MICROSECONDS_PER_SECOND <= endAt
+				) {
+					pendingFrames.push(frame);
+					return;
+				}
+
+				frame.close();
 			}
 		});
 
@@ -72,7 +89,7 @@ export function createMP4({ videoUrl, fps = FPS, endAt, renderer, onResult }: Cr
 			return;
 		}
 
-		const time = encodedFrames / fps;
+		const time = startAt + encodedFrames / fps;
 
 		if (time >= endAt) {
 			await _mux();
