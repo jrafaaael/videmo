@@ -1,6 +1,5 @@
 import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
-import { CODEC } from '$lib/utils/constants';
-import { FPS } from '../utils/constants';
+import { CODEC, FPS } from '$lib/utils/constants';
 
 // https://aws.amazon.com/es/blogs/media/part-1-back-to-basics-gops-explained/
 const GOP = 512;
