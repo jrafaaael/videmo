@@ -36,8 +36,9 @@ function onStartDecoding({ url }: { url: string }) {
 	});
 }
 
-function onStopDecoding() {
-	console.log('stop');
+async function onStopDecoding() {
+	await decoder?.flush();
+	decoder?.close();
 }
 
 const MESSAGE_HANLDER = {

@@ -103,6 +103,9 @@ export function createMP4({ videoUrl, fps = FPS, endAt, renderer, onResult }: Cr
 
 	async function _mux() {
 		intervalId && clearInterval(intervalId);
+		decodeWorker?.postMessage({
+			type: 'end'
+		});
 		decodeWorker?.terminate();
 		await encoder.flush();
 		muxer.finalize();
