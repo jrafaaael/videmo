@@ -1,7 +1,8 @@
 import { ArrayBufferTarget, Muxer } from 'mp4-muxer';
-import { CODEC, MICROSECONDS_PER_SECOND } from '$lib/utils/constants';
+import { CODEC } from '$lib/utils/constants';
 import DecodeWorker from '../workers/decode.worker?worker';
 import { FPS } from '../../(recorder)/utils/constants';
+import { MICROSECONDS_PER_SECOND } from './constants';
 
 interface CreateMP4Params {
 	videoUrl: string;

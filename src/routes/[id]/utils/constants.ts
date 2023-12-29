@@ -1,0 +1,1 @@
+export const MICROSECONDS_PER_SECOND = 1_000_000;

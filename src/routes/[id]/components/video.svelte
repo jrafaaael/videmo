@@ -3,11 +3,11 @@
 	import { sineIn } from 'svelte/easing';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
-	import { MICROSECONDS_PER_SECOND } from '$lib/utils/constants';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
 	import { createMP4 } from '../utils/create-mp4';
+	import { MICROSECONDS_PER_SECOND } from '../utils/constants';
 
 	export let currentTime: number;
 	export let paused: boolean;
