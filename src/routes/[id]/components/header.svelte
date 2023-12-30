@@ -35,11 +35,11 @@
 </script>
 
 <header
-	class="h-16 px-10 bg-neutral-900 border-b-2 border-b-white/5 shrink-0 flex justify-between items-center gap-8"
+	class="h-16 px-10 bg-neutral-900 border-b-2 border-b-white/5 shrink-0 flex justify-center items-center gap-8"
 >
 	<a
 		href="/"
-		class="p-2 rounded-md text-neutral-300 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
+		class="p-2 rounded-md text-neutral-300 absolute left-10 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
 	>
 		<div class="w-4 aspect-square">
 			<Trash />
@@ -81,7 +81,7 @@
 		</Select.Root>
 	</h1>
 	<button
-		class="py-1 px-3 rounded-md flex items-center gap-2 {isExporting
+		class="py-1 px-3 rounded-md flex items-center gap-2 absolute right-10 {isExporting
 			? 'bg-neutral-600 text-neutral-400 cursor-not-allowed focus:outline-none'
 			: 'bg-purple-600'}"
 		tabindex={isExporting ? -1 : 0}
