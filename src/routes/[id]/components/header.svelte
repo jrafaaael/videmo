@@ -4,6 +4,7 @@
 	import { recording } from '$lib/stores/recording.store';
 	import { EXPORT_OPTIONS } from '../utils/export-options';
 	import { download } from '../utils/download';
+	import Loading from './icons/loading.animated.svelte';
 	import Trash from './icons/trash.svelte';
 	import ChrevronDown from './icons/chevron-down.outlined.svelte';
 	import Download from './icons/download.svelte';
@@ -12,8 +13,15 @@
 	export let getFrameAsImage: () => string;
 	export let getMP4: () => Promise<string>;
 	let extension = writable(EXPORT_OPTIONS.at(0));
+	let isExporting = false;
 
 	async function save() {
+		if (isExporting) {
+			return;
+		}
+
+		isExporting = true;
+
 		if ($extension.value === '.png') {
 			download(($recording?.id ?? 'image') + $extension.value, getFrameAsImage());
 		} else if ($extension.value === '.mp4') {
@@ -21,6 +29,8 @@
 
 			download(($recording?.id ?? 'video') + $extension.value, mp4);
 		}
+
+		isExporting = false;
 	}
 </script>
 
@@ -70,10 +80,23 @@
 			</Select.Menu>
 		</Select.Root>
 	</h1>
-	<button class="py-1 px-3 bg-purple-600 rounded-md flex items-center gap-2" on:click={save}>
-		<div class="w-4 aspect-square">
-			<Download />
-		</div>
-		<span>Export</span>
+	<button
+		class="py-1 px-3 rounded-md flex items-center gap-2 {isExporting
+			? 'bg-neutral-600 text-neutral-400 cursor-not-allowed focus:outline-none'
+			: 'bg-purple-600'}"
+		tabindex={isExporting ? -1 : 0}
+		on:click={save}
+	>
+		{#if isExporting}
+			<div class="w-4 aspect-square">
+				<Loading />
+			</div>
+			<span>Exporting</span>
+		{:else}
+			<div class="w-4 aspect-square">
+				<Download />
+			</div>
+			<span>Export</span>
+		{/if}
 	</button>
 </header>
