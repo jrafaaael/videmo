@@ -67,6 +67,7 @@ export function createMP4({
 			if (type === 'frame') {
 				const frame: VideoFrame = rest.data;
 
+				// Check if frame timestamp is between trim `start` and `end` values
 				if (
 					frame.timestamp / MICROSECONDS_PER_SECOND >= startAt &&
 					frame.timestamp / MICROSECONDS_PER_SECOND <= endAt
@@ -85,6 +86,9 @@ export function createMP4({
 	}
 
 	async function _encode() {
+		// at start, decode may doesn't start yet so there aren't pending frames and not encoded frames yet.
+		// closest to end, may haven't pending frames but may have time remaining to finish the recording
+		// and `mux` needs to be dependant of time
 		if (pendingFrames.length <= 0 && encodedFrames <= 0) {
 			return;
 		}
