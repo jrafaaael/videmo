@@ -67,20 +67,11 @@ export function createMP4({
 			if (type === 'frame') {
 				const frame: VideoFrame = rest.data;
 
-				// Check if frame timestamp is between trim `start` and `end` values
-				if (
-					frame.timestamp / MICROSECONDS_PER_SECOND >= startAt &&
-					frame.timestamp / MICROSECONDS_PER_SECOND <= endAt
-				) {
-					pendingFrames.push(frame);
-					return;
-				}
-
-				frame.close();
+				pendingFrames.push(frame);
 			}
 		});
 
-		decodeWorker.postMessage({ type: 'start', url: videoUrl });
+		decodeWorker.postMessage({ type: 'start', url: videoUrl, trimStart: startAt, trimEnd: endAt });
 
 		intervalId = setInterval(_encode, 100);
 	}

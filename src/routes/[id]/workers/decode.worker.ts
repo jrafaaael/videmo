@@ -1,19 +1,32 @@
 import { CODEC } from '$lib/utils/constants';
 import { MP4Demuxer } from '../libs/mp4box/mp4-demuxer';
+import { MICROSECONDS_PER_SECOND } from '../utils/constants';
 
 let decoder: VideoDecoder | null = null;
 let demuxer: MP4Demuxer | null = null;
 
-function onStartDecoding({ url }: { url: string }) {
+interface StartDecodingParams {
+	url: string;
+	trimStart: number;
+	trimEnd: number;
+}
+
+function onStartDecoding({ url, trimStart, trimEnd }: StartDecodingParams) {
 	decoder = new VideoDecoder({
 		output(frame) {
-			self.postMessage(
-				{
-					type: 'frame',
-					data: frame
-				},
-				{ transfer: [frame] }
-			);
+			// Check if frame timestamp is between trim `start` and `end` values
+			if (
+				(frame.timestamp + (frame?.duration ?? 0)) / MICROSECONDS_PER_SECOND >= trimStart &&
+				(frame.timestamp + (frame?.duration ?? 0)) / MICROSECONDS_PER_SECOND <= trimEnd
+			) {
+				self.postMessage(
+					{
+						type: 'frame',
+						data: frame
+					},
+					{ transfer: [frame] }
+				);
+			}
 
 			frame.close();
 		},
