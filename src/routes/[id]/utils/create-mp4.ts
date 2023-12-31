@@ -128,6 +128,8 @@ export function createMP4({
 
 		onResult({ result: mp4 });
 
+		pendingFrames.forEach((frame) => frame.close());
+
 		decodeWorker = null;
 		pendingFrames = [];
 		frameToDraw = null;
