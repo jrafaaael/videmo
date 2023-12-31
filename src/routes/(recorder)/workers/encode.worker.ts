@@ -4,23 +4,15 @@ import { CODEC, FPS } from '$lib/utils/constants';
 // https://aws.amazon.com/es/blogs/media/part-1-back-to-basics-gops-explained/
 const GOP = 512;
 let reader: ReadableStreamDefaultReader<VideoFrame> | null = null;
-let muxer: Muxer<FileSystemWritableFileStreamTarget> | null = null;
+let muxer: Muxer<ArrayBufferTarget> | null = null;
 let encoder: VideoEncoder | null = null;
-let fileHandle: FileSystemFileHandle | null = null;
-
-async function getFileHandle(filename: string) {
-	const root = await navigator.storage.getDirectory();
-	return await root.getFileHandle(filename, { create: true });
-}
 
 async function onStartRecording({
 	trackStream,
-	trackSettings,
-	id
+	trackSettings
 }: {
 	trackStream: ReadableStream<VideoFrame>;
 	trackSettings: MediaTrackSettings;
-	id: string;
 }) {
 	const { width, height } = trackSettings;
 
@@ -30,10 +22,9 @@ async function onStartRecording({
 
 	let frames = 0;
 	reader = trackStream.getReader();
-	fileHandle = await getFileHandle(id + '.mp4');
 
 	muxer = new Muxer({
-		target: new FileSystemWritableFileStreamTarget(await fileHandle.createWritable()),
+		target: new ArrayBufferTarget(),
 		video: {
 			codec: 'avc',
 			width,
@@ -42,7 +33,6 @@ async function onStartRecording({
 		fastStart: 'in-memory',
 		firstTimestampBehavior: 'offset'
 	});
-
 	encoder = new VideoEncoder({
 		output(chunk, metadata) {
 			muxer?.addVideoChunk(chunk, metadata);
@@ -87,10 +77,9 @@ async function onStopRecording() {
 	await reader?.cancel();
 	await encoder?.flush();
 	muxer?.finalize();
-	await muxer?.target.stream.close();
 
-	const file = await fileHandle?.getFile();
-	const mp4 = URL.createObjectURL(new Blob([file!], { type: 'video/mp4' }));
+	const { buffer } = muxer.target;
+	const mp4 = URL.createObjectURL(new Blob([buffer], { type: 'video/mp4' }));
 
 	self.postMessage({
 		type: 'result',

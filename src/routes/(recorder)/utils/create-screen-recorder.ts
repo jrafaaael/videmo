@@ -67,8 +67,7 @@ export function createScreenRecorder(params?: Params) {
 				{
 					type: 'start',
 					trackStream,
-					trackSettings,
-					id: stream?.id
+					trackSettings
 				},
 				[trackStream]
 			);
