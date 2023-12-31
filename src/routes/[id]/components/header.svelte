@@ -11,6 +11,7 @@
 	import Check from './icons/check.svelte';
 
 	export let getFrameAsImage: () => string;
+	export let getMP4: () => Promise<string>;
 	let extension = writable(EXPORT_OPTIONS.at(0));
 	let isExporting = false;
 
