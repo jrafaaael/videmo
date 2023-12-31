@@ -38,6 +38,7 @@ function onStartDecoding({ url, trimStart, trimEnd }: StartDecodingParams) {
 	demuxer = new MP4Demuxer(url, {
 		onConfig(config) {
 			config.codec = CODEC;
+			config.optimizeForLatency = false;
 			decoder?.configure(config);
 		},
 		onChunk(chunk) {
