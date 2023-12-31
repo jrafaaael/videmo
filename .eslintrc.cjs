@@ -18,6 +18,21 @@ module.exports = {
 		es2017: true,
 		node: true
 	},
+	globals: {
+		CanvasImageSource: 'readonly',
+		AudioDecoder: 'readonly',
+		VideoDecoder: 'readonly',
+		AudioEncoder: 'readonly',
+		VideoEncoder: 'readonly',
+		EncodedAudioChunk: 'readonly',
+		EncodedVideoChunk: 'readonly',
+		AudioData: 'readonly',
+		VideoFrame: 'readonly',
+		VideoColorSpace: 'readonly',
+		ImageDecoder: 'readonly',
+		ImageTrackList: 'readonly',
+		ImageTrack: 'readonly'
+	},
 	overrides: [
 		{
 			files: ['*.svelte'],

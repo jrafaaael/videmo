@@ -6,6 +6,8 @@
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
+	import { createMP4 } from '../utils/create-mp4';
+	import { MICROSECONDS_PER_SECOND } from '../utils/constants';
 
 	export let currentTime: number;
 	export let paused: boolean;
@@ -16,15 +18,10 @@
 	};
 	let videoRef: HTMLVideoElement;
 	let canvasRef: HTMLCanvasElement;
+	let ctx: CanvasRenderingContext2D;
 	let backgroundImageRef = new Image();
 	let animationId: number;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
-
-	function updateBackground() {
-		backgroundImageRef.src = $background.url;
-
-		backgroundImageRef.addEventListener('load', () => draw());
-	}
 
 	function roundCorners({
 		ctx,
@@ -54,11 +51,10 @@
 		ctx.closePath();
 	}
 
-	function draw() {
+	function draw(frame: CanvasImageSource, frameTime: number) {
 		const VIDEO_NATURAL_WIDTH = videoRef?.videoWidth;
 		const VIDEO_NATURAL_HEIGHT = videoRef?.videoHeight;
 		const VIDEO_NATURAL_ASPECT_RATIO = VIDEO_NATURAL_WIDTH / VIDEO_NATURAL_HEIGHT;
-		const ctx = canvasRef.getContext('2d')!;
 		const p = $appearence.padding * 4;
 		const cornerRadius = $appearence.cornerRadius;
 		const shadow = $appearence.shadow;
@@ -68,7 +64,7 @@
 		const top = (ctx.canvas.height - height) / 2;
 		const zoom = sineIn(
 			interpolateZoomLevel({
-				time: currentTime,
+				time: frameTime,
 				zoomInStartTime: 2,
 				zoomOutStartTime: 4
 			})
@@ -102,12 +98,12 @@
 		ctx.clip();
 		ctx.imageSmoothingEnabled = true;
 		ctx.imageSmoothingQuality = 'high';
-		ctx?.drawImage(videoRef, leftWithZoom, topWithZoom, widthWithZoom, heightWithZoom);
+		ctx?.drawImage(frame, leftWithZoom, topWithZoom, widthWithZoom, heightWithZoom);
 		ctx.restore();
 	}
 
 	function animate() {
-		draw();
+		draw(videoRef, currentTime);
 
 		if (!paused) {
 			animationId = window?.requestAnimationFrame(animate);
@@ -126,6 +122,28 @@
 		return canvasRef.toDataURL('image/png');
 	}
 
+	export function exportMP4(): Promise<string> {
+		return new Promise((resolve) => {
+			const { start } = createMP4({
+				videoUrl: $recording?.url ?? '',
+				startAt: $edits.startAt,
+				endAt: $edits.endAt,
+				renderer: (frame, time) => {
+					draw(frame, time);
+
+					return new VideoFrame(canvasRef, {
+						timestamp: time * MICROSECONDS_PER_SECOND
+					});
+				},
+				onResult({ result }) {
+					resolve(result);
+				}
+			});
+
+			start();
+		});
+	}
+
 	onMount(() => {
 		if (videoRef && canvasRef) {
 			canvasRef.style.maxWidth = '100%';
@@ -134,12 +152,21 @@
 			canvasRef.style.objectFit = 'contain';
 		}
 
-		const unsubscribeBackgroundStore = background.subscribe(updateBackground);
-		const unsubscribeAppearenceStore = appearence.subscribe(draw);
+		ctx = canvasRef.getContext('2d', { alpha: false })!;
+
+		const unsubscribeBackgroundStore = background.subscribe(
+			() => (backgroundImageRef.src = $background.url)
+		);
+		const unsubscribeAppearenceStore = appearence.subscribe(() => draw(videoRef, currentTime));
+		const controller = new AbortController();
+		const signal = controller.signal;
+
+		backgroundImageRef.addEventListener('load', () => draw(videoRef, currentTime), { signal });
 
 		return () => {
 			unsubscribeBackgroundStore();
 			unsubscribeAppearenceStore();
+			controller.abort();
 		};
 	});
 </script>
@@ -157,7 +184,7 @@
 		bind:this={videoRef}
 		on:loadeddata={() => {
 			videoRef.pause();
-			draw();
+			draw(videoRef, currentTime);
 		}}
 		on:play={() => {
 			animationId = window?.requestAnimationFrame(animate);
@@ -176,7 +203,7 @@
 				videoRef.pause();
 			}
 		}}
-		on:seeking={draw}
+		on:seeking={() => draw(videoRef, currentTime)}
 	/>
 	<canvas width="1920" height="1080" class="rounded-md" bind:this={canvasRef} />
 </div>

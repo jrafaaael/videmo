@@ -14,6 +14,9 @@ dependencies:
   mp4-muxer:
     specifier: ^3.0.2
     version: 3.0.2
+  mp4box:
+    specifier: ^0.5.2
+    version: 0.5.2
 
 devDependencies:
   '@melt-ui/pp':
@@ -1602,6 +1605,10 @@ packages:
     dependencies:
       '@types/dom-webcodecs': 0.1.11
       '@types/wicg-file-system-access': 2020.9.8
+    dev: false
+
+  /mp4box@0.5.2:
+    resolution: {integrity: sha512-zRmGlvxy+YdW3Dmt+TR4xPHynbxwXtAQDTN/Fo9N3LMxaUlB2C5KmZpzYyGKy4c7k4Jf3RCR0A2pm9SZELOLXw==}
     dev: false
 
   /mri@1.2.0:

@@ -1,5 +1,5 @@
-import { Muxer, FileSystemWritableFileStreamTarget } from 'mp4-muxer';
-import { FPS } from '../utils/constants';
+import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
+import { CODEC, FPS } from '$lib/utils/constants';
 
 // https://aws.amazon.com/es/blogs/media/part-1-back-to-basics-gops-explained/
 const GOP = 512;
@@ -53,7 +53,7 @@ async function onStartRecording({
 	});
 
 	encoder.configure({
-		codec: 'avc1.F4E034',
+		codec: CODEC,
 		width,
 		height,
 		displayWidth: width,

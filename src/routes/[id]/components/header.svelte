@@ -4,6 +4,7 @@
 	import { recording } from '$lib/stores/recording.store';
 	import { EXPORT_OPTIONS, Status } from '../utils/export-options';
 	import { download } from '../utils/download';
+	import Loading from './icons/loading.animated.svelte';
 	import Trash from './icons/trash.svelte';
 	import ChrevronDown from './icons/chevron-down.outlined.svelte';
 	import Download from './icons/download.svelte';
@@ -11,20 +12,39 @@
 
 	export let getFrameAsImage: () => string;
 	let extension = writable(EXPORT_OPTIONS.at(0));
+	let isExporting = false;
 
 	async function save() {
-		if ($extension.value === '.png') {
-			download(($recording?.id ?? 'image') + $extension.value, getFrameAsImage());
+		if (isExporting) {
+			return;
 		}
+
+		isExporting = true;
+
+		if ($extension.value === '.png') {
+			const img = getFrameAsImage();
+
+			download(($recording?.id ?? 'image') + $extension.value, img);
+
+			URL.revokeObjectURL(img);
+		} else if ($extension.value === '.mp4') {
+			const mp4 = await getMP4();
+
+			download(($recording?.id ?? 'video') + $extension.value, mp4);
+
+			URL.revokeObjectURL(mp4);
+		}
+
+		isExporting = false;
 	}
 </script>
 
 <header
-	class="h-16 px-10 bg-neutral-900 border-b-2 border-b-white/5 shrink-0 flex justify-between items-center gap-8"
+	class="h-16 px-10 bg-neutral-900 border-b-2 border-b-white/5 shrink-0 flex justify-center items-center gap-8"
 >
 	<a
 		href="/"
-		class="p-2 rounded-md text-neutral-300 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
+		class="p-2 rounded-md text-neutral-300 absolute left-10 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
 	>
 		<div class="w-4 aspect-square">
 			<Trash />
@@ -69,10 +89,23 @@
 			</Select.Menu>
 		</Select.Root>
 	</h1>
-	<button class="py-1 px-3 bg-purple-600 rounded-md flex items-center gap-2" on:click={save}>
-		<div class="w-4 aspect-square">
-			<Download />
-		</div>
-		<span>Export</span>
+	<button
+		class="py-1 px-3 rounded-md flex items-center gap-2 absolute right-10 {isExporting
+			? 'bg-neutral-600 text-neutral-400 cursor-not-allowed focus:outline-none'
+			: 'bg-purple-600'}"
+		tabindex={isExporting ? -1 : 0}
+		on:click={save}
+	>
+		{#if isExporting}
+			<div class="w-4 aspect-square">
+				<Loading />
+			</div>
+			<span>Exporting</span>
+		{:else}
+			<div class="w-4 aspect-square">
+				<Download />
+			</div>
+			<span>Export</span>
+		{/if}
 	</button>
 </header>
