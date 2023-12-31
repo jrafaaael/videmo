@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { recording } from '$lib/stores/recording.store';
 
 	type Resizer = 'right' | 'left';
@@ -26,7 +26,7 @@
 		dispatcher('resizeStart');
 	}
 
-	function handleResize(e: MouseEvent & { currentTarget: EventTarget & Document }) {
+	function handleResize(e: MouseEvent) {
 		if (
 			!isTrimming ||
 			!resizer ||
@@ -86,16 +86,33 @@
 			}
 		}
 	}
+
+	function handleResizeEnd() {
+		isTrimming = false;
+		resizer = null;
+		dispatcher('resizeEnd');
+	}
+
+	onMount(() => {
+		document.addEventListener('mousemove', (e) => handleResize(e));
+		document.addEventListener('mouseup', handleResizeEnd);
+
+		return () => {
+			document.removeEventListener('mousemove', handleResize);
+			document.removeEventListener('mouseup', handleResizeEnd);
+		};
+	});
 </script>
 
-<svelte:document
+<!-- BUG: `mouseup` event on `svelte:document` fires `input` event on numeric input indefinitely -->
+<!-- <svelte:document
 	on:mousemove={handleResize}
 	on:mouseup={() => {
 		isTrimming = false;
 		resizer = null;
 		dispatcher('resizeEnd');
 	}}
-/>
+/> -->
 
 <div
 	class="w-full h-10 bg-blue-500/30 rounded-md overflow-hidden relative"

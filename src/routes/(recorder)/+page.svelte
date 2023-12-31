@@ -10,17 +10,6 @@
 	import { createScreenRecorder } from './utils/create-screen-recorder';
 
 	const recorder = createScreenRecorder({
-		async onStart() {
-			const { toBlobURL } = await import('@ffmpeg/util');
-			const BASE_URL = 'https://unpkg.com/@ffmpeg/core@0.12.4/dist/esm';
-
-			$ffmpeg?.on('log', ({ message }) => console.log(message));
-
-			await $ffmpeg?.load({
-				coreURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.js`, 'text/javascript'),
-				wasmURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.wasm`, 'application/wasm')
-			});
-		},
 		onEnd(video) {
 			recording.set(video);
 			edits.set({ startAt: 0, endAt: video.duration });

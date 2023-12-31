@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { recording } from '$lib/stores/recording.store';
 
 	export let currentTime: number;
@@ -12,7 +12,7 @@
 	$: totalVideoDuration = $recording?.duration ?? 0;
 	$: position = (currentTime * 100) / totalVideoDuration;
 
-	function handleChangeTime(e: MouseEvent & { currentTarget: EventTarget & Document }) {
+	function handleSeeking(e: MouseEvent) {
 		if (isDragging) {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const constrains = seekbarRef.parentElement!.getBoundingClientRect();
@@ -33,12 +33,27 @@
 			dispatcher('changeTime', { newTime });
 		}
 	}
+
+	function handleSeekEnd() {
+		isDragging = false;
+	}
+
+	onMount(() => {
+		document.addEventListener('mousemove', (e) => handleSeeking(e));
+		document.addEventListener('mouseup', handleSeekEnd);
+
+		return () => {
+			document.removeEventListener('mousemove', handleSeeking);
+			document.removeEventListener('mouseup', handleSeekEnd);
+		};
+	});
 </script>
 
-<svelte:document
+<!-- BUG: `mouseup` event on `svelte:document` fires `input` event on numeric input indefinitely -->
+<!-- <svelte:document
 	on:mousemove={handleChangeTime}
 	on:mouseup|preventDefault={() => (isDragging = false)}
-/>
+/> -->
 
 <button
 	class="h-[calc(100%+8px)] px-2 absolute bottom-0 z-50 cursor-col-resize {currentTime <= startAt ||

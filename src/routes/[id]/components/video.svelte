@@ -57,6 +57,7 @@
 		const VIDEO_NATURAL_ASPECT_RATIO = VIDEO_NATURAL_WIDTH / VIDEO_NATURAL_HEIGHT;
 		const p = $appearence.padding * 4;
 		const cornerRadius = $appearence.cornerRadius;
+		const shadow = $appearence.shadow;
 		const width = Math.min(ctx.canvas.height * VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.width) - p;
 		const height = Math.min(width / VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.height);
 		const left = (ctx.canvas.width - width) / 2;
@@ -88,6 +89,12 @@
 			left: leftWithZoom,
 			radius: cornerRadius
 		});
+		ctx.shadowColor = `rgba(0,0,0,${shadow.opacity / 100})`;
+		ctx.shadowBlur = shadow.blur;
+		ctx.shadowOffsetX = shadow.x;
+		ctx.shadowOffsetY = shadow.y;
+		// https://stackoverflow.com/questions/77249393/how-to-apply-shadow-to-an-image-with-rounded-corners-on-html5-canvas
+		ctx.fill();
 		ctx.clip();
 		ctx.imageSmoothingEnabled = true;
 		ctx.imageSmoothingQuality = 'high';
