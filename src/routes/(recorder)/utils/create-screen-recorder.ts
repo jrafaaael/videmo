@@ -45,8 +45,8 @@ export function createScreenRecorder(params?: Params) {
 			});
 
 			recorder.addEventListener('stop', () => {
-				stream?.getTracks().forEach((track) => track.stop());
 				worker.postMessage({ type: 'end' });
+				set({ isRecording: false });
 			});
 
 			recorder.start();
@@ -79,8 +79,8 @@ export function createScreenRecorder(params?: Params) {
 	}
 
 	function stop() {
+		stream?.getTracks().forEach((track) => track.stop());
 		recorder?.stop();
-		set({ isRecording: false });
 	}
 
 	return {
