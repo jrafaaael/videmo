@@ -23,11 +23,17 @@
 		isExporting = true;
 
 		if ($extension.value === '.png') {
-			download(($recording?.id ?? 'image') + $extension.value, getFrameAsImage());
+			const img = getFrameAsImage();
+
+			download(($recording?.id ?? 'image') + $extension.value, img);
+
+			URL.revokeObjectURL(img);
 		} else if ($extension.value === '.mp4') {
 			const mp4 = await getMP4();
 
 			download(($recording?.id ?? 'video') + $extension.value, mp4);
+
+			URL.revokeObjectURL(mp4);
 		}
 
 		isExporting = false;
