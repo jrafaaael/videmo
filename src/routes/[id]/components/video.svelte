@@ -5,6 +5,7 @@
 	import { edits } from '$lib/stores/edits.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
+	import { zoomList } from '../stores/zoom-list.store';
 	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
 	import { createMP4 } from '../utils/create-mp4';
 	import { MICROSECONDS_PER_SECOND } from '../utils/constants';
@@ -62,11 +63,12 @@
 		const height = Math.min(width / VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.height);
 		const left = (ctx.canvas.width - width) / 2;
 		const top = (ctx.canvas.height - height) / 2;
+		const currentZoom = $zoomList.at(0);
 		const zoom = sineIn(
 			interpolateZoomLevel({
 				time: frameTime,
-				zoomInStartTime: 2,
-				zoomOutStartTime: 4
+				zoomInStartTime: currentZoom?.start ?? Infinity,
+				zoomOutStartTime: currentZoom?.end ?? Infinity
 			})
 		);
 		const widthWithZoom = width * zoom;
