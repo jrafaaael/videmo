@@ -8,6 +8,7 @@
 	import Timeline from './components/timeline.svelte';
 	import Seeker from './components/seeker.svelte';
 	import Trimmer from './components/trimmer.svelte';
+	import ZoomList from './components/zoom-list.svelte';
 	import { secondsToTime } from './utils/seconds-to-time';
 
 	let videoRef: Video;
@@ -77,6 +78,7 @@
 							}
 						}}
 					/>
+					<ZoomList />
 				</div>
 			</div>
 		</footer>
