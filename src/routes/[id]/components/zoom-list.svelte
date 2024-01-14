@@ -21,9 +21,13 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="w-full h-10 flex" on:click|self={handleAddZoom}>
+<div class="w-full h-10 relative">
 	{#each $zoomList as zoom}
+		{@const width = ((zoom.end - zoom.start) * 100) / $recording?.duration}
+		{@const left = (zoom.start * 100) / $recording?.duration}
 		<Zoom
+			initalWidth={`${width}%`}
+			initalLeft={`${left}%`}
 			on:startChange={({ detail }) => {
 				zoomList.updateZoomById({
 					...zoom,

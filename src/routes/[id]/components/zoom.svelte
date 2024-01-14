@@ -2,8 +2,12 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { recording } from '$lib/stores/recording.store';
 
+	type Units = 'px' | '%';
+	type Length = `${number}${Units}`;
 	type Resizer = 'right' | 'left';
 
+	export let initalWidth: Length = '100%';
+	export let initalLeft: Length = '0%';
 	const MINIMUM_DURATION_IN_SECONDS = 0.5;
 	let isTrimming: boolean;
 	let resizer: Resizer | null = null;
@@ -115,8 +119,8 @@
 /> -->
 
 <div
-	class="w-full h-10 bg-emerald-500/30 rounded-md overflow-hidden relative"
-	style="width: var(--width, 100%); left: var(--left, 0)"
+	class="h-10 bg-emerald-500/30 rounded-md overflow-hidden absolute"
+	style="width: var(--width, {initalWidth}); left: var(--left, {initalLeft})"
 	bind:this={trimmerRef}
 >
 	<button
