@@ -94,7 +94,7 @@
 	}
 
 	onMount(() => {
-		document.addEventListener('mousemove', (e) => handleResize(e));
+		document.addEventListener('mousemove', handleResize);
 		document.addEventListener('mouseup', handleResizeEnd);
 
 		return () => {
