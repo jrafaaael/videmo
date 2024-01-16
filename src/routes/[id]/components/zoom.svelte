@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { recording } from '$lib/stores/recording.store';
 
 	type Units = 'px' | '%';
 	type Length = `${number}${Units}`;
@@ -8,14 +7,13 @@
 
 	export let initalWidth: Length = '100%';
 	export let initalLeft: Length = '0%';
-	const MINIMUM_DURATION_IN_SECONDS = 0.5;
+	export let minWidth: number = 100;
 	let isTrimming: boolean;
 	let resizer: Resizer | null = null;
 	let trimmerRef: HTMLDivElement;
 	let mousePositionWhenResizingStart: number | null = null;
 	let trimmerRectWhenResizingStart: DOMRect | null = null;
 	let dispatcher = createEventDispatcher();
-	$: totalVideoDuration = $recording?.duration ?? 0;
 
 	function handleResizeStart(
 		e: MouseEvent & {
@@ -43,7 +41,6 @@
 		const trimmerRect = trimmerRef.getBoundingClientRect();
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const constrains = trimmerRef.parentElement!.getBoundingClientRect();
-		const constrainPadding = constrains.left;
 
 		if (resizer === 'right') {
 			const delta = e.pageX - mousePositionWhenResizingStart;
@@ -53,17 +50,17 @@
 				trimmerRectWhenResizingStart.width + delta
 			);
 			const widthInPercentage = (width * 100) / constrains.width;
-			const duration = (widthInPercentage * totalVideoDuration) / 100;
 
-			if (duration >= MINIMUM_DURATION_IN_SECONDS) {
+			if (width >= minWidth) {
 				trimmerRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
 
 				const deltaWidth = width - trimmerRect.width;
-				const endAt =
-					((trimmerRect.right + deltaWidth - constrainPadding) * totalVideoDuration) /
-					(constrains.right - constrainPadding);
 
-				dispatcher('endChange', { endAt: +endAt.toFixed(4) });
+				dispatcher('resize', {
+					direction: resizer,
+					delta: deltaWidth,
+					refToElement: trimmerRef
+				});
 			}
 		} else if (resizer === 'left') {
 			const delta = mousePositionWhenResizingStart - e.pageX;
@@ -75,18 +72,18 @@
 			);
 			const widthInPercentage = (width * 100) / constrains.width;
 			const leftInPercentage = Math.max(0, (left * 100) / constrains.width);
-			const duration = (widthInPercentage * totalVideoDuration) / 100;
 
-			if (duration >= MINIMUM_DURATION_IN_SECONDS) {
+			if (width >= minWidth) {
 				trimmerRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
 				trimmerRef.style.setProperty('left', leftInPercentage.toFixed(1) + '%');
 
 				const deltaWidth = width - trimmerRect.width;
-				const startAt =
-					((trimmerRect.left - deltaWidth - constrainPadding) * totalVideoDuration) /
-					(constrains.right - constrainPadding);
 
-				dispatcher('startChange', { startAt: +startAt.toFixed(4) });
+				dispatcher('resize', {
+					direction: resizer,
+					delta: deltaWidth,
+					refToElement: trimmerRef
+				});
 			}
 		}
 	}
