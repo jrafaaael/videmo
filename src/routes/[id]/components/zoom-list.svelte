@@ -26,38 +26,39 @@
 		{@const width = ((zoom.end - zoom.start) * 100) / $recording?.duration}
 		{@const left = (zoom.start * 100) / $recording?.duration}
 		{@const nextZoom = $zoomList.at(idx + 1)}
+		{@const prevZoom = idx === 0 ? null : $zoomList.at(idx - 1)}
 		<Zoom
-			initalWidth={`${width}%`}
-			initalLeft={`${left}%`}
-			on:resize={async ({ detail }) => {
+			{width}
+			{left}
+			on:resize={({ detail }) => {
 				const { direction, delta, refToElement } = detail;
 				const zoomRect = refToElement.getBoundingClientRect();
 				const constrains = refToElement.parentElement.getBoundingClientRect();
 
 				if (direction === 'right') {
-					const endAt =
+					const endAt = (
 						((zoomRect.right + delta - constrains.left) * $recording.duration) /
-						(constrains.right - constrains.left);
+						(constrains.right - constrains.left)
+					).toFixed(2);
 
-					if (endAt >= (nextZoom?.start ?? Infinity)) {
-						return;
+					if (delta < 0 || zoom.end < (nextZoom?.start ?? Infinity)) {
+						zoomList.updateZoomById({
+							...zoom,
+							end: +endAt
+						});
 					}
-
-					zoom.end = endAt;
-
-					// zoomList.updateZoomById({
-					// 	...zoom,
-					// 	end: endAt
-					// });
 				} else if (direction === 'left') {
-					const startAt =
+					const startAt = (
 						((zoomRect.left - delta - constrains.left) * $recording.duration) /
-						(constrains.right - constrains.left);
+						(constrains.right - constrains.left)
+					).toFixed(2);
 
-					zoomList.updateZoomById({
-						...zoom,
-						start: startAt
-					});
+					if (delta < 0 || zoom.start > (prevZoom?.end ?? 0)) {
+						zoomList.updateZoomById({
+							...zoom,
+							start: +startAt
+						});
+					}
 				}
 			}}
 		/>
