@@ -58,7 +58,7 @@
 						(constrains.right - constrains.left)
 					).toFixed(2);
 
-					if (delta < 0 || +startAt > (prevZoom?.end ?? 0)) {
+					if (delta < 0 || +startAt > (prevZoom?.end ?? -Infinity)) {
 						zoomList.updateZoomById({
 							...zoom,
 							start: +startAt
