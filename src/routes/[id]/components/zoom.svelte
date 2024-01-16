@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
 
-	type Units = 'px' | '%';
-	type Length = `${number}${Units}`;
 	type Resizer = 'right' | 'left';
 
-	export let initalWidth: Length = '100%';
-	export let initalLeft: Length = '0%';
-	export let minWidth: number = 100;
+	export let minWidth = 100;
+	export let width = 100;
+	export let left = 0;
 	let isTrimming: boolean;
 	let resizer: Resizer | null = null;
 	let trimmerRef: HTMLDivElement;
@@ -44,17 +42,20 @@
 
 		if (resizer === 'right') {
 			const delta = e.pageX - mousePositionWhenResizingStart;
-			const width = Math.min(
+			const interalWidth = Math.min(
 				constrains.width,
 				constrains.width - trimmerRect.left + constrains.left,
 				trimmerRectWhenResizingStart.width + delta
 			);
-			const widthInPercentage = (width * 100) / constrains.width;
 
-			if (width >= minWidth) {
-				trimmerRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
+			if (interalWidth >= minWidth) {
+				const deltaWidth = interalWidth - trimmerRect.width;
 
-				const deltaWidth = width - trimmerRect.width;
+				if (!width) {
+					const widthInPercentage = (width * 100) / constrains.width;
+
+					trimmerRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
+				}
 
 				dispatcher('resize', {
 					direction: resizer,
@@ -64,20 +65,23 @@
 			}
 		} else if (resizer === 'left') {
 			const delta = mousePositionWhenResizingStart - e.pageX;
-			const left = trimmerRectWhenResizingStart.left - delta - constrains.left;
-			const width = Math.min(
+			const internalLeft = trimmerRectWhenResizingStart.left - delta - constrains.left;
+			const internalWidth = Math.min(
 				constrains.width,
 				trimmerRectWhenResizingStart.width + delta,
-				trimmerRectWhenResizingStart.width + left + delta
+				trimmerRectWhenResizingStart.width + internalLeft + delta
 			);
-			const widthInPercentage = (width * 100) / constrains.width;
-			const leftInPercentage = Math.max(0, (left * 100) / constrains.width);
 
-			if (width >= minWidth) {
-				trimmerRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
-				trimmerRef.style.setProperty('left', leftInPercentage.toFixed(1) + '%');
+			if (internalWidth >= minWidth) {
+				const deltaWidth = internalWidth - trimmerRect.width;
 
-				const deltaWidth = width - trimmerRect.width;
+				if (!width) {
+					const widthInPercentage = (internalWidth * 100) / constrains.width;
+					const leftInPercentage = Math.max(0, (internalLeft * 100) / constrains.width);
+
+					trimmerRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
+					trimmerRef.style.setProperty('left', leftInPercentage.toFixed(1) + '%');
+				}
 
 				dispatcher('resize', {
 					direction: resizer,
@@ -117,7 +121,7 @@
 
 <div
 	class="h-10 bg-emerald-500/30 rounded-md overflow-hidden absolute"
-	style="width: var(--width, {initalWidth}); left: var(--left, {initalLeft})"
+	style="width: {width}%; left: {left}%"
 	bind:this={trimmerRef}
 >
 	<button
