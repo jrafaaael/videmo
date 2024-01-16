@@ -41,10 +41,15 @@
 						(constrains.right - constrains.left)
 					).toFixed(2);
 
-					if (delta < 0 || zoom.end < (nextZoom?.start ?? Infinity)) {
+					if (delta < 0 || +endAt < (nextZoom?.start ?? Infinity)) {
 						zoomList.updateZoomById({
 							...zoom,
 							end: +endAt
+						});
+					} else if (nextZoom && +endAt > nextZoom?.start) {
+						zoomList.updateZoomById({
+							...zoom,
+							end: nextZoom?.start
 						});
 					}
 				} else if (direction === 'left') {
@@ -53,10 +58,15 @@
 						(constrains.right - constrains.left)
 					).toFixed(2);
 
-					if (delta < 0 || zoom.start > (prevZoom?.end ?? 0)) {
+					if (delta < 0 || +startAt > (prevZoom?.end ?? 0)) {
 						zoomList.updateZoomById({
 							...zoom,
 							start: +startAt
+						});
+					} else if (prevZoom && +startAt < prevZoom.end) {
+						zoomList.updateZoomById({
+							...zoom,
+							start: prevZoom?.end
 						});
 					}
 				}
