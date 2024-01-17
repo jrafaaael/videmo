@@ -22,6 +22,7 @@
 	let ctx: CanvasRenderingContext2D;
 	let backgroundImageRef = new Image();
 	let animationId: number;
+	let currentZoomIndex = 0;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
 	function roundCorners({
@@ -63,7 +64,7 @@
 		const height = Math.min(width / VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.height);
 		const left = (ctx.canvas.width - width) / 2;
 		const top = (ctx.canvas.height - height) / 2;
-		const currentZoom = $zoomList.at(0);
+		const currentZoom = $zoomList.at(currentZoomIndex);
 		const zoom = sineIn(
 			interpolateZoomLevel({
 				time: frameTime,
@@ -75,6 +76,10 @@
 		const heightWithZoom = height * zoom;
 		const leftWithZoom = left - COORD.x * (zoom - 1);
 		const topWithZoom = top - COORD.y * (zoom - 1);
+
+		if (currentTime > (currentZoom?.end ?? Infinity) + 1) {
+			currentZoomIndex++;
+		}
 
 		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
 
