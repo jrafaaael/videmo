@@ -17,6 +17,7 @@
 		x: 0,
 		y: 540
 	};
+	const ZOOM_DURATION = 1;
 	let videoRef: HTMLVideoElement;
 	let canvasRef: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
@@ -77,7 +78,7 @@
 		const leftWithZoom = left - COORD.x * (zoom - 1);
 		const topWithZoom = top - COORD.y * (zoom - 1);
 
-		if (currentTime > (currentZoom?.end ?? Infinity) + 1) {
+		if (currentTime > (currentZoom?.end ?? Infinity) + ZOOM_DURATION) {
 			currentZoomIndex++;
 		}
 
@@ -212,7 +213,8 @@
 		}}
 		on:seeking={() => {
 			currentZoomIndex = $zoomList.findIndex(
-				(zoom) => zoom.start >= currentTime || zoom.end >= currentTime
+				(zoom) =>
+					zoom.start + ZOOM_DURATION >= currentTime || zoom.end + ZOOM_DURATION >= currentTime
 			);
 			draw(videoRef, currentTime);
 		}}
