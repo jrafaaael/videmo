@@ -17,7 +17,6 @@
 		x: 0,
 		y: 540
 	};
-	const ZOOM_DURATION = 1;
 	let videoRef: HTMLVideoElement;
 	let canvasRef: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
@@ -68,9 +67,9 @@
 		const currentZoom = $zoomList.at(currentZoomIndex);
 		const zoom = sineIn(
 			interpolateZoomLevel({
-				time: frameTime,
-				zoomInStartTime: currentZoom?.start ?? Infinity,
-				zoomOutStartTime: currentZoom?.end ?? Infinity
+				currentTime: frameTime,
+				start: currentZoom?.start ?? Infinity,
+				end: currentZoom?.end ?? Infinity
 			})
 		);
 		const widthWithZoom = width * zoom;
@@ -78,7 +77,7 @@
 		const leftWithZoom = left - COORD.x * (zoom - 1);
 		const topWithZoom = top - COORD.y * (zoom - 1);
 
-		if (currentTime > (currentZoom?.end ?? Infinity) + ZOOM_DURATION) {
+		if (currentTime > (currentZoom?.end ?? Infinity)) {
 			currentZoomIndex++;
 		}
 
@@ -213,8 +212,7 @@
 		}}
 		on:seeking={() => {
 			currentZoomIndex = $zoomList.findIndex(
-				(zoom) =>
-					zoom.start + ZOOM_DURATION >= currentTime || zoom.end + ZOOM_DURATION >= currentTime
+				(zoom) => zoom.start >= currentTime || zoom.end >= currentTime
 			);
 			draw(videoRef, currentTime);
 		}}
