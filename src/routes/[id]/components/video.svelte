@@ -13,10 +13,6 @@
 	export let currentTime: number;
 	export let paused: boolean;
 	export let ended: boolean;
-	const COORD = {
-		x: 0,
-		y: 540
-	};
 	let videoRef: HTMLVideoElement;
 	let canvasRef: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
@@ -74,8 +70,8 @@
 		);
 		const widthWithZoom = width * zoom;
 		const heightWithZoom = height * zoom;
-		const leftWithZoom = left - COORD.x * (zoom - 1);
-		const topWithZoom = top - COORD.y * (zoom - 1);
+		const leftWithZoom = left - (currentZoom?.x ?? 0) * (zoom - 1);
+		const topWithZoom = top - (currentZoom?.y ?? 0) * (zoom - 1);
 
 		if (currentTime > (currentZoom?.end ?? Infinity)) {
 			currentZoomIndex++;

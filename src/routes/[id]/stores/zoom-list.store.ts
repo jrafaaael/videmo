@@ -4,6 +4,8 @@ interface Zoom {
 	id: number;
 	start: number;
 	end: number;
+	x: number;
+	y: number;
 }
 
 function createZoomList() {
