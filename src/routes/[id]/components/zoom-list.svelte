@@ -41,12 +41,17 @@
 						(constrains.right - constrains.left)
 					).toFixed(2);
 
-					if (delta < 0 || +endAt < (nextZoom?.start ?? Infinity)) {
+					/*
+					 * `resize` event aren't fired on every size change. when `endAt` is calculated, it can has a value greater than `nextZoom.start`
+					 * so current edited zoom couldn't be set to end exactly when next one starts. when this happens, I set the `end` value of
+					 * the current edited zoom equals to `start` of next one
+					 */
+					if (!nextZoom || +endAt < nextZoom.start) {
 						zoomList.updateZoomById({
 							...zoom,
 							end: +endAt
 						});
-					} else if (nextZoom && +endAt > nextZoom?.start) {
+					} else if (+endAt > nextZoom?.start) {
 						zoomList.updateZoomById({
 							...zoom,
 							end: nextZoom?.start
@@ -58,12 +63,17 @@
 						(constrains.right - constrains.left)
 					).toFixed(2);
 
-					if (delta < 0 || +startAt > (prevZoom?.end ?? -Infinity)) {
+					/*
+					 * `resize` event aren't fired on every size change. when `startAt` is calculated, it can has a value less than `prevZoom.end`
+					 * so current edited zoom couldn't be set to start exactly when previous one ends. when this happens, I set the `start` value of
+					 * the current edited zoom equals to `end` of previous one
+					 */
+					if (!prevZoom || +startAt > prevZoom.end) {
 						zoomList.updateZoomById({
 							...zoom,
 							start: +startAt
 						});
-					} else if (prevZoom && +startAt < prevZoom.end) {
+					} else if (+startAt < prevZoom.end) {
 						zoomList.updateZoomById({
 							...zoom,
 							start: prevZoom?.end
