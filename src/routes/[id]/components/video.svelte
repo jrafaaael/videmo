@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { sineIn } from 'svelte/easing';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
 	import { zoomList } from '../stores/zoom-list.store';
-	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
 	import { createMP4 } from '../utils/create-mp4';
-	import { MICROSECONDS_PER_SECOND } from '../utils/constants';
+	import { lerp } from '../utils/lerp';
+	import { MICROSECONDS_PER_SECOND, MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL } from '../utils/constants';
 
 	export let currentTime: number;
 	export let paused: boolean;
@@ -60,22 +59,31 @@
 		const height = Math.min(width / VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.height);
 		const left = (ctx.canvas.width - width) / 2;
 		const top = (ctx.canvas.height - height) / 2;
-		const currentZoom = $zoomList.at(currentZoomIndex);
-		const zoom = sineIn(
-			interpolateZoomLevel({
-				currentTime: frameTime,
-				start: currentZoom?.start ?? Infinity,
-				end: currentZoom?.end ?? Infinity
-			})
-		);
+		const currentZoom = $zoomList.at(currentZoomIndex) ?? null;
+		const zoomInStart = currentZoom?.start ?? Infinity;
+		const zoomInEnd = zoomInStart + 0.25;
+		const zoomOutEnd = currentZoom?.end ?? Infinity;
+		const zoomOutStart = zoomOutEnd - 0.25;
+		let zoom = 1;
+
+		if (frameTime >= zoomInStart && frameTime <= zoomOutStart) {
+			const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+
+			zoom = Math.min(MAX_ZOOM_LEVEL, lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, progress));
+		} else if (frameTime >= zoomOutStart && frameTime <= zoomOutEnd) {
+			const progress = (frameTime - zoomOutStart) / (zoomOutEnd - zoomOutStart);
+
+			zoom = Math.max(MIN_ZOOM_LEVEL, lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, progress));
+		}
+
+		if (frameTime >= zoomOutEnd) {
+			currentZoomIndex++;
+		}
+
 		const widthWithZoom = width * zoom;
 		const heightWithZoom = height * zoom;
 		const leftWithZoom = left - (currentZoom?.x ?? 0) * (zoom - 1);
 		const topWithZoom = top - (currentZoom?.y ?? 0) * (zoom - 1);
-
-		if (currentTime > (currentZoom?.end ?? Infinity)) {
-			currentZoomIndex++;
-		}
 
 		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
 
@@ -206,7 +214,7 @@
 				videoRef.pause();
 			}
 		}}
-		on:seeking={() => {
+		on:seeked={() => {
 			currentZoomIndex = $zoomList.findIndex(
 				(zoom) => zoom.start >= currentTime || zoom.end >= currentTime
 			);
