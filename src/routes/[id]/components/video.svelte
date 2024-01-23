@@ -18,6 +18,7 @@
 	let backgroundImageRef = new Image();
 	let animationId: number;
 	let currentZoomIndex = 0;
+	let currentZoom = $zoomList.at(currentZoomIndex) ?? null;
 	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
 
 	function roundCorners({
@@ -59,31 +60,71 @@
 		const height = Math.min(width / VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.height);
 		const left = (ctx.canvas.width - width) / 2;
 		const top = (ctx.canvas.height - height) / 2;
-		const currentZoom = $zoomList.at(currentZoomIndex) ?? null;
+
+		if (currentZoom && frameTime >= currentZoom.end) {
+			currentZoomIndex++;
+			currentZoom = $zoomList.at(currentZoomIndex) ?? null;
+		}
+
 		const zoomInStart = currentZoom?.start ?? Infinity;
 		const zoomInEnd = zoomInStart + 0.25;
 		const zoomOutEnd = currentZoom?.end ?? Infinity;
 		const zoomOutStart = zoomOutEnd - 0.25;
+		const prevZoom = $zoomList[currentZoomIndex - 1];
+		const nextZoom = $zoomList.at(currentZoomIndex + 1);
+		const isInsideZoom = frameTime >= zoomInStart && frameTime <= zoomOutEnd;
+		const isOverlappingNextZoom = nextZoom ? nextZoom?.start <= zoomOutEnd : false;
+		const isOverlappingPrevZoom = prevZoom ? zoomInStart <= prevZoom?.end : false;
 		let zoom = 1;
+		let leftWithZoom = left;
+		let topWithZoom = top;
 
-		if (frameTime >= zoomInStart && frameTime <= zoomOutStart) {
-			const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+		if (currentZoom && isInsideZoom && (isOverlappingPrevZoom || isOverlappingNextZoom)) {
+			if (isOverlappingPrevZoom) {
+				if (frameTime >= zoomInStart && frameTime <= zoomInEnd) {
+					const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
 
-			zoom = Math.min(MAX_ZOOM_LEVEL, lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, progress));
-		} else if (frameTime >= zoomOutStart && frameTime <= zoomOutEnd) {
-			const progress = (frameTime - zoomOutStart) / (zoomOutEnd - zoomOutStart);
+					const l = lerp(prevZoom?.x, currentZoom?.x, progress);
+					const t = lerp(prevZoom.y, currentZoom?.y, progress);
 
-			zoom = Math.max(MIN_ZOOM_LEVEL, lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, progress));
-		}
+					zoom = MAX_ZOOM_LEVEL;
+					leftWithZoom = left - l * (zoom - 1);
+					topWithZoom = top - t * (zoom - 1);
+				} else if (frameTime >= zoomOutStart && !isOverlappingNextZoom) {
+					const progress = (frameTime - zoomOutStart) / (zoomOutEnd - zoomOutStart);
 
-		if (frameTime >= zoomOutEnd) {
-			currentZoomIndex++;
+					zoom = Math.max(MIN_ZOOM_LEVEL, lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, progress));
+					leftWithZoom = left - currentZoom?.x * (zoom - 1);
+					topWithZoom = top - currentZoom?.y * (zoom - 1);
+				} else {
+					zoom = MAX_ZOOM_LEVEL;
+					leftWithZoom = left - currentZoom?.x * (zoom - 1);
+					topWithZoom = top - currentZoom?.y * (zoom - 1);
+				}
+			} else if (isOverlappingNextZoom) {
+				const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+
+				zoom = Math.min(MAX_ZOOM_LEVEL, lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, progress));
+				leftWithZoom = left - currentZoom?.x * (zoom - 1);
+				topWithZoom = top - currentZoom?.y * (zoom - 1);
+			}
+		} else if (currentZoom) {
+			if (frameTime >= zoomInStart && frameTime <= zoomOutStart) {
+				const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+
+				zoom = Math.min(MAX_ZOOM_LEVEL, lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, progress));
+			} else if (frameTime >= zoomOutStart && frameTime <= zoomOutEnd) {
+				const progress = (frameTime - zoomOutStart) / (zoomOutEnd - zoomOutStart);
+
+				zoom = Math.max(MIN_ZOOM_LEVEL, lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, progress));
+			}
+
+			leftWithZoom = left - currentZoom?.x * (zoom - 1);
+			topWithZoom = top - currentZoom?.y * (zoom - 1);
 		}
 
 		const widthWithZoom = width * zoom;
 		const heightWithZoom = height * zoom;
-		const leftWithZoom = left - (currentZoom?.x ?? 0) * (zoom - 1);
-		const topWithZoom = top - (currentZoom?.y ?? 0) * (zoom - 1);
 
 		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
 
@@ -218,6 +259,7 @@
 			currentZoomIndex = $zoomList.findIndex(
 				(zoom) => zoom.start >= currentTime || zoom.end >= currentTime
 			);
+			currentZoom = $zoomList.at(currentZoomIndex) ?? null;
 			draw(videoRef, currentTime);
 		}}
 	/>
