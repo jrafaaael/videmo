@@ -230,6 +230,16 @@
 			() => (backgroundImageRef.src = $background.url)
 		);
 		const unsubscribeAppearenceStore = appearence.subscribe(() => draw(videoRef, currentTime));
+		const unsubscribeZoomStore = zoomList.subscribe(() => {
+			currentZoomIndex = $zoomList.findIndex(
+				(zoom) => zoom.start >= currentTime || zoom.end >= currentTime
+			);
+			currentZoom = $zoomList.at(currentZoomIndex) ?? null;
+
+			if (paused) {
+				draw(videoRef, currentTime);
+			}
+		});
 		const controller = new AbortController();
 		const signal = controller.signal;
 
@@ -238,6 +248,7 @@
 		return () => {
 			unsubscribeBackgroundStore();
 			unsubscribeAppearenceStore();
+			unsubscribeZoomStore();
 			controller.abort();
 		};
 	});
