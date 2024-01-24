@@ -85,6 +85,34 @@
 		let leftWithZoom = left;
 		let topWithZoom = top;
 
+		/*
+		 * VIDEMO'S ZOOM WORKING PRINCIPLE
+		 *
+		 * zoom-in: `currentZoom.start` to `currentZoom.start + zoom transition duration`
+		 * zoom-out: `currentZoom.end - transition duration` to `currentZoom.end`
+		 *
+		 * EXAMPLE: [{start: 1, end: 2}, {start: 3, end: 4}]
+		 * WORKFLOW:
+		 * 1. zoom-in transition start at 1
+		 * 2. zoom-in transition end at 1.25
+		 * 3. zoom level remains up to 1.75
+		 * 4. zoom-out transition start at 1.75
+		 * 5. zoom-out transition end at 2
+		 * 6. gap between zooms (2 to 3)
+		 * 7. repeat with new zoom
+		 *
+		 * ZOOM OVERLAP: two zooms overlap when `end` time of one is equal to `start` time of the other
+		 * in this case, i don't want to zoom-in and zoom-out for every zoom. instead, i want to zoom-in on the first zoom `start` time, move zoom coordinates
+		 * on every next zoom `start` time and zoom-out on the last zoom `end` time
+		 *
+		 * EXAMPLE: [{start: 1, end: 2}, {start: 2, end: 3}, {start: 3, end: 4}]
+		 * WORKFLOW:
+		 * 1. zoom-in transition start at 1 and end at 1.25 to (x, y) coordinates
+		 * 2. change zoom coordinates start at 2 and end at 2.25 to (x, y) coordinates
+		 * 3. change zoom coordinates start at 3 and end at 3.25 to (x, y) coordinates
+		 * 4. zoom-out transition start at 3.75 and end at 4
+		 */
+		// TODO: zoom speed
 		if (!isInsideZoom) {
 		} else if (isOverlappingPrevZoom && frameTime >= zoomInStart && frameTime <= zoomInEnd) {
 			const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
