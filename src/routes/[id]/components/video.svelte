@@ -7,7 +7,12 @@
 	import { zoomList } from '../stores/zoom-list.store';
 	import { createMP4 } from '../utils/create-mp4';
 	import { lerp } from '../utils/lerp';
-	import { MICROSECONDS_PER_SECOND, MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL } from '../utils/constants';
+	import {
+		MICROSECONDS_PER_SECOND,
+		MAX_ZOOM_LEVEL,
+		MIN_ZOOM_LEVEL,
+		ZOOM_TRANSITION_DURATION
+	} from '../utils/constants';
 
 	export let currentTime: number;
 	export let paused: boolean;
@@ -67,60 +72,47 @@
 		}
 
 		const zoomInStart = currentZoom?.start ?? Infinity;
-		const zoomInEnd = zoomInStart + 0.25;
+		const zoomInEnd = zoomInStart + ZOOM_TRANSITION_DURATION;
 		const zoomOutEnd = currentZoom?.end ?? Infinity;
-		const zoomOutStart = zoomOutEnd - 0.25;
+		const zoomOutStart = zoomOutEnd - ZOOM_TRANSITION_DURATION;
 		const prevZoom = $zoomList[currentZoomIndex - 1];
 		const nextZoom = $zoomList.at(currentZoomIndex + 1);
-		const isInsideZoom = frameTime >= zoomInStart && frameTime <= zoomOutEnd;
+		const isInsideZoom =
+			currentZoom !== null && frameTime >= zoomInStart && frameTime <= zoomOutEnd;
 		const isOverlappingNextZoom = nextZoom ? nextZoom?.start <= zoomOutEnd : false;
 		const isOverlappingPrevZoom = prevZoom ? zoomInStart <= prevZoom?.end : false;
 		let zoom = 1;
 		let leftWithZoom = left;
 		let topWithZoom = top;
 
-		if (currentZoom && isInsideZoom && (isOverlappingPrevZoom || isOverlappingNextZoom)) {
-			if (isOverlappingPrevZoom) {
-				if (frameTime >= zoomInStart && frameTime <= zoomInEnd) {
-					const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+		if (!isInsideZoom) {
+		} else if (isOverlappingPrevZoom && frameTime >= zoomInStart && frameTime <= zoomInEnd) {
+			const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
 
-					const l = lerp(prevZoom?.x, currentZoom?.x, progress);
-					const t = lerp(prevZoom.y, currentZoom?.y, progress);
+			const left = lerp(prevZoom?.x, currentZoom?.x, progress);
+			const top = lerp(prevZoom.y, currentZoom?.y, progress);
 
-					zoom = MAX_ZOOM_LEVEL;
-					leftWithZoom = left - l * (zoom - 1);
-					topWithZoom = top - t * (zoom - 1);
-				} else if (frameTime >= zoomOutStart && !isOverlappingNextZoom) {
-					const progress = (frameTime - zoomOutStart) / (zoomOutEnd - zoomOutStart);
-
-					zoom = Math.max(MIN_ZOOM_LEVEL, lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, progress));
-					leftWithZoom = left - currentZoom?.x * (zoom - 1);
-					topWithZoom = top - currentZoom?.y * (zoom - 1);
-				} else {
-					zoom = MAX_ZOOM_LEVEL;
-					leftWithZoom = left - currentZoom?.x * (zoom - 1);
-					topWithZoom = top - currentZoom?.y * (zoom - 1);
-				}
-			} else if (isOverlappingNextZoom) {
-				const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
-
-				zoom = Math.min(MAX_ZOOM_LEVEL, lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, progress));
-				leftWithZoom = left - currentZoom?.x * (zoom - 1);
-				topWithZoom = top - currentZoom?.y * (zoom - 1);
-			}
-		} else if (currentZoom) {
-			if (frameTime >= zoomInStart && frameTime <= zoomOutStart) {
-				const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
-
-				zoom = Math.min(MAX_ZOOM_LEVEL, lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, progress));
-			} else if (frameTime >= zoomOutStart && frameTime <= zoomOutEnd) {
+			zoom = MAX_ZOOM_LEVEL;
+			leftWithZoom -= left * (zoom - 1);
+			topWithZoom -= top * (zoom - 1);
+		} else {
+			if (
+				(isOverlappingPrevZoom && !isOverlappingNextZoom && frameTime >= zoomOutStart) ||
+				(!isOverlappingNextZoom && frameTime >= zoomOutStart && frameTime <= zoomOutEnd)
+			) {
 				const progress = (frameTime - zoomOutStart) / (zoomOutEnd - zoomOutStart);
 
 				zoom = Math.max(MIN_ZOOM_LEVEL, lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, progress));
+			} else if (isOverlappingNextZoom || (frameTime >= zoomInStart && frameTime <= zoomOutStart)) {
+				const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+
+				zoom = Math.min(MAX_ZOOM_LEVEL, lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, progress));
+			} else {
+				zoom = MAX_ZOOM_LEVEL;
 			}
 
-			leftWithZoom = left - currentZoom?.x * (zoom - 1);
-			topWithZoom = top - currentZoom?.y * (zoom - 1);
+			leftWithZoom -= currentZoom?.x * (zoom - 1);
+			topWithZoom -= currentZoom?.y * (zoom - 1);
 		}
 
 		const widthWithZoom = width * zoom;
