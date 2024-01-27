@@ -1,4 +1,5 @@
 <script>
+	import { edits } from '$lib/stores/edits.store';
 	import { videoStatus } from '../../stores/video-status.store';
 	import { zoomList } from '../../stores/zoom-list.store';
 
@@ -8,7 +9,8 @@
 				(zoom) =>
 					($videoStatus.currentTime >= zoom.start || $videoStatus.currentTime + 1 >= zoom.start) &&
 					$videoStatus.currentTime <= zoom.end
-			)
+			) ||
+			$videoStatus.currentTime + 1 >= $edits.endAt
 		) {
 			return;
 		}
