@@ -3,6 +3,7 @@
 	import ChevronDown from '../icons/chevron-down.filled.svelte';
 	import BackgroundEditor from './background-editor.svelte';
 	import AppearanceEditor from './appearance-editor.svelte';
+	import ZoomEditor from './zoom-editor.svelte';
 
 	const OPTIONS = [
 		{
@@ -14,6 +15,11 @@
 			id: 'appearance',
 			label: 'Appearance',
 			content: AppearanceEditor
+		},
+		{
+			id: 'zoom',
+			label: 'Zoom',
+			content: ZoomEditor
 		}
 	] as const;
 </script>
