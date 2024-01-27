@@ -3,6 +3,16 @@
 	import { zoomList } from '../../stores/zoom-list.store';
 
 	function handleAddZoom() {
+		if (
+			$zoomList.some(
+				(zoom) =>
+					($videoStatus.currentTime >= zoom.start || $videoStatus.currentTime + 1 >= zoom.start) &&
+					$videoStatus.currentTime <= zoom.end
+			)
+		) {
+			return;
+		}
+
 		const zoom = {
 			id: new Date().getTime(),
 			start: $videoStatus.currentTime,
