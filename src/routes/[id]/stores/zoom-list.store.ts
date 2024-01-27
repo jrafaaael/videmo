@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { derived, writable } from 'svelte/store';
 
 interface Zoom {
 	id: number;
@@ -9,22 +9,25 @@ interface Zoom {
 }
 
 function createZoomList() {
-	const { subscribe, update, set } = writable<Zoom[]>([]);
+	const _zooms = writable<Zoom[]>([]);
+	const sorted = derived(_zooms, (zooms) => zooms.toSorted((a, b) => a.start - b.start));
 
 	function addZoom(zoom: Zoom) {
-		update((list) => [...list, zoom]);
+		_zooms.update((list) => [...list, zoom]);
 	}
 
 	function updateZoomById(zoom: Zoom) {
-		update((list) => list.map((current) => (current.id === zoom.id ? { ...zoom } : current)));
+		_zooms.update((list) =>
+			list.map((current) => (current.id === zoom.id ? { ...zoom } : current))
+		);
 	}
 
 	function _clear() {
-		set([]);
+		_zooms.set([]);
 	}
 
 	return {
-		subscribe,
+		subscribe: sorted.subscribe,
 		addZoom,
 		updateZoomById,
 		_clear
