@@ -25,10 +25,7 @@
 	let animationId: number;
 	let currentZoomIndex = 0;
 	let currentZoom = $zoomList.at(currentZoomIndex) ?? null;
-	$: $videoStatus.currentTime = Math.max(
-		$edits.startAt,
-		Math.min(currentTime ?? Infinity, $edits.endAt)
-	);
+	$: $videoStatus.currentTime = Math.max($edits.startAt, Math.min(currentTime, $edits.endAt));
 
 	function roundCorners({
 		ctx,
@@ -246,6 +243,9 @@
 				draw(videoRef, $videoStatus.currentTime);
 			}
 		});
+		const unsubscribeVideoStatusStore = videoStatus.subscribe(() => {
+			currentTime = $videoStatus.currentTime;
+		});
 		const controller = new AbortController();
 		const signal = controller.signal;
 
@@ -254,6 +254,7 @@
 		});
 
 		return () => {
+			unsubscribeVideoStatusStore();
 			unsubscribeBackgroundStore();
 			unsubscribeAppearenceStore();
 			unsubscribeZoomStore();
