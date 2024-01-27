@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
+	import { videoStatus } from '../stores/video-status.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
 	import { zoomList } from '../stores/zoom-list.store';
@@ -14,17 +15,20 @@
 		ZOOM_TRANSITION_DURATION
 	} from '../utils/constants';
 
-	export let currentTime: number;
 	export let paused: boolean;
 	export let ended: boolean;
 	let videoRef: HTMLVideoElement;
 	let canvasRef: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
 	let backgroundImageRef = new Image();
+	let currentTime = 0;
 	let animationId: number;
 	let currentZoomIndex = 0;
 	let currentZoom = $zoomList.at(currentZoomIndex) ?? null;
-	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
+	$: $videoStatus.currentTime = Math.max(
+		$edits.startAt,
+		Math.min(currentTime ?? Infinity, $edits.endAt)
+	);
 
 	function roundCorners({
 		ctx,
@@ -175,7 +179,7 @@
 	}
 
 	function animate() {
-		draw(videoRef, currentTime);
+		draw(videoRef, $videoStatus.currentTime);
 
 		if (!paused) {
 			animationId = window?.requestAnimationFrame(animate);
@@ -229,21 +233,25 @@
 		const unsubscribeBackgroundStore = background.subscribe(
 			() => (backgroundImageRef.src = $background.url)
 		);
-		const unsubscribeAppearenceStore = appearence.subscribe(() => draw(videoRef, currentTime));
+		const unsubscribeAppearenceStore = appearence.subscribe(() =>
+			draw(videoRef, $videoStatus.currentTime)
+		);
 		const unsubscribeZoomStore = zoomList.subscribe(() => {
 			currentZoomIndex = $zoomList.findIndex(
-				(zoom) => zoom.start >= currentTime || zoom.end >= currentTime
+				(zoom) => zoom.start >= $videoStatus.currentTime || zoom.end >= $videoStatus.currentTime
 			);
 			currentZoom = $zoomList.at(currentZoomIndex) ?? null;
 
 			if (paused) {
-				draw(videoRef, currentTime);
+				draw(videoRef, $videoStatus.currentTime);
 			}
 		});
 		const controller = new AbortController();
 		const signal = controller.signal;
 
-		backgroundImageRef.addEventListener('load', () => draw(videoRef, currentTime), { signal });
+		backgroundImageRef.addEventListener('load', () => draw(videoRef, $videoStatus.currentTime), {
+			signal
+		});
 
 		return () => {
 			unsubscribeBackgroundStore();
@@ -267,13 +275,13 @@
 		bind:this={videoRef}
 		on:loadeddata={() => {
 			videoRef.pause();
-			draw(videoRef, currentTime);
+			draw(videoRef, $videoStatus.currentTime);
 		}}
 		on:play={() => {
 			animationId = window?.requestAnimationFrame(animate);
 
-			if (ended || currentTime >= $edits.endAt) {
-				currentTime = $edits.startAt;
+			if (ended || $videoStatus.currentTime >= $edits.endAt) {
+				$videoStatus.currentTime = $edits.startAt;
 			}
 		}}
 		on:pause={() => {
@@ -282,16 +290,16 @@
 			}
 		}}
 		on:timeupdate={() => {
-			if (currentTime >= $edits.endAt) {
+			if ($videoStatus.currentTime >= $edits.endAt) {
 				videoRef.pause();
 			}
 		}}
 		on:seeked={() => {
 			currentZoomIndex = $zoomList.findIndex(
-				(zoom) => zoom.start >= currentTime || zoom.end >= currentTime
+				(zoom) => zoom.start >= $videoStatus.currentTime || zoom.end >= $videoStatus.currentTime
 			);
 			currentZoom = $zoomList.at(currentZoomIndex) ?? null;
-			draw(videoRef, currentTime);
+			draw(videoRef, $videoStatus.currentTime);
 		}}
 	/>
 	<canvas width="1920" height="1080" class="rounded-md" bind:this={canvasRef} />
