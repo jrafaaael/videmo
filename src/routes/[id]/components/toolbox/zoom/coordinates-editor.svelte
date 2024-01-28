@@ -2,25 +2,36 @@
 	import { onMount } from 'svelte';
 	import { currentZoomIndex, zoomList } from '../../../stores/zoom-list.store';
 
-	let dragableRef: HTMLButtonElement;
+	let draggableRef: HTMLButtonElement;
 	let isDragging = false;
+	let mousePositionWhenDragStart = { x: 0, y: 0 };
 
 	function handleDragging(e: MouseEvent) {
 		if (isDragging) {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const constrains = dragableRef.parentElement!.getBoundingClientRect();
-			const x = Math.min(Math.max(e.clientX - constrains.left, 0), constrains.width);
-			const y = Math.min(Math.max(e.clientY - constrains.top, 0), constrains.height);
-			const xInPercentage = +((x * 100) / constrains.width).toFixed(0);
-			const yInPercentage = +((y * 100) / constrains.height).toFixed(0);
+			const constrains = draggableRef.parentElement!.getBoundingClientRect();
+			const draggableSize = draggableRef.getBoundingClientRect().width / 2;
+			const dx = Math.min(
+				Math.max(e.clientX - mousePositionWhenDragStart.x, -draggableSize),
+				constrains.width - draggableSize
+			);
+			const dy = Math.min(
+				Math.max(e.clientY - mousePositionWhenDragStart.y, -draggableSize),
+				constrains.height - draggableSize
+			);
+			const centerX = draggableRef.offsetLeft + draggableRef.offsetWidth / 2;
+			const centerY = draggableRef.offsetTop + draggableRef.offsetHeight / 2;
+			const percentX = +((centerX / constrains.width) * 100).toFixed(0);
+			const percentY = +((centerY / constrains.height) * 100).toFixed(0);
+			console.log({ percentX, percentY });
 
-			dragableRef.style.setProperty('--positionX', `${xInPercentage}%`);
-			dragableRef.style.setProperty('--positionY', `${yInPercentage}%`);
+			draggableRef.style.setProperty('--positionX', `${dx}px`);
+			draggableRef.style.setProperty('--positionY', `${dy}px`);
 
 			const currentZoom = $zoomList.at($currentZoomIndex);
 
 			if (currentZoom) {
-				zoomList.updateZoomById({ ...currentZoom, x: xInPercentage, y: yInPercentage });
+				zoomList.updateZoomById({ ...currentZoom, x: percentX, y: percentY });
 			}
 		}
 	}
@@ -50,7 +61,11 @@
 	<button
 		class="w-4 aspect-square bg-white/50 rounded-full absolute inset-0 cursor-grab active:cursor-grabbing"
 		style="top: var(--positionY, 0%); left: var(--positionX, 0%);"
-		bind:this={dragableRef}
-		on:mousedown={() => (isDragging = true)}
+		bind:this={draggableRef}
+		on:mousedown={(e) => {
+			isDragging = true;
+			mousePositionWhenDragStart.x = e.clientX - draggableRef.offsetLeft;
+			mousePositionWhenDragStart.y = e.clientY - draggableRef.offsetTop;
+		}}
 	/>
 </div>
