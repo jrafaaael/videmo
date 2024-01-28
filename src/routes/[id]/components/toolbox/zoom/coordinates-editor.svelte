@@ -64,7 +64,9 @@
 	on:mouseup={() => (isDragging = false)}
 /> -->
 
-<div class="w-full aspect-video bg-white/5 relative {isDragging ? 'cursor-grabbing' : ''}">
+<div
+	class="w-full aspect-video bg-white/5 border border-white/5 rounded-md relative {isDragging ? 'cursor-grabbing' : ''}"
+>
 	<button
 		class="w-4 aspect-square bg-white/50 rounded-full absolute inset-0 cursor-grab active:cursor-grabbing"
 		style="top: var(--positionY, 0%); left: var(--positionX, 0%);"

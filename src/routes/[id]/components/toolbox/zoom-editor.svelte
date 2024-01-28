@@ -36,17 +36,13 @@
 	}}
 />
 
-<div class=" w-full rounded-md">
-	{#if currentZoom && currentZoom?.start <= $videoStatus.currentTime && currentZoom.end >= $videoStatus.currentTime}
-		<div class="w-full">
-			<CoordinatesEditor />
-		</div>
-	{:else}
-		<button
-			class="w-full aspect-video p-2 bg-black/50 flex justify-center items-center"
-			on:click={handleAddZoom}
-		>
-			➕ Add zoom
-		</button>
-	{/if}
-</div>
+{#if currentZoom && currentZoom?.start <= $videoStatus.currentTime && currentZoom.end >= $videoStatus.currentTime}
+	<CoordinatesEditor />
+{:else}
+	<button
+		class="w-full aspect-video p-2 bg-white/5 border border-white/5 rounded-md flex justify-center items-center"
+		on:click={handleAddZoom}
+	>
+		➕ Add zoom
+	</button>
+{/if}
