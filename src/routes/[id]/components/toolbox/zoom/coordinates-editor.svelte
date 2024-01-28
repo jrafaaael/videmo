@@ -5,6 +5,7 @@
 	let draggableRef: HTMLButtonElement;
 	let isDragging = false;
 	let mousePositionWhenDragStart = { x: 0, y: 0 };
+	$: currentZoom = $zoomList.at($currentZoomIndex);
 
 	function handleDragging(e: MouseEvent) {
 		if (isDragging) {
@@ -23,12 +24,9 @@
 			const centerY = draggableRef.offsetTop + draggableRef.offsetHeight / 2;
 			const percentX = +((centerX / constrains.width) * 100).toFixed(0);
 			const percentY = +((centerY / constrains.height) * 100).toFixed(0);
-			console.log({ percentX, percentY });
 
 			draggableRef.style.setProperty('--positionX', `${dx}px`);
 			draggableRef.style.setProperty('--positionY', `${dy}px`);
-
-			const currentZoom = $zoomList.at($currentZoomIndex);
 
 			if (currentZoom) {
 				zoomList.updateZoomById({ ...currentZoom, x: percentX, y: percentY });
@@ -41,6 +39,15 @@
 	}
 
 	onMount(() => {
+		draggableRef.style.setProperty(
+			'--positionX',
+			`calc(${currentZoom?.x}% - ${draggableRef?.getBoundingClientRect().width / 2}px)`
+		);
+		draggableRef.style.setProperty(
+			'--positionY',
+			`calc(${currentZoom?.y}% - ${draggableRef?.getBoundingClientRect().height / 2}px)`
+		);
+
 		document.addEventListener('mousemove', handleDragging);
 		document.addEventListener('mouseup', handleDragEnd);
 
