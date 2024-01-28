@@ -35,3 +35,4 @@ function createZoomList() {
 }
 
 export const zoomList = createZoomList();
+export const currentZoomIndex = writable(0);

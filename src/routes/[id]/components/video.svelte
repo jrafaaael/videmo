@@ -5,7 +5,7 @@
 	import { videoStatus } from '../stores/video-status.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
-	import { zoomList } from '../stores/zoom-list.store';
+	import { zoomList, currentZoomIndex } from '../stores/zoom-list.store';
 	import { createMP4 } from '../utils/create-mp4';
 	import { lerp } from '../utils/lerp';
 	import {
@@ -23,8 +23,7 @@
 	let backgroundImageRef = new Image();
 	let currentTime = 0;
 	let animationId: number;
-	let currentZoomIndex = 0;
-	let currentZoom = $zoomList.at(currentZoomIndex) ?? null;
+	$: currentZoom = $zoomList.at($currentZoomIndex) ?? null;
 	$: $videoStatus.currentTime = Math.max($edits.startAt, Math.min(currentTime, $edits.endAt));
 
 	function roundCorners({
@@ -68,16 +67,16 @@
 		const top = (ctx.canvas.height - height) / 2;
 
 		if (currentZoom && frameTime >= currentZoom.end) {
-			currentZoomIndex++;
-			currentZoom = $zoomList.at(currentZoomIndex) ?? null;
+			$currentZoomIndex++;
+			currentZoom = $zoomList.at($currentZoomIndex) ?? null;
 		}
 
 		const zoomInStart = currentZoom?.start ?? Infinity;
 		const zoomInEnd = zoomInStart + ZOOM_TRANSITION_DURATION;
 		const zoomOutEnd = currentZoom?.end ?? Infinity;
 		const zoomOutStart = zoomOutEnd - ZOOM_TRANSITION_DURATION;
-		const prevZoom = $zoomList[currentZoomIndex - 1];
-		const nextZoom = $zoomList.at(currentZoomIndex + 1);
+		const prevZoom = $zoomList[$currentZoomIndex - 1];
+		const nextZoom = $zoomList.at($currentZoomIndex + 1);
 		const isInsideZoom =
 			currentZoom !== null && frameTime >= zoomInStart && frameTime <= zoomOutEnd;
 		const isOverlappingNextZoom = nextZoom ? nextZoom?.start <= zoomOutEnd : false;
@@ -114,6 +113,7 @@
 		 * 4. zoom-out transition start at 3.75 and end at 4
 		 */
 		// TODO: zoom speed
+		// TODO: zoom level
 		if (!isInsideZoom) {
 		} else if (isOverlappingPrevZoom && frameTime >= zoomInStart && frameTime <= zoomInEnd) {
 			const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
@@ -234,10 +234,10 @@
 			draw(videoRef, $videoStatus.currentTime)
 		);
 		const unsubscribeZoomStore = zoomList.subscribe(() => {
-			currentZoomIndex = $zoomList.findIndex(
+			$currentZoomIndex = $zoomList.findIndex(
 				(zoom) => zoom.start >= $videoStatus.currentTime || zoom.end >= $videoStatus.currentTime
 			);
-			currentZoom = $zoomList.at(currentZoomIndex) ?? null;
+			currentZoom = $zoomList.at($currentZoomIndex) ?? null;
 
 			if (paused) {
 				draw(videoRef, $videoStatus.currentTime);
@@ -296,11 +296,13 @@
 			}
 		}}
 		on:seeked={() => {
-			currentZoomIndex = $zoomList.findIndex(
+			$currentZoomIndex = $zoomList.findIndex(
 				(zoom) => zoom.start >= $videoStatus.currentTime || zoom.end >= $videoStatus.currentTime
 			);
-			currentZoom = $zoomList.at(currentZoomIndex) ?? null;
-			draw(videoRef, $videoStatus.currentTime);
+
+			if (!ended) {
+				draw(videoRef, $videoStatus.currentTime);
+			}
 		}}
 	/>
 	<canvas width="1920" height="1080" class="rounded-md" bind:this={canvasRef} />
