@@ -84,6 +84,8 @@
 		let zoom = 1;
 		let leftWithZoom = left;
 		let topWithZoom = top;
+		const x = (currentZoom?.x * width) / 100;
+		const y = (currentZoom?.y * height) / 100;
 
 		/*
 		 * VIDEMO'S ZOOM WORKING PRINCIPLE
@@ -117,9 +119,10 @@
 		if (!isInsideZoom) {
 		} else if (isOverlappingPrevZoom && frameTime >= zoomInStart && frameTime <= zoomInEnd) {
 			const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
-
-			const left = lerp(prevZoom?.x, currentZoom?.x, progress);
-			const top = lerp(prevZoom.y, currentZoom?.y, progress);
+			const prevX = (prevZoom?.x * width) / 100;
+			const prevY = (prevZoom?.y * height) / 100;
+			const left = lerp(prevX, x, progress);
+			const top = lerp(prevY, y, progress);
 
 			zoom = MAX_ZOOM_LEVEL;
 			leftWithZoom -= left * (zoom - 1);
@@ -140,8 +143,8 @@
 				zoom = MAX_ZOOM_LEVEL;
 			}
 
-			leftWithZoom -= currentZoom?.x * (zoom - 1);
-			topWithZoom -= currentZoom?.y * (zoom - 1);
+			leftWithZoom -= x * (zoom - 1);
+			topWithZoom -= y * (zoom - 1);
 		}
 
 		const widthWithZoom = width * zoom;

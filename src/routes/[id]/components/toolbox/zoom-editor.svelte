@@ -1,7 +1,10 @@
 <script>
 	import { edits } from '$lib/stores/edits.store';
 	import { videoStatus } from '../../stores/video-status.store';
-	import { zoomList } from '../../stores/zoom-list.store';
+	import { zoomList, currentZoomIndex } from '../../stores/zoom-list.store';
+	import CoordinatesEditor from './zoom/coordinates-editor.svelte';
+
+	$: currentZoom = $zoomList.at($currentZoomIndex) ?? null;
 
 	function handleAddZoom() {
 		if (
@@ -33,12 +36,17 @@
 	}}
 />
 
-<div class="relative rounded-md overflow-hidden">
-	<button
-		class="w-full h-full p-2 bg-black/50 flex justify-center items-center absolute inset-0"
-		on:click={handleAddZoom}
-	>
-		➕ Add zoom
-	</button>
-	<div class="w-full aspect-video bg-white/5" />
+<div class=" w-full rounded-md">
+	{#if currentZoom && currentZoom?.start <= $videoStatus.currentTime && currentZoom.end >= $videoStatus.currentTime}
+		<div class="w-full">
+			<CoordinatesEditor />
+		</div>
+	{:else}
+		<button
+			class="w-full aspect-video p-2 bg-black/50 flex justify-center items-center"
+			on:click={handleAddZoom}
+		>
+			➕ Add zoom
+		</button>
+	{/if}
 </div>
