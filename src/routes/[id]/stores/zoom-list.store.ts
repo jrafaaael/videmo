@@ -22,6 +22,10 @@ function createZoomList() {
 		);
 	}
 
+	function removeZoomById(zoom: Zoom) {
+		_zooms.update((list) => list.filter((current) => current.id !== zoom.id));
+	}
+
 	function _clear() {
 		_zooms.set([]);
 	}
@@ -30,6 +34,7 @@ function createZoomList() {
 		subscribe: sorted.subscribe,
 		addZoom,
 		updateZoomById,
+		removeZoomById,
 		_clear
 	};
 }

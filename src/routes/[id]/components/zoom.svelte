@@ -123,6 +123,7 @@
 	class="h-10 bg-emerald-500/30 rounded-md overflow-hidden absolute"
 	style="width: {width}%; left: {left}%"
 	bind:this={trimmerRef}
+	on:dblclick={(e) => dispatcher('dblclick', { e })}
 >
 	<button
 		class="w-auto h-full px-4 cursor-ew-resize absolute top-0 left-0"

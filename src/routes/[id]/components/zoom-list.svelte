@@ -14,6 +14,7 @@
 			{width}
 			{left}
 			on:resize={({ detail }) => {
+				// BUG: when resizing to end, allow to set `end` time equals to `end` of trimming
 				const { direction, delta, refToElement } = detail;
 				const zoomRect = refToElement.getBoundingClientRect();
 				const constrains = refToElement.parentElement.getBoundingClientRect();
@@ -63,6 +64,9 @@
 						});
 					}
 				}
+			}}
+			on:dblclick={() => {
+				zoomList.removeZoomById(zoom);
 			}}
 		/>
 	{/each}
