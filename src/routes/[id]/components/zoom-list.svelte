@@ -65,9 +65,6 @@
 					}
 				}
 			}}
-			on:dblclick={() => {
-				zoomList.removeZoomById(zoom);
-			}}
 		/>
 	{/each}
 </div>

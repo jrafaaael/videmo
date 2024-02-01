@@ -2,6 +2,7 @@
 	import { edits } from '$lib/stores/edits.store';
 	import { videoStatus } from '../../stores/video-status.store';
 	import { zoomList, currentZoomIndex } from '../../stores/zoom-list.store';
+	import Trash from '../icons/trash.svelte';
 	import CoordinatesEditor from './zoom/coordinates-editor.svelte';
 
 	$: currentZoom = $zoomList.at($currentZoomIndex) ?? null;
@@ -28,17 +29,22 @@
 	}
 </script>
 
-<svelte:document
-	on:dblclick={() => {
-		zoomList._clear();
-	}}
-/>
-
 {#if currentZoom && currentZoom?.start <= $videoStatus.currentTime && currentZoom.end >= $videoStatus.currentTime}
 	<ul class="flex flex-col gap-8">
 		<li class="flex flex-col gap-2">
-			<p class="text-neutral-300">Focus point</p>
+			<p class="mb-2 text-neutral-300">Focus point</p>
 			<CoordinatesEditor />
+		</li>
+		<li class="flex gap-2">
+			<button
+				class="py-[6px] px-3 bg-white/5 border border-white/5 rounded-md text-neutral-50 flex-1 flex justify-center items-center gap-2 hover:bg-white/10 hover:border-white/10"
+				on:click={() => zoomList.removeZoomById(currentZoom)}
+			>
+				<span class="w-4 aspect-square inline-block">
+					<Trash />
+				</span>
+				<span>Remove zoom</span>
+			</button>
 		</li>
 	</ul>
 {:else}
