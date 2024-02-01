@@ -31,7 +31,10 @@
 </script>
 
 <main class="w-full h-full flex justify-center items-center">
-	<button class="py-1 px-3 bg-purple-600 rounded-md flex items-center gap-2" on:click={handleClick}>
+	<button
+		class="py-[6px] px-3 bg-purple-600 rounded-md flex items-center gap-2"
+		on:click={handleClick}
+	>
 		<div class="w-4 aspect-square">
 			{#if $recorder.isRecording}
 				<VideoSlash />
