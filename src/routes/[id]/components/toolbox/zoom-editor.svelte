@@ -18,15 +18,13 @@
 			return;
 		}
 
-		const zoom = {
+		zoomList.addZoom({
 			id: new Date().getTime(),
 			start: $videoStatus.currentTime,
 			end: $videoStatus.currentTime + 1,
 			x: 0,
 			y: 0
-		};
-
-		zoomList.addZoom(zoom);
+		});
 	}
 </script>
 
@@ -37,7 +35,12 @@
 />
 
 {#if currentZoom && currentZoom?.start <= $videoStatus.currentTime && currentZoom.end >= $videoStatus.currentTime}
-	<CoordinatesEditor />
+	<ul class="flex flex-col gap-8">
+		<li class="flex flex-col gap-2">
+			<p class="text-neutral-300">Focus point</p>
+			<CoordinatesEditor />
+		</li>
+	</ul>
 {:else}
 	<button
 		class="w-full aspect-video p-2 bg-white/5 border border-white/5 rounded-md flex justify-center items-center"

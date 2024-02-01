@@ -24,7 +24,9 @@
 	] as const;
 </script>
 
-<aside class="min-w-[350px] bg-neutral-900 border-r-2 border-r-white/5 basis-1/5">
+<aside
+	class="min-w-[350px] max-w-full bg-neutral-900 border-r-2 border-r-white/5 basis-1/5 overflow-y-scroll"
+>
 	<Accordion.Root defaultValue={OPTIONS.at(0)?.id}>
 		<div class="w-full">
 			{#each OPTIONS as item}
