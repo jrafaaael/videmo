@@ -6,6 +6,7 @@
 	import CoordinatesEditor from './zoom/coordinates-editor.svelte';
 
 	$: currentZoom = $zoomList.at($currentZoomIndex) ?? null;
+	$: currentTime = +$videoStatus.currentTime.toFixed(2);
 
 	function handleAddZoom() {
 		if (
@@ -21,15 +22,15 @@
 
 		zoomList.addZoom({
 			id: new Date().getTime(),
-			start: $videoStatus.currentTime,
-			end: $videoStatus.currentTime + 1,
+			start: currentTime,
+			end: currentTime + 1,
 			x: 0,
 			y: 0
 		});
 	}
 </script>
 
-{#if currentZoom && currentZoom?.start <= $videoStatus.currentTime && currentZoom.end >= $videoStatus.currentTime}
+{#if currentZoom && currentZoom?.start <= currentTime && currentZoom.end >= currentTime}
 	<ul class="flex flex-col gap-8">
 		<li class="flex flex-col gap-2">
 			<p class="mb-2 text-neutral-300">Focus point</p>
