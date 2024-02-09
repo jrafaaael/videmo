@@ -38,7 +38,7 @@
 					} else if (+endAt > nextZoom?.start) {
 						zoomList.updateZoomById({
 							...zoom,
-							end: nextZoom?.start
+							end: +nextZoom?.start.toFixed(2)
 						});
 					}
 				} else if (direction === 'left') {
@@ -60,7 +60,7 @@
 					} else if (+startAt < prevZoom.end) {
 						zoomList.updateZoomById({
 							...zoom,
-							start: prevZoom?.end
+							start: +prevZoom?.end.toFixed(2)
 						});
 					}
 				}
