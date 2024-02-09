@@ -41,3 +41,7 @@ function createZoomList() {
 
 export const zoomList = createZoomList();
 export const currentZoomIndex = writable(0);
+export const currentZoom = derived(
+	[zoomList, currentZoomIndex],
+	([zooms, idx]) => zooms[idx] ?? null
+);

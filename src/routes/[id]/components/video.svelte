@@ -5,7 +5,7 @@
 	import { videoStatus } from '../stores/video-status.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
-	import { zoomList, currentZoomIndex } from '../stores/zoom-list.store';
+	import { zoomList, currentZoomIndex, currentZoom } from '../stores/zoom-list.store';
 	import { createMP4 } from '../utils/create-mp4';
 	import { lerp } from '../utils/lerp';
 	import {
@@ -23,7 +23,6 @@
 	let backgroundImageRef = new Image();
 	let currentTime = 0;
 	let animationId: number;
-	$: currentZoom = $zoomList.at($currentZoomIndex) ?? null;
 	$: $videoStatus.currentTime = Math.max($edits.startAt, Math.min(currentTime, $edits.endAt));
 
 	function roundCorners({
@@ -66,14 +65,13 @@
 		const left = (ctx.canvas.width - width) / 2;
 		const top = (ctx.canvas.height - height) / 2;
 
-		if (currentZoom && frameTime >= currentZoom.end) {
+		if ($currentZoomIndex < $zoomList.length - 1 && $currentZoom && frameTime >= $currentZoom.end) {
 			$currentZoomIndex++;
-			currentZoom = $zoomList.at($currentZoomIndex) ?? null;
 		}
 
-		const zoomInStart = currentZoom?.start ?? Infinity;
+		const zoomInStart = $currentZoom?.start ?? Infinity;
 		const zoomInEnd = zoomInStart + ZOOM_TRANSITION_DURATION;
-		const zoomOutEnd = currentZoom?.end ?? Infinity;
+		const zoomOutEnd = $currentZoom?.end ?? Infinity;
 		const zoomOutStart = zoomOutEnd - ZOOM_TRANSITION_DURATION;
 		const prevZoom = $zoomList[$currentZoomIndex - 1];
 		const nextZoom = $zoomList.at($currentZoomIndex + 1);
@@ -81,11 +79,11 @@
 			currentZoom !== null && frameTime >= zoomInStart && frameTime <= zoomOutEnd;
 		const isOverlappingNextZoom = nextZoom ? nextZoom?.start <= zoomOutEnd : false;
 		const isOverlappingPrevZoom = prevZoom ? zoomInStart <= prevZoom?.end : false;
+		const x = ($currentZoom?.x * width) / 100;
+		const y = ($currentZoom?.y * height) / 100;
 		let zoom = 1;
 		let leftWithZoom = left;
 		let topWithZoom = top;
-		const x = (currentZoom?.x * width) / 100;
-		const y = (currentZoom?.y * height) / 100;
 
 		/*
 		 * VIDEMO'S ZOOM WORKING PRINCIPLE
@@ -240,7 +238,6 @@
 			$currentZoomIndex = $zoomList.findIndex(
 				(zoom) => zoom.start >= $videoStatus.currentTime || zoom.end >= $videoStatus.currentTime
 			);
-			currentZoom = $zoomList.at($currentZoomIndex) ?? null;
 
 			if (paused) {
 				draw(videoRef, $videoStatus.currentTime);

@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { currentZoomIndex, zoomList } from '../../../stores/zoom-list.store';
+	import { zoomList, currentZoom } from '../../../stores/zoom-list.store';
 
 	let draggableRef: HTMLButtonElement;
 	let isDragging = false;
 	let mousePositionWhenDragStart = { x: 0, y: 0 };
-	$: currentZoom = $zoomList.at($currentZoomIndex);
 
 	function handleDragging(e: MouseEvent) {
 		if (isDragging) {
@@ -29,7 +28,7 @@
 			draggableRef.style.setProperty('--positionY', `${dy}px`);
 
 			if (currentZoom) {
-				zoomList.updateZoomById({ ...currentZoom, x: percentX, y: percentY });
+				zoomList.updateZoomById({ ...$currentZoom, x: percentX, y: percentY });
 			}
 		}
 	}
@@ -41,11 +40,11 @@
 	onMount(() => {
 		draggableRef.style.setProperty(
 			'--positionX',
-			`calc(${currentZoom?.x}% - ${draggableRef?.getBoundingClientRect().width / 2}px)`
+			`calc(${$currentZoom?.x}% - ${draggableRef?.getBoundingClientRect().width / 2}px)`
 		);
 		draggableRef.style.setProperty(
 			'--positionY',
-			`calc(${currentZoom?.y}% - ${draggableRef?.getBoundingClientRect().height / 2}px)`
+			`calc(${$currentZoom?.y}% - ${draggableRef?.getBoundingClientRect().height / 2}px)`
 		);
 
 		document.addEventListener('mousemove', handleDragging);
