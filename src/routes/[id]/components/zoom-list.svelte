@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { recording } from '$lib/stores/recording.store';
-	import { zoomList } from '../stores/zoom-list.store';
+	import { zooms } from '../stores/zooms.store';
 	import Zoom from './zoom.svelte';
 </script>
 
 <div class="w-full h-10 relative">
-	{#each $zoomList as zoom, idx (zoom.id)}
+	{#each $zooms as zoom, idx (zoom.id)}
 		{@const width = ((zoom.end - zoom.start) * 100) / $recording?.duration}
 		{@const left = (zoom.start * 100) / $recording?.duration}
-		{@const nextZoom = $zoomList.at(idx + 1)}
-		{@const prevZoom = idx === 0 ? null : $zoomList.at(idx - 1)}
+		{@const nextZoom = $zooms.at(idx + 1)}
+		{@const prevZoom = idx === 0 ? null : $zooms.at(idx - 1)}
 		<Zoom
 			{width}
 			{left}
@@ -35,12 +35,12 @@
 					 * the current edited zoom equals to `start` of next one
 					 */
 					if (!nextZoom || end < nextZoom.start) {
-						zoomList.updateZoomById({
+						zooms.updateZoomById({
 							...zoom,
 							end
 						});
 					} else if (end > nextZoom?.start) {
-						zoomList.updateZoomById({
+						zooms.updateZoomById({
 							...zoom,
 							end: +nextZoom?.start.toFixed(2)
 						});
@@ -61,12 +61,12 @@
 					 * the current edited zoom equals to `end` of previous one
 					 */
 					if (!prevZoom || start > prevZoom.end) {
-						zoomList.updateZoomById({
+						zooms.updateZoomById({
 							...zoom,
 							start
 						});
 					} else if (start < prevZoom.end) {
-						zoomList.updateZoomById({
+						zooms.updateZoomById({
 							...zoom,
 							start: +prevZoom?.end.toFixed(2)
 						});

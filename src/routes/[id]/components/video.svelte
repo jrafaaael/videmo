@@ -5,7 +5,7 @@
 	import { videoStatus } from '../stores/video-status.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
-	import { zoomList, currentZoomIndex, currentZoom } from '../stores/zoom-list.store';
+	import { zooms, currentZoomIndex, currentZoom } from '../stores/zooms.store';
 	import { createMP4 } from '../utils/create-mp4';
 	import { lerp } from '../utils/lerp';
 	import {
@@ -65,7 +65,7 @@
 		const left = (ctx.canvas.width - width) / 2;
 		const top = (ctx.canvas.height - height) / 2;
 
-		if ($currentZoomIndex < $zoomList.length - 1 && $currentZoom && frameTime >= $currentZoom.end) {
+		if ($currentZoomIndex < $zooms.length - 1 && $currentZoom && frameTime >= $currentZoom.end) {
 			$currentZoomIndex++;
 		}
 
@@ -73,8 +73,8 @@
 		const zoomInEnd = zoomInStart + ZOOM_TRANSITION_DURATION;
 		const zoomOutEnd = $currentZoom?.end ?? Infinity;
 		const zoomOutStart = zoomOutEnd - ZOOM_TRANSITION_DURATION;
-		const prevZoom = $zoomList[$currentZoomIndex - 1];
-		const nextZoom = $zoomList.at($currentZoomIndex + 1);
+		const prevZoom = $zooms[$currentZoomIndex - 1];
+		const nextZoom = $zooms.at($currentZoomIndex + 1);
 		const isInsideZoom =
 			currentZoom !== null && frameTime >= zoomInStart && frameTime <= zoomOutEnd;
 		const isOverlappingNextZoom = nextZoom ? nextZoom?.start <= zoomOutEnd : false;
@@ -236,8 +236,8 @@
 		const unsubscribeAppearenceStore = appearence.subscribe(() =>
 			draw(videoRef, $videoStatus.currentTime)
 		);
-		const unsubscribeZoomStore = zoomList.subscribe(() => {
-			$currentZoomIndex = $zoomList.findIndex(
+		const unsubscribeZoomStore = zooms.subscribe(() => {
+			$currentZoomIndex = $zooms.findIndex(
 				(zoom) => zoom.start >= $videoStatus.currentTime || zoom.end >= $videoStatus.currentTime
 			);
 
@@ -298,7 +298,7 @@
 			}
 		}}
 		on:seeked={() => {
-			$currentZoomIndex = $zoomList.findIndex(
+			$currentZoomIndex = $zooms.findIndex(
 				(zoom) => zoom.start >= $videoStatus.currentTime || zoom.end >= $videoStatus.currentTime
 			);
 

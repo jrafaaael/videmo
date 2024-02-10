@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { zoomList, currentZoom } from '../../../stores/zoom-list.store';
+	import { zooms, currentZoom } from '../../../stores/zooms.store';
 
 	let draggableRef: HTMLButtonElement;
 	let isDragging = false;
@@ -31,7 +31,7 @@
 				return;
 			}
 
-			zoomList.updateZoomById({ ...$currentZoom, x: percentX, y: percentY });
+			zooms.updateZoomById({ ...$currentZoom, x: percentX, y: percentY });
 		}
 	}
 

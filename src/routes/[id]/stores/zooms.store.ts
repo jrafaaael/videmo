@@ -8,7 +8,7 @@ interface Zoom {
 	y: number;
 }
 
-function createZoomList() {
+function createZooms() {
 	const _zooms = writable<Zoom[]>([]);
 	const sorted = derived(_zooms, (zooms) => zooms.toSorted((a, b) => a.start - b.start));
 
@@ -39,9 +39,9 @@ function createZoomList() {
 	};
 }
 
-export const zoomList = createZoomList();
+export const zooms = createZooms();
 export const currentZoomIndex = writable(0);
 export const currentZoom = derived(
-	[zoomList, currentZoomIndex],
+	[zooms, currentZoomIndex],
 	([zooms, idx]) => zooms[idx] ?? null
 );
