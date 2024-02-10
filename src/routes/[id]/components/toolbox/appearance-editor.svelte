@@ -61,7 +61,7 @@
 		<div class="flex justify-between gap-4">
 			<label for="shadow-opacity" class="text-neutral-300">Shadow opacity</label>
 			<output class="tabular-nums">
-				{$appearence.shadow.opacity.toString(10).padStart(3, '0')}<span>%</span>
+				{$appearence.shadow.opacity.toString(10).padStart(3, '0')}<span class="text-xs">%</span>
 			</output>
 		</div>
 		<input

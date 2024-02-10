@@ -10,7 +10,7 @@
 	let seekbarRef: HTMLButtonElement;
 	let dispatcher = createEventDispatcher();
 	$: totalVideoDuration = $recording?.duration ?? 0;
-	$: position = ($videoStatus.currentTime * 100) / totalVideoDuration;
+	$: position = +(($videoStatus.currentTime * 100) / totalVideoDuration).toFixed(2);
 
 	function handleSeeking(e: MouseEvent) {
 		if (isDragging) {
@@ -27,8 +27,6 @@
 				Math.min(positionInPercentage, endPositionInPercentage)
 			);
 			const newTime = (newPosition * totalVideoDuration) / 100;
-
-			position = newPosition;
 
 			dispatcher('changeTime', { newTime });
 		}
