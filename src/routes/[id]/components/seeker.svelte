@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { recording } from '$lib/stores/recording.store';
+	import { videoStatus } from '../stores/video-status.store';
 
-	export let currentTime: number;
 	export let startAt: number;
 	export let endAt: number;
 	export let isTrimming: boolean;
@@ -10,7 +10,7 @@
 	let seekbarRef: HTMLButtonElement;
 	let dispatcher = createEventDispatcher();
 	$: totalVideoDuration = $recording?.duration ?? 0;
-	$: position = ((currentTime * 100) / totalVideoDuration).toFixed(2);
+	$: position = +(($videoStatus.currentTime * 100) / totalVideoDuration).toFixed(2);
 
 	function handleSeeking(e: MouseEvent) {
 		if (isDragging) {
@@ -54,9 +54,10 @@
 /> -->
 
 <button
-	class="h-[calc(100%+8px)] px-2 absolute bottom-0 z-50 cursor-col-resize {currentTime <= startAt ||
+	class="h-[calc(100%+8px)] px-2 absolute bottom-0 z-50 cursor-col-resize {$videoStatus.currentTime <=
+		startAt ||
 	isDragging ||
-	(isTrimming && (endAt <= currentTime || startAt >= currentTime))
+	(isTrimming && (endAt <= $videoStatus.currentTime || startAt >= $videoStatus.currentTime))
 		? 'transition-none'
 		: 'transition-[left] ease-linear duration-100'}"
 	style="--position: {position}%; left: calc(var(--position, 0%) - 8px);"

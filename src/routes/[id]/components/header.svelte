@@ -91,7 +91,7 @@
 		</Select.Root>
 	</h1>
 	<button
-		class="py-1 px-3 rounded-md flex items-center gap-2 absolute right-10 {isExporting
+		class="py-[6px] px-3 rounded-md flex items-center gap-2 absolute right-10 {isExporting
 			? 'bg-neutral-600 text-neutral-400 cursor-not-allowed focus:outline-none'
 			: 'bg-purple-600'}"
 		tabindex={isExporting ? -1 : 0}

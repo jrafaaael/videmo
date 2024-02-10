@@ -1,27 +1,29 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { sineIn } from 'svelte/easing';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
+	import { videoStatus } from '../stores/video-status.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
-	import { interpolateZoomLevel } from '../utils/interpolate-zoom-level';
+	import { zooms, currentZoomIndex, currentZoom } from '../stores/zooms.store';
 	import { createMP4 } from '../utils/create-mp4';
-	import { MICROSECONDS_PER_SECOND } from '../utils/constants';
+	import { lerp } from '../utils/lerp';
+	import {
+		MICROSECONDS_PER_SECOND,
+		MAX_ZOOM_LEVEL,
+		MIN_ZOOM_LEVEL,
+		ZOOM_TRANSITION_DURATION
+	} from '../utils/constants';
 
-	export let currentTime: number;
 	export let paused: boolean;
 	export let ended: boolean;
-	const COORD = {
-		x: 0,
-		y: 540
-	};
 	let videoRef: HTMLVideoElement;
 	let canvasRef: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
 	let backgroundImageRef = new Image();
+	let currentTime = 0;
 	let animationId: number;
-	$: currentTime = Math.max($edits.startAt, Math.min(currentTime ?? Infinity, $edits.endAt));
+	$: $videoStatus.currentTime = Math.max($edits.startAt, Math.min(currentTime, $edits.endAt));
 
 	function roundCorners({
 		ctx,
@@ -62,17 +64,89 @@
 		const height = Math.min(width / VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.height);
 		const left = (ctx.canvas.width - width) / 2;
 		const top = (ctx.canvas.height - height) / 2;
-		const zoom = sineIn(
-			interpolateZoomLevel({
-				time: frameTime,
-				zoomInStartTime: 2,
-				zoomOutStartTime: 4
-			})
-		);
+
+		if ($currentZoomIndex < $zooms.length - 1 && $currentZoom && frameTime >= $currentZoom.end) {
+			$currentZoomIndex++;
+		}
+
+		const zoomInStart = $currentZoom?.start ?? Infinity;
+		const zoomInEnd = zoomInStart + ZOOM_TRANSITION_DURATION;
+		const zoomOutEnd = $currentZoom?.end ?? Infinity;
+		const zoomOutStart = zoomOutEnd - ZOOM_TRANSITION_DURATION;
+		const prevZoom = $zooms[$currentZoomIndex - 1];
+		const nextZoom = $zooms.at($currentZoomIndex + 1);
+		const isInsideZoom =
+			currentZoom !== null && frameTime >= zoomInStart && frameTime <= zoomOutEnd;
+		const isOverlappingNextZoom = nextZoom ? nextZoom?.start <= zoomOutEnd : false;
+		const isOverlappingPrevZoom = prevZoom ? zoomInStart <= prevZoom?.end : false;
+		const x = ($currentZoom?.x * width) / 100;
+		const y = ($currentZoom?.y * height) / 100;
+		let zoom = 1;
+		let leftWithZoom = left;
+		let topWithZoom = top;
+
+		/*
+		 * VIDEMO'S ZOOM WORKING PRINCIPLE
+		 *
+		 * zoom-in: `currentZoom.start` to `currentZoom.start + zoom transition duration`
+		 * zoom-out: `currentZoom.end - transition duration` to `currentZoom.end`
+		 *
+		 * EXAMPLE: [{start: 1, end: 2}, {start: 3, end: 4}]
+		 * WORKFLOW:
+		 * 1. zoom-in transition start at 1
+		 * 2. zoom-in transition end at 1.25
+		 * 3. zoom level remains up to 1.75
+		 * 4. zoom-out transition start at 1.75
+		 * 5. zoom-out transition end at 2
+		 * 6. gap between zooms (2 to 3)
+		 * 7. repeat with new zoom
+		 *
+		 * ZOOM OVERLAP: two zooms overlap when `end` time of one is equal to `start` time of the other
+		 * in this case, i don't want to zoom-in and zoom-out for every zoom. instead, i want to zoom-in on the first zoom `start` time, move zoom coordinates
+		 * on every next zoom `start` time and zoom-out on the last zoom `end` time
+		 *
+		 * EXAMPLE: [{start: 1, end: 2}, {start: 2, end: 3}, {start: 3, end: 4}]
+		 * WORKFLOW:
+		 * 1. zoom-in transition start at 1 and end at 1.25 to (x, y) coordinates
+		 * 2. change zoom coordinates start at 2 and end at 2.25 to (x, y) coordinates
+		 * 3. change zoom coordinates start at 3 and end at 3.25 to (x, y) coordinates
+		 * 4. zoom-out transition start at 3.75 and end at 4
+		 */
+		// TODO: zoom speed
+		// TODO: zoom level
+		if (!isInsideZoom) {
+		} else if (isOverlappingPrevZoom && frameTime >= zoomInStart && frameTime <= zoomInEnd) {
+			const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+			const prevX = (prevZoom?.x * width) / 100;
+			const prevY = (prevZoom?.y * height) / 100;
+			const left = lerp(prevX, x, progress);
+			const top = lerp(prevY, y, progress);
+
+			zoom = MAX_ZOOM_LEVEL;
+			leftWithZoom -= left * (zoom - 1);
+			topWithZoom -= top * (zoom - 1);
+		} else {
+			if (
+				(isOverlappingPrevZoom && !isOverlappingNextZoom && frameTime >= zoomOutStart) ||
+				(!isOverlappingNextZoom && frameTime >= zoomOutStart && frameTime <= zoomOutEnd)
+			) {
+				const progress = (frameTime - zoomOutStart) / (zoomOutEnd - zoomOutStart);
+
+				zoom = Math.max(MIN_ZOOM_LEVEL, lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, progress));
+			} else if (isOverlappingNextZoom || (frameTime >= zoomInStart && frameTime <= zoomOutStart)) {
+				const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+
+				zoom = Math.min(MAX_ZOOM_LEVEL, lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, progress));
+			} else {
+				zoom = MAX_ZOOM_LEVEL;
+			}
+
+			leftWithZoom -= x * (zoom - 1);
+			topWithZoom -= y * (zoom - 1);
+		}
+
 		const widthWithZoom = width * zoom;
 		const heightWithZoom = height * zoom;
-		const leftWithZoom = left - COORD.x * (zoom - 1);
-		const topWithZoom = top - COORD.y * (zoom - 1);
 
 		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
 
@@ -103,7 +177,7 @@
 	}
 
 	function animate() {
-		draw(videoRef, currentTime);
+		draw(videoRef, $videoStatus.currentTime);
 
 		if (!paused) {
 			animationId = window?.requestAnimationFrame(animate);
@@ -123,6 +197,8 @@
 	}
 
 	export function exportMP4(): Promise<string> {
+		$currentZoomIndex = 0;
+
 		return new Promise((resolve) => {
 			const { start } = createMP4({
 				videoUrl: $recording?.url ?? '',
@@ -157,15 +233,33 @@
 		const unsubscribeBackgroundStore = background.subscribe(
 			() => (backgroundImageRef.src = $background.url)
 		);
-		const unsubscribeAppearenceStore = appearence.subscribe(() => draw(videoRef, currentTime));
+		const unsubscribeAppearenceStore = appearence.subscribe(() =>
+			draw(videoRef, $videoStatus.currentTime)
+		);
+		const unsubscribeZoomStore = zooms.subscribe(() => {
+			$currentZoomIndex = $zooms.findIndex(
+				(zoom) => zoom.start >= $videoStatus.currentTime || zoom.end >= $videoStatus.currentTime
+			);
+
+			if (paused) {
+				draw(videoRef, $videoStatus.currentTime);
+			}
+		});
+		const unsubscribeVideoStatusStore = videoStatus.subscribe(() => {
+			currentTime = $videoStatus.currentTime;
+		});
 		const controller = new AbortController();
 		const signal = controller.signal;
 
-		backgroundImageRef.addEventListener('load', () => draw(videoRef, currentTime), { signal });
+		backgroundImageRef.addEventListener('load', () => draw(videoRef, $videoStatus.currentTime), {
+			signal
+		});
 
 		return () => {
+			unsubscribeVideoStatusStore();
 			unsubscribeBackgroundStore();
 			unsubscribeAppearenceStore();
+			unsubscribeZoomStore();
 			controller.abort();
 		};
 	});
@@ -184,13 +278,13 @@
 		bind:this={videoRef}
 		on:loadeddata={() => {
 			videoRef.pause();
-			draw(videoRef, currentTime);
+			draw(videoRef, $videoStatus.currentTime);
 		}}
 		on:play={() => {
 			animationId = window?.requestAnimationFrame(animate);
 
-			if (ended || currentTime >= $edits.endAt) {
-				currentTime = $edits.startAt;
+			if (ended || $videoStatus.currentTime >= $edits.endAt) {
+				$videoStatus.currentTime = $edits.startAt;
 			}
 		}}
 		on:pause={() => {
@@ -199,11 +293,19 @@
 			}
 		}}
 		on:timeupdate={() => {
-			if (currentTime >= $edits.endAt) {
+			if ($videoStatus.currentTime >= $edits.endAt) {
 				videoRef.pause();
 			}
 		}}
-		on:seeked={() => draw(videoRef, currentTime)}
+		on:seeked={() => {
+			$currentZoomIndex = $zooms.findIndex(
+				(zoom) => zoom.start >= $videoStatus.currentTime || zoom.end >= $videoStatus.currentTime
+			);
+
+			if (!ended) {
+				draw(videoRef, $videoStatus.currentTime);
+			}
+		}}
 	/>
 	<canvas width="1920" height="1080" class="rounded-md" bind:this={canvasRef} />
 </div>

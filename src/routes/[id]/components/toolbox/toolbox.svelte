@@ -3,6 +3,7 @@
 	import ChevronDown from '../icons/chevron-down.filled.svelte';
 	import BackgroundEditor from './background-editor.svelte';
 	import AppearanceEditor from './appearance-editor.svelte';
+	import ZoomEditor from './zoom-editor.svelte';
 
 	const OPTIONS = [
 		{
@@ -14,11 +15,18 @@
 			id: 'appearance',
 			label: 'Appearance',
 			content: AppearanceEditor
+		},
+		{
+			id: 'zoom',
+			label: 'Zoom',
+			content: ZoomEditor
 		}
 	] as const;
 </script>
 
-<aside class="min-w-[350px] bg-neutral-900 border-r-2 border-r-white/5 basis-1/5">
+<aside
+	class="min-w-[350px] max-w-full bg-neutral-900 border-r-2 border-r-white/5 basis-1/5 overflow-y-scroll"
+>
 	<Accordion.Root defaultValue={OPTIONS.at(0)?.id}>
 		<div class="w-full">
 			{#each OPTIONS as item}
