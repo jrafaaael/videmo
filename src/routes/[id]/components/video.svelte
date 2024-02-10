@@ -197,6 +197,8 @@
 	}
 
 	export function exportMP4(): Promise<string> {
+		$currentZoomIndex = 0;
+
 		return new Promise((resolve) => {
 			const { start } = createMP4({
 				videoUrl: $recording?.url ?? '',
