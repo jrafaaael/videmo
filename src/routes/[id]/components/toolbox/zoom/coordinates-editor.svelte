@@ -27,9 +27,11 @@
 			draggableRef.style.setProperty('--positionX', `${dx}px`);
 			draggableRef.style.setProperty('--positionY', `${dy}px`);
 
-			if (currentZoom) {
-				zoomList.updateZoomById({ ...$currentZoom, x: percentX, y: percentY });
+			if (percentX === $currentZoom.x && percentY === $currentZoom.y) {
+				return;
 			}
+
+			zoomList.updateZoomById({ ...$currentZoom, x: percentX, y: percentY });
 		}
 	}
 
