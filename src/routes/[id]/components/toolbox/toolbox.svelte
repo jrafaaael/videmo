@@ -23,7 +23,7 @@
 	class="min-w-[350px] max-w-full bg-neutral-900 border-r-2 border-r-white/5 basis-1/5 overflow-y-scroll"
 >
 	{#each OPTIONS as option}
-		<details class="w-full border-b border-b-white/10">
+		<details class="w-full border-b-2 border-b-white/5">
 			<summary
 				class="w-full p-5 font-medium flex justify-between items-center cursor-pointer list-none"
 			>
