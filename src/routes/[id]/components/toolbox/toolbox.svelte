@@ -24,7 +24,9 @@
 >
 	{#each OPTIONS as option}
 		<details class="w-full border-b border-b-white/10">
-			<summary class="w-full p-5 font-medium flex justify-between items-center cursor-pointer list-none">
+			<summary
+				class="w-full p-5 font-medium flex justify-between items-center cursor-pointer list-none"
+			>
 				<span>
 					{option.label}
 				</span>
@@ -37,6 +39,15 @@
 </aside>
 
 <style>
+	aside {
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
+
+	aside::-webkit-scrollbar {
+		display: none;
+	}
+
 	/* https://stackoverflow.com/questions/73195948/change-color-fill-of-a-svg-path-when-used-in-the-content-of-a-before-pseudo-el */
 	summary::after {
 		content: '';
