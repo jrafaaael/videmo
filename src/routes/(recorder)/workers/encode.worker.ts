@@ -6,6 +6,7 @@ const GOP = 512;
 let reader: ReadableStreamDefaultReader<VideoFrame> | null = null;
 let muxer: Muxer<ArrayBufferTarget> | null = null;
 let encoder: VideoEncoder | null = null;
+let previousTimestamp = 0;
 
 async function onStartRecording({
 	trackStream,
@@ -35,7 +36,20 @@ async function onStartRecording({
 	});
 	encoder = new VideoEncoder({
 		output(chunk, metadata) {
-			muxer?.addVideoChunk(chunk, metadata);
+			/*
+			 * sometimes I get the error `Error: Timestamps must be monotonically increasing` and recording has missing frames.
+			 * this could be an error on chrome
+			 */
+			if (chunk.timestamp > previousTimestamp) {
+				muxer?.addVideoChunk(chunk, metadata);
+
+				previousTimestamp = chunk.timestamp;
+			} else {
+				const diff = previousTimestamp - chunk.timestamp;
+				const timestamp = previousTimestamp + diff;
+
+				muxer?.addVideoChunk(chunk, metadata, timestamp);
+			}
 		},
 		error(e) {
 			console.error(e);
