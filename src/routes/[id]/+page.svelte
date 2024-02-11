@@ -24,7 +24,7 @@
 	<Toolbox />
 
 	<section class="w-full flex-1 grid grid-rows-[minmax(0,1fr)_auto]">
-		<div class="p-10">
+		<div class="p-10 relative" id="video-wrapper">
 			<Video bind:this={videoRef} bind:ended bind:paused />
 		</div>
 
@@ -83,3 +83,19 @@
 		</footer>
 	</section>
 </main>
+
+<style>
+	/* https://codepen.io/jh3y/pen/oNVwLpK */
+	#video-wrapper::before {
+		--line: hsla(0, 0%, 95%, 0.03);
+		content: '';
+		height: 100%;
+		width: 100%;
+		position: absolute;
+		background: linear-gradient(90deg, var(--line) 2px, transparent 2px 4vmin) 0 -2vmin / 4vmin
+				4vmin,
+			linear-gradient(var(--line) 2px, transparent 2px 4vmin) 0 -2vmin / 4vmin 4vmin;
+		inset: 0;
+		transform: translate3d(0, 0, -100vmin);
+	}
+</style>
