@@ -1,5 +1,5 @@
 import { ArrayBufferTarget, Muxer } from 'mp4-muxer';
-import { CODEC, FPS } from '$lib/utils/constants';
+import { CODEC, FPS, KEYFRAME_SEPARATION_IN_SECONDS } from '$lib/utils/constants';
 import DecodeWorker from '../workers/decode.worker?worker';
 import { MICROSECONDS_PER_SECOND } from './constants';
 
@@ -14,7 +14,6 @@ interface CreateMP4Params {
 
 const WIDTH = 1920;
 const HEIGHT = 1080;
-const KEYFRAME_SEPARATION_IN_SECONDS = 0.5;
 
 export function createMP4({
 	videoUrl,
@@ -103,7 +102,8 @@ export function createMP4({
 
 		if (frame.timestamp >= nextKeyFrameTimestamp) {
 			keyFrame = true;
-			nextKeyFrameTimestamp = frame.timestamp + KEYFRAME_SEPARATION_IN_SECONDS * 1_000_000;
+			nextKeyFrameTimestamp =
+				frame.timestamp + KEYFRAME_SEPARATION_IN_SECONDS * MICROSECONDS_PER_SECOND;
 		}
 
 		encoder.encode(frame, { keyFrame });
