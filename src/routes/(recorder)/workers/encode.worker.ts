@@ -1,12 +1,11 @@
 import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
-import { CODEC, FPS } from '$lib/utils/constants';
+import { CODEC, FPS, KEYFRAME_SEPARATION_IN_SECONDS } from '$lib/utils/constants';
 
-// https://aws.amazon.com/es/blogs/media/part-1-back-to-basics-gops-explained/
-const GOP = 512;
 let reader: ReadableStreamDefaultReader<VideoFrame> | null = null;
 let muxer: Muxer<ArrayBufferTarget> | null = null;
 let encoder: VideoEncoder | null = null;
 let previousTimestamp = 0;
+let nextKeyFrameTimestamp = -Infinity;
 
 async function onStartRecording({
 	trackStream,
@@ -21,7 +20,6 @@ async function onStartRecording({
 		throw new Error('`width` and `height` needs to be specified');
 	}
 
-	let frames = 0;
 	reader = trackStream.getReader();
 
 	muxer = new Muxer({
@@ -72,12 +70,11 @@ async function onStartRecording({
 		}
 
 		const frame = value;
-		const keyFrame = frames === 0;
+		let keyFrame = false;
 
-		frames++;
-
-		if (frames >= GOP) {
-			frames = 0;
+		if (frame.timestamp >= nextKeyFrameTimestamp) {
+			keyFrame = true;
+			nextKeyFrameTimestamp = frame.timestamp + KEYFRAME_SEPARATION_IN_SECONDS * 1_000_000;
 		}
 
 		encoder?.encode(frame, { keyFrame });
