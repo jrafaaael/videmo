@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { FFmpeg } from '@ffmpeg/ffmpeg';
-	import { ffmpeg } from '$lib/stores/ffmpeg.store';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
 	import Video from './components/icons/video.svelte';
@@ -24,10 +21,6 @@
 			recorder.start();
 		}
 	}
-
-	onMount(() => {
-		ffmpeg.set(new FFmpeg());
-	});
 </script>
 
 <main class="w-full h-full flex justify-center items-center">
