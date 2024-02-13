@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
+	import { page } from '$app/stores';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
 	import { videoStatus } from './stores/video-status.store';
@@ -14,14 +15,13 @@
 	import { secondsToTime } from './utils/seconds-to-time';
 	import { getBlobDuration } from '../(recorder)/utils/get-blob-duration';
 
-	export let data;
 	let videoRef: Video;
 	let paused = true;
 	let ended: boolean;
 	let isTrimming = false;
 
 	onMount(async () => {
-		const folderName = data.id;
+		const folderName = $page.params.id;
 		const root = await navigator.storage.getDirectory();
 		const folder = await root.getDirectoryHandle(folderName);
 
