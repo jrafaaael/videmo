@@ -1,12 +1,14 @@
 import { Muxer, FileSystemWritableFileStreamTarget } from 'mp4-muxer';
 import { CODEC, FPS, KEYFRAME_SEPARATION_IN_SECONDS } from '$lib/utils/constants';
 
+const date = new Date().getTime().toString();
 let reader: ReadableStreamDefaultReader<VideoFrame> | null = null;
 let muxer: Muxer<FileSystemWritableFileStreamTarget> | null = null;
 let encoder: VideoEncoder | null = null;
 let fileHandle: FileSystemFileHandle;
 let previousTimestamp = 0;
 let nextKeyFrameTimestamp = -Infinity;
+let filename: string;
 
 async function onStartRecording({
 	trackStream,
@@ -23,10 +25,10 @@ async function onStartRecording({
 		throw new Error('`width` and `height` needs to be specified');
 	}
 
-	const date = new Date().getTime().toString();
+	filename = `${name}.mp4`;
 	const root = await navigator.storage.getDirectory();
 	const folder = await root.getDirectoryHandle(date, { create: true });
-	fileHandle = await folder.getFileHandle(`${name}.mp4`, { create: true });
+	fileHandle = await folder.getFileHandle(filename, { create: true });
 	const fileStream = await fileHandle.createWritable();
 
 	reader = trackStream.getReader();
@@ -99,12 +101,10 @@ async function onStopRecording() {
 	muxer?.finalize();
 	await muxer?.target.stream.close();
 
-	const blob = await fileHandle?.getFile();
-	const mp4 = URL.createObjectURL(new Blob([blob], { type: 'video/mp4' }));
-
 	self.postMessage({
 		type: 'result',
-		url: mp4
+		folder: date,
+		filename
 	});
 }
 

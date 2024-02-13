@@ -1,16 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { recording } from '$lib/stores/recording.store';
-	import { edits } from '$lib/stores/edits.store';
 	import Video from './components/icons/video.svelte';
 	import VideoSlash from './components/icons/video-slash.svelte';
 	import { createScreenRecorder } from './utils/create-screen-recorder';
 
 	const recorder = createScreenRecorder({
-		onEnd(video) {
-			recording.set(video);
-			edits.set({ startAt: 0, endAt: video.duration });
-			goto(video.id);
+		onEnd(data) {
+			goto(data.folder);
 		}
 	});
 
