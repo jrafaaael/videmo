@@ -278,7 +278,14 @@
 		bind:this={videoRef}
 		on:loadeddata={() => {
 			videoRef.pause();
-			draw(videoRef, $videoStatus.currentTime);
+			/*
+			 * from mdn: "The loadeddata event is fired when the frame at the current playback position of the media has finished loading; often the first frame."
+			 * I use this event to draw the first frame on the canvas. However, when open editor from url or the page has been refreshed, the video isn't draw
+			 * on canvas for some reason. Routing from home page works as expected (lol).
+			 * A workaround I find to make it work in both ways is: update `currentTime` to a small value (to keep it at 0) in this event. This fires a `seeked` event
+			 * that draw the first frame normally
+			 */
+			currentTime = Number.MIN_SAFE_INTEGER;
 		}}
 		on:play={() => {
 			animationId = window?.requestAnimationFrame(animate);
@@ -302,9 +309,7 @@
 				(zoom) => zoom.start >= $videoStatus.currentTime || zoom.end >= $videoStatus.currentTime
 			);
 
-			if (!ended) {
-				draw(videoRef, $videoStatus.currentTime);
-			}
+			draw(videoRef, $videoStatus.currentTime);
 		}}
 	/>
 	<canvas width="1920" height="1080" class="rounded-md" bind:this={canvasRef} />
