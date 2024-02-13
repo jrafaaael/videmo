@@ -14,7 +14,7 @@
 	import Trimmer from './components/trimmer.svelte';
 	import ZoomList from './components/zoom-list.svelte';
 	import { secondsToTime } from './utils/seconds-to-time';
-	import { getBlobDuration } from '../(recorder)/utils/get-blob-duration';
+	import { getBlobDuration } from './utils/get-blob-duration';
 
 	let videoRef: Video;
 	let paused = true;
