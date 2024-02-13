@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
 	import { videoStatus } from './stores/video-status.store';
@@ -11,11 +12,30 @@
 	import Trimmer from './components/trimmer.svelte';
 	import ZoomList from './components/zoom-list.svelte';
 	import { secondsToTime } from './utils/seconds-to-time';
+	import { getBlobDuration } from '../(recorder)/utils/get-blob-duration';
 
+	export let data;
 	let videoRef: Video;
 	let paused = true;
 	let ended: boolean;
 	let isTrimming = false;
+
+	onMount(async () => {
+		const folderName = data.id;
+		const root = await navigator.storage.getDirectory();
+		const folder = await root.getDirectoryHandle(folderName);
+
+		for await (let [name] of folder) {
+			const fileHandle = await folder.getFileHandle(name);
+			const file = await fileHandle.getFile();
+			const mp4 = URL.createObjectURL(new Blob([file], { type: 'video/mp4' }));
+			const duration = await getBlobDuration(mp4);
+			console.log(duration);
+
+			recording.set({ id: '1', url: mp4, duration });
+			edits.set({ startAt: 0, endAt: duration });
+		}
+	});
 </script>
 
 <Header getFrameAsImage={videoRef?.exportFrameAsImage} getMP4={videoRef?.exportMP4} />
@@ -92,8 +112,7 @@
 		height: 100%;
 		width: 100%;
 		position: absolute;
-		background: linear-gradient(90deg, var(--line) 2px, transparent 2px 4vmin) 0 -2vmin / 4vmin
-				4vmin,
+		background: linear-gradient(90deg, var(--line) 2px, transparent 2px 4vmin) 0 -2vmin / 4vmin 4vmin,
 			linear-gradient(var(--line) 2px, transparent 2px 4vmin) 0 -2vmin / 4vmin 4vmin;
 		inset: 0;
 		transform: translate3d(0, 0, -100vmin);
