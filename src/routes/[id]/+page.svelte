@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
 	import { videoStatus } from './stores/video-status.store';
@@ -21,18 +22,23 @@
 	let isTrimming = false;
 
 	onMount(async () => {
-		const folderName = $page.params.id;
-		const root = await navigator.storage.getDirectory();
-		const folder = await root.getDirectoryHandle(folderName);
+		try {
+			const folderName = $page.params.id;
+			const root = await navigator.storage.getDirectory();
+			const folder = await root.getDirectoryHandle(folderName);
 
-		for await (let [name] of folder) {
-			const fileHandle = await folder.getFileHandle(name);
-			const file = await fileHandle.getFile();
-			const mp4 = URL.createObjectURL(new Blob([file], { type: 'video/mp4' }));
-			const duration = await getBlobDuration(mp4);
+			for await (let [name] of folder) {
+				const fileHandle = await folder.getFileHandle(name);
+				const file = await fileHandle.getFile();
+				const mp4 = URL.createObjectURL(new Blob([file], { type: 'video/mp4' }));
+				const duration = await getBlobDuration(mp4);
 
-			recording.set({ id: '1', url: mp4, duration });
-			edits.set({ startAt: 0, endAt: duration });
+				recording.set({ id: '1', url: mp4, duration });
+				edits.set({ startAt: 0, endAt: duration });
+			}
+		} catch (error) {
+			console.error(error);
+			goto('/');
 		}
 	});
 
