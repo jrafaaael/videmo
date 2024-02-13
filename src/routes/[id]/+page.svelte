@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { recording } from '$lib/stores/recording.store';
 	import { edits } from '$lib/stores/edits.store';
 	import { videoStatus } from './stores/video-status.store';
@@ -35,6 +35,12 @@
 			recording.set({ id: '1', url: mp4, duration });
 			edits.set({ startAt: 0, endAt: duration });
 		}
+	});
+
+	onDestroy(() => {
+		URL.revokeObjectURL($recording?.url);
+		recording.set(null);
+		edits.set({ startAt: 0, endAt: Number.MAX_SAFE_INTEGER });
 	});
 </script>
 
