@@ -30,7 +30,6 @@
 			const file = await fileHandle.getFile();
 			const mp4 = URL.createObjectURL(new Blob([file], { type: 'video/mp4' }));
 			const duration = await getBlobDuration(mp4);
-			console.log(duration);
 
 			recording.set({ id: '1', url: mp4, duration });
 			edits.set({ startAt: 0, endAt: duration });
