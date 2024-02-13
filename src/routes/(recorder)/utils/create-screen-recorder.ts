@@ -1,8 +1,6 @@
 import { writable } from 'svelte/store';
-import type { Recording } from '$lib/types/recording';
 import { FPS } from '$lib/utils/constants';
 import EncodeWorker from '../workers/encode.worker?worker';
-import { getBlobDuration } from './get-blob-duration';
 import { BPS } from './constants';
 
 interface RecordingStorageInformation {
