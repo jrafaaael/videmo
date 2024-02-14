@@ -51,7 +51,7 @@
 
 <Header getFrameAsImage={videoRef?.exportFrameAsImage} getMP4={videoRef?.exportMP4} />
 
-<main class="w-full h-[calc(100%-4rem)] bg-neutral-950 flex">
+<main class="w-full h-[calc(100dvh-4rem)] bg-neutral-950 flex">
 	<Toolbox />
 
 	<section class="w-full flex-1 grid grid-rows-[minmax(0,1fr)_auto]">
