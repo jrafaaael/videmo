@@ -4,7 +4,7 @@
 
 	let recordings: string[] = [];
 
-	onMount(async () => {
+	async function getRecordings() {
 		const root = await navigator.storage.getDirectory();
 		const folders = [];
 
@@ -12,7 +12,17 @@
 			folders.push(name);
 		}
 
-		recordings = folders;
+		return folders;
+	}
+
+	async function removeRecording(name: string) {
+		const root = await navigator.storage.getDirectory();
+
+		root.removeEntry(name, { recursive: true });
+	}
+
+	onMount(async () => {
+		recordings = await getRecordings();
 	});
 </script>
 
@@ -25,7 +35,12 @@
 			<h3 class="text-sm font-medium">
 				{new Date(+record).toLocaleString(undefined)}
 			</h3>
-			<button on:click|stopPropagation={() => console.log('here')}>
+			<button
+				on:click|stopPropagation={async () => {
+					await removeRecording(record);
+					recordings = await getRecordings();
+				}}
+			>
 				<span class="w-4 aspect-square inline-block">
 					<Trash />
 				</span>
