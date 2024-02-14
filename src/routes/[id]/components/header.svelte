@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
 	import { page } from '$app/stores';
-	import Trash from '$lib/components/icons/trash.svelte';
 	import * as Select from '$lib/components/select';
 	import { EXPORT_OPTIONS, Status } from '../utils/export-options';
 	import { download } from '../utils/download';
+	import ArrowFat from './icons/arrow-fat.svelte';
 	import Loading from './icons/loading.animated.svelte';
 	import ChrevronDown from './icons/chevron-down.outlined.svelte';
 	import Download from './icons/download.svelte';
@@ -56,11 +56,11 @@
 >
 	<a
 		href="/"
-		class="p-2 rounded-md text-neutral-300 absolute left-10 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
+		class="p-2 bg-white/5 border border-white/5 rounded-md text-neutral-300 flex absolute left-10 transition-all hover:bg-white/10 hover:border-white/10 hover:text-neutral-200"
 	>
-		<div class="w-4 aspect-square">
-			<Trash />
-		</div>
+		<span class="w-4 aspect-square inline-block -scale-100">
+			<ArrowFat />
+		</span>
 	</a>
 	<h1 class="text-xl font-bold leading-none flex">
 		<span class="line-clamp-1 break-all grow shrink-0 basis-0">
