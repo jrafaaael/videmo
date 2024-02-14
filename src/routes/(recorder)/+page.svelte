@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import RecordingList from './components/recording-list.svelte';
 	import Video from './components/icons/video.svelte';
 	import VideoSlash from './components/icons/video-slash.svelte';
 	import { createScreenRecorder } from './utils/create-screen-recorder';
@@ -10,7 +10,6 @@
 			goto(data.folder);
 		}
 	});
-	let recordings: string[] = [];
 
 	function handleClick() {
 		if ($recorder.isRecording) {
@@ -19,20 +18,11 @@
 			recorder.start();
 		}
 	}
-
-	onMount(async () => {
-		const root = await navigator.storage.getDirectory();
-		const folders = [];
-
-		for await (let [name] of root) {
-			folders.push(name);
-		}
-
-		recordings = folders;
-	});
 </script>
 
-<main class="w-full h-full flex justify-center items-center gap-2">
+<main
+	class="w-full h-full p-8 grid grid-cols-[repeat(auto-fit,minmax(360px,1fr))] auto-rows-min gap-8 md:p-16 lg:px-32 lg:gap-y-16"
+>
 	<button
 		class="py-[6px] px-3 bg-purple-600 rounded-md flex items-center gap-2"
 		on:click={handleClick}
@@ -46,7 +36,5 @@
 		</div>
 		<span>{$recorder.isRecording ? 'Stop' : 'Start'} recording</span>
 	</button>
-	{#each recordings as record}
-		<a href="/{record}">{record}</a>
-	{/each}
+	<RecordingList />
 </main>
