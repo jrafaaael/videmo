@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
 	import { page } from '$app/stores';
+	import Trash from '$lib/components/icons/trash.svelte';
 	import * as Select from '$lib/components/select';
 	import { EXPORT_OPTIONS, Status } from '../utils/export-options';
 	import { download } from '../utils/download';
 	import Loading from './icons/loading.animated.svelte';
-	import Trash from './icons/trash.svelte';
 	import ChrevronDown from './icons/chevron-down.outlined.svelte';
 	import Download from './icons/download.svelte';
 	import Check from './icons/check.svelte';
