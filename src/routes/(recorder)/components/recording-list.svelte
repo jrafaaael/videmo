@@ -18,7 +18,7 @@
 	async function removeRecording(name: string) {
 		const root = await navigator.storage.getDirectory();
 
-		root.removeEntry(name, { recursive: true });
+		await root.removeEntry(name, { recursive: true });
 	}
 
 	onMount(async () => {
