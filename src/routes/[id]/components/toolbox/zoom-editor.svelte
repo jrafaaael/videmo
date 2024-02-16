@@ -1,6 +1,6 @@
 <script>
 	import Trash from '$lib/components/icons/trash.svelte';
-	import { edits } from '$lib/stores/edits.store';
+	import { edits } from '../../stores/edits.store';
 	import { videoStatus } from '../../stores/video-status.store';
 	import { zooms, currentZoom } from '../../stores/zooms.store';
 	import CoordinatesEditor from './zoom/coordinates-editor.svelte';

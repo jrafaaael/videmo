@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { recording } from '$lib/stores/recording.store';
+	import { recording } from '../stores/recording.store';
 	import { videoStatus } from '../stores/video-status.store';
 
 	export let startAt: number;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { recording } from '$lib/stores/recording.store';
+	import { recording } from '../stores/recording.store';
 	import { secondsToTime } from '../utils/seconds-to-time';
 
 	const INDICATORS_PER_DURATION = {

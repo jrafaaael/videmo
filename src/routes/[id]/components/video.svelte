@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { recording } from '$lib/stores/recording.store';
-	import { edits } from '$lib/stores/edits.store';
+	import { recording } from '../stores/recording.store';
+	import { edits } from '../stores/edits.store';
 	import { videoStatus } from '../stores/video-status.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';

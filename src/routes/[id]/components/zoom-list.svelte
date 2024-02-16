@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { recording } from '$lib/stores/recording.store';
+	import { recording } from '../stores/recording.store';
 	import { zooms } from '../stores/zooms.store';
 	import Zoom from './zoom.svelte';
 </script>

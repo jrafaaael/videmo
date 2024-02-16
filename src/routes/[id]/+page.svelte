@@ -2,8 +2,8 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { recording } from '$lib/stores/recording.store';
-	import { edits } from '$lib/stores/edits.store';
+	import { recording } from './stores/recording.store';
+	import { edits } from './stores/edits.store';
 	import { videoStatus } from './stores/video-status.store';
 	import Header from './components/header.svelte';
 	import Toolbox from './components/toolbox/toolbox.svelte';
