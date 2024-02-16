@@ -47,4 +47,31 @@
 			</button>
 		</div>
 	</article>
+{:else}
+	<article class="flex flex-col gap-2">
+		<span
+			class="w-full aspect-video bg-white/5 border-2 border-white/10 rounded-md text-4xl flex justify-center items-center relative"
+			id="empty"
+		>
+			🕳️
+		</span>
+		<div class="flex flex-col gap-1">
+			<h3 class="font-medium">No recordings yet!</h3>
+			<p class="text-sm">Record your first video and it'll show up here!</p>
+		</div>
+	</article>
 {/each}
+
+<style>
+	#empty::before {
+		--line: hsla(0, 0%, 95%, 0.05);
+		content: '';
+		height: 100%;
+		width: 100%;
+		position: absolute;
+		background: linear-gradient(90deg, var(--line) 2px, transparent 2px 4vmin) 0 -2vmin / 4vmin 4vmin,
+			linear-gradient(var(--line) 2px, transparent 2px 4vmin) 0 -2vmin / 4vmin 4vmin;
+		inset: 0;
+		transform: translate3d(0, 0, -100vmin);
+	}
+</style>
