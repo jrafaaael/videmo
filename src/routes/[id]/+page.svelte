@@ -35,6 +35,7 @@
 				zooms.load(values.zooms);
 				background.updateBackground(values.background.name);
 				$appearence = values.appearence;
+				$edits = values.trimmings;
 			} else {
 				zooms.reset();
 				background.reset();
@@ -51,7 +52,9 @@
 				const duration = await getBlobDuration(mp4);
 
 				recording.set({ id: '1', url: mp4, duration });
-				edits.set({ startAt: 0, endAt: duration });
+				if (!values) {
+					edits.set({ startAt: 0, endAt: duration });
+				}
 			}
 		} catch (error) {
 			console.error(error);
@@ -64,7 +67,8 @@
 		const values = {
 			background: $background,
 			appearence: $appearence,
-			zooms: $zooms
+			zooms: $zooms,
+			trimmings: $edits
 		};
 
 		localStorage.setItem($page.params.id, JSON.stringify(values));
