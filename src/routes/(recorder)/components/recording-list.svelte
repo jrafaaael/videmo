@@ -36,6 +36,7 @@
 				{new Date(+record).toLocaleString(undefined)}
 			</h3>
 			<button
+				class="p-2 text-neutral-300 flex transition-colors hover:text-red-500"
 				on:click|stopPropagation={async () => {
 					await removeRecording(record);
 					recordings = await getRecordings();
