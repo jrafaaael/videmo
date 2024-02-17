@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { recording } from '../stores/recording.store';
 	import { zooms } from '../stores/zooms.store';
-	import Zoom from './zoom.svelte';
+	import Resizable from './resizable.svelte';
 </script>
 
 <div class="w-full h-10 relative">
@@ -10,7 +10,8 @@
 		{@const left = (zoom.start * 100) / $recording?.duration}
 		{@const nextZoom = $zooms.at(idx + 1)}
 		{@const prevZoom = idx === 0 ? null : $zooms.at(idx - 1)}
-		<Zoom
+		<Resizable
+			className="h-10 bg-emerald-500/30 rounded-md overflow-hidden absolute"
 			{width}
 			{left}
 			on:resize={({ detail }) => {

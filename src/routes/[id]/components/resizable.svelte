@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
 
-	type Resizer = 'right' | 'left';
+	type Direction = 'right' | 'left';
 
 	export let minWidth = 100;
-	export let width = 100;
-	export let left = 0;
-	let isTrimming: boolean;
-	let resizer: Resizer | null = null;
-	let trimmerRef: HTMLDivElement;
+	export let width: number | null = null;
+	export let left: number | null = null;
+	export let className: string;
+	export let isResizing: boolean | null = null;
+	let direction: Direction | null = null;
+	let resizableRef: HTMLDivElement;
 	let mousePositionWhenResizingStart: number | null = null;
 	let trimmerRectWhenResizingStart: DOMRect | null = null;
 	let dispatcher = createEventDispatcher();
@@ -17,30 +18,30 @@
 		e: MouseEvent & {
 			currentTarget: EventTarget & HTMLButtonElement;
 		},
-		direction: Resizer
+		dir: Direction
 	) {
-		trimmerRectWhenResizingStart = trimmerRef.getBoundingClientRect();
+		trimmerRectWhenResizingStart = resizableRef.getBoundingClientRect();
 		mousePositionWhenResizingStart = e.pageX;
-		isTrimming = true;
-		resizer = direction;
+		isResizing = true;
+		direction = dir;
 		dispatcher('resizeStart');
 	}
 
 	function handleResize(e: MouseEvent) {
 		if (
-			!isTrimming ||
-			!resizer ||
+			!isResizing ||
+			!direction ||
 			!trimmerRectWhenResizingStart ||
 			!mousePositionWhenResizingStart
 		) {
 			return;
 		}
 
-		const trimmerRect = trimmerRef.getBoundingClientRect();
+		const trimmerRect = resizableRef.getBoundingClientRect();
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		const constrains = trimmerRef.parentElement!.getBoundingClientRect();
+		const constrains = resizableRef.parentElement!.getBoundingClientRect();
 
-		if (resizer === 'right') {
+		if (direction === 'right') {
 			const delta = e.pageX - mousePositionWhenResizingStart;
 			const interalWidth = Math.min(
 				constrains.width,
@@ -52,18 +53,18 @@
 				const deltaWidth = interalWidth - trimmerRect.width;
 
 				if (!width) {
-					const widthInPercentage = (width * 100) / constrains.width;
+					const widthInPercentage = (interalWidth * 100) / constrains.width;
 
-					trimmerRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
+					resizableRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
 				}
 
 				dispatcher('resize', {
-					direction: resizer,
+					direction: direction,
 					delta: deltaWidth,
-					refToElement: trimmerRef
+					refToElement: resizableRef
 				});
 			}
-		} else if (resizer === 'left') {
+		} else if (direction === 'left') {
 			const delta = mousePositionWhenResizingStart - e.pageX;
 			const internalLeft = trimmerRectWhenResizingStart.left - delta - constrains.left;
 			const internalWidth = Math.min(
@@ -79,22 +80,22 @@
 					const widthInPercentage = (internalWidth * 100) / constrains.width;
 					const leftInPercentage = Math.max(0, (internalLeft * 100) / constrains.width);
 
-					trimmerRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
-					trimmerRef.style.setProperty('left', leftInPercentage.toFixed(1) + '%');
+					resizableRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
+					resizableRef.style.setProperty('left', leftInPercentage.toFixed(1) + '%');
 				}
 
 				dispatcher('resize', {
-					direction: resizer,
+					direction: direction,
 					delta: deltaWidth,
-					refToElement: trimmerRef
+					refToElement: resizableRef
 				});
 			}
 		}
 	}
 
 	function handleResizeEnd() {
-		isTrimming = false;
-		resizer = null;
+		isResizing = false;
+		direction = null;
 		dispatcher('resizeEnd');
 	}
 
@@ -120,9 +121,9 @@
 /> -->
 
 <div
-	class="h-10 bg-emerald-500/30 rounded-md overflow-hidden absolute"
-	style="width: {width}%; left: {left}%"
-	bind:this={trimmerRef}
+	class={className}
+	style="width: {width ?? 100}%; left: {left ?? 0}%; position: absolute;"
+	bind:this={resizableRef}
 >
 	<button
 		class="w-auto h-full px-4 cursor-ew-resize absolute top-0 left-0"

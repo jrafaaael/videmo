@@ -116,24 +116,9 @@
 							$videoStatus.currentTime = detail.newTime;
 						}}
 					/>
-					<Trimmer
-						bind:isTrimming
-						on:resizeStart={() => videoRef.pause()}
-						on:startChange={({ detail }) => {
-							$edits.startAt = detail.startAt;
-
-							if ($edits.startAt >= $videoStatus.currentTime) {
-								$videoStatus.currentTime = detail.startAt;
-							}
-						}}
-						on:endChange={({ detail }) => {
-							$edits.endAt = detail.endAt;
-
-							if ($edits.endAt <= $videoStatus.currentTime) {
-								$videoStatus.currentTime = detail.endAt;
-							}
-						}}
-					/>
+					<div class="w-full h-10 relative">
+						<Trimmer bind:isResizing={isTrimming} />
+					</div>
 					<ZoomList />
 				</div>
 			</div>
