@@ -1,10 +1,13 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
+	import { goto, beforeNavigate } from '$app/navigation';
 	import { recording } from './stores/recording.store';
 	import { edits } from './stores/edits.store';
 	import { videoStatus } from './stores/video-status.store';
+	import { background } from './stores/background.store';
+	import { appearence } from './stores/general-appearance.store';
+	import { zooms } from './stores/zooms.store';
 	import Header from './components/header.svelte';
 	import Toolbox from './components/toolbox/toolbox.svelte';
 	import Video from './components/video.svelte';
@@ -24,6 +27,20 @@
 	onMount(async () => {
 		try {
 			const folderName = $page.params.id;
+			const values = localStorage.getItem(folderName)
+				? JSON.parse(localStorage.getItem(folderName)!)
+				: null;
+
+			if (values !== null) {
+				zooms.load(values.zooms);
+				background.updateBackground(values.background.name);
+				$appearence = values.appearence;
+			} else {
+				zooms.reset();
+				background.reset();
+				appearence.reset();
+			}
+
 			const root = await navigator.storage.getDirectory();
 			const folder = await root.getDirectoryHandle(folderName);
 
@@ -42,8 +59,17 @@
 		}
 	});
 
-	onDestroy(() => {
-		URL.revokeObjectURL($recording?.url);
+	beforeNavigate(() => {
+		const url = $recording?.url;
+		const values = {
+			background: $background,
+			appearence: $appearence,
+			zooms: $zooms
+		};
+
+		localStorage.setItem($page.params.id, JSON.stringify(values));
+		URL.revokeObjectURL(url!);
+
 		recording.set(null);
 		edits.set({ startAt: 0, endAt: Number.MAX_SAFE_INTEGER });
 	});
