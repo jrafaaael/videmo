@@ -17,7 +17,7 @@
 	let isExporting = false;
 
 	function exportAsImage() {
-		const filename = folderName + extension;
+		const filename = folderName + $extension.value;
 		const img = getFrameAsImage();
 
 		download(filename, img);
@@ -25,7 +25,7 @@
 	}
 
 	async function exportAsMP4() {
-		const filename = folderName + extension;
+		const filename = folderName + $extension.value;
 		const mp4 = await getMP4();
 
 		download(filename, mp4);
