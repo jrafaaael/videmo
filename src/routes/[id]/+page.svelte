@@ -1,7 +1,13 @@
 <script lang="ts">
-	import { recording } from '$lib/stores/recording.store';
-	import { edits } from '$lib/stores/edits.store';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { goto, beforeNavigate } from '$app/navigation';
+	import { recording } from './stores/recording.store';
+	import { edits } from './stores/edits.store';
 	import { videoStatus } from './stores/video-status.store';
+	import { background } from './stores/background.store';
+	import { appearence } from './stores/general-appearance.store';
+	import { zooms } from './stores/zooms.store';
 	import Header from './components/header.svelte';
 	import Toolbox from './components/toolbox/toolbox.svelte';
 	import Video from './components/video.svelte';
@@ -11,16 +17,71 @@
 	import Trimmer from './components/trimmer.svelte';
 	import ZoomList from './components/zoom-list.svelte';
 	import { secondsToTime } from './utils/seconds-to-time';
+	import { getBlobDuration } from './utils/get-blob-duration';
 
 	let videoRef: Video;
 	let paused = true;
 	let ended: boolean;
 	let isTrimming = false;
+
+	onMount(async () => {
+		try {
+			const folderName = $page.params.id;
+			const values = localStorage.getItem(folderName)
+				? JSON.parse(localStorage.getItem(folderName)!)
+				: null;
+
+			if (values !== null) {
+				zooms.load(values.zooms);
+				background.updateBackground(values.background.name);
+				$appearence = values.appearence;
+				$edits = values.trimmings;
+			} else {
+				zooms.reset();
+				background.reset();
+				appearence.reset();
+			}
+
+			const root = await navigator.storage.getDirectory();
+			const folder = await root.getDirectoryHandle(folderName);
+
+			for await (let [name] of folder) {
+				const fileHandle = await folder.getFileHandle(name);
+				const file = await fileHandle.getFile();
+				const mp4 = URL.createObjectURL(new Blob([file], { type: 'video/mp4' }));
+				const duration = await getBlobDuration(mp4);
+
+				recording.set({ id: '1', url: mp4, duration });
+				if (!values) {
+					edits.set({ startAt: 0, endAt: duration });
+				}
+			}
+		} catch (error) {
+			console.error(error);
+			goto('/');
+		}
+	});
+
+	beforeNavigate(() => {
+		const url = $recording?.url;
+		const values = {
+			background: $background,
+			appearence: $appearence,
+			zooms: $zooms,
+			trimmings: $edits
+		};
+
+		localStorage.setItem($page.params.id, JSON.stringify(values));
+		URL.revokeObjectURL(url!);
+
+		recording.set(null);
+		edits.set({ startAt: 0, endAt: Number.MAX_SAFE_INTEGER });
+	});
 </script>
 
 <Header getFrameAsImage={videoRef?.exportFrameAsImage} getMP4={videoRef?.exportMP4} />
 
-<main class="w-full h-[calc(100%-4rem)] bg-neutral-950 flex">
+<main class="w-full h-[calc(100dvh-4rem)] bg-neutral-950 flex overflow-hidden">
 	<Toolbox />
 
 	<section class="w-full flex-1 grid grid-rows-[minmax(0,1fr)_auto]">
@@ -59,24 +120,9 @@
 							$videoStatus.currentTime = detail.newTime;
 						}}
 					/>
-					<Trimmer
-						bind:isTrimming
-						on:resizeStart={() => videoRef.pause()}
-						on:startChange={({ detail }) => {
-							$edits.startAt = detail.startAt;
-
-							if ($edits.startAt >= $videoStatus.currentTime) {
-								$videoStatus.currentTime = detail.startAt;
-							}
-						}}
-						on:endChange={({ detail }) => {
-							$edits.endAt = detail.endAt;
-
-							if ($edits.endAt <= $videoStatus.currentTime) {
-								$videoStatus.currentTime = detail.endAt;
-							}
-						}}
-					/>
+					<div class="w-full h-10 relative">
+						<Trimmer bind:isResizing={isTrimming} />
+					</div>
 					<ZoomList />
 				</div>
 			</div>
@@ -92,8 +138,7 @@
 		height: 100%;
 		width: 100%;
 		position: absolute;
-		background: linear-gradient(90deg, var(--line) 2px, transparent 2px 4vmin) 0 -2vmin / 4vmin
-				4vmin,
+		background: linear-gradient(90deg, var(--line) 2px, transparent 2px 4vmin) 0 -2vmin / 4vmin 4vmin,
 			linear-gradient(var(--line) 2px, transparent 2px 4vmin) 0 -2vmin / 4vmin 4vmin;
 		inset: 0;
 		transform: translate3d(0, 0, -100vmin);

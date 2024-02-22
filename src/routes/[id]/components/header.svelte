@@ -1,19 +1,36 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
+	import { page } from '$app/stores';
 	import * as Select from '$lib/components/select';
-	import { recording } from '$lib/stores/recording.store';
 	import { EXPORT_OPTIONS, Status } from '../utils/export-options';
 	import { download } from '../utils/download';
+	import ArrowFat from './icons/arrow-fat.svelte';
 	import Loading from './icons/loading.animated.svelte';
-	import Trash from './icons/trash.svelte';
 	import ChrevronDown from './icons/chevron-down.outlined.svelte';
 	import Download from './icons/download.svelte';
 	import Check from './icons/check.svelte';
 
 	export let getFrameAsImage: () => string;
 	export let getMP4: () => Promise<string>;
+	const folderName = new Date(+$page.params.id).toLocaleString(undefined);
 	let extension = writable(EXPORT_OPTIONS.at(0));
 	let isExporting = false;
+
+	function exportAsImage() {
+		const filename = folderName + $extension.value;
+		const img = getFrameAsImage();
+
+		download(filename, img);
+		URL.revokeObjectURL(img);
+	}
+
+	async function exportAsMP4() {
+		const filename = folderName + $extension.value;
+		const mp4 = await getMP4();
+
+		download(filename, mp4);
+		URL.revokeObjectURL(mp4);
+	}
 
 	async function save() {
 		if (isExporting) {
@@ -22,19 +39,13 @@
 
 		isExporting = true;
 
-		if ($extension.value === '.png') {
-			const img = getFrameAsImage();
+		const EXPORTERS = {
+			'.png': exportAsImage,
+			'.mp4': exportAsMP4,
+			'.gif': () => null
+		};
 
-			download(($recording?.id ?? 'image') + $extension.value, img);
-
-			URL.revokeObjectURL(img);
-		} else if ($extension.value === '.mp4') {
-			const mp4 = await getMP4();
-
-			download(($recording?.id ?? 'video') + $extension.value, mp4);
-
-			URL.revokeObjectURL(mp4);
-		}
+		await EXPORTERS[$extension.label]();
 
 		isExporting = false;
 	}
@@ -45,15 +56,15 @@
 >
 	<a
 		href="/"
-		class="p-2 rounded-md text-neutral-300 absolute left-10 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
+		class="p-2 bg-white/5 border border-white/5 rounded-md text-neutral-300 flex absolute left-10 transition-all hover:bg-white/10 hover:border-white/10 hover:text-neutral-200"
 	>
-		<div class="w-4 aspect-square">
-			<Trash />
-		</div>
+		<span class="w-4 aspect-square inline-block -scale-100">
+			<ArrowFat />
+		</span>
 	</a>
 	<h1 class="text-xl font-bold leading-none flex">
 		<span class="line-clamp-1 break-all grow shrink-0 basis-0">
-			{$recording?.id}
+			{folderName}
 		</span>
 		<Select.Root
 			selected={extension}

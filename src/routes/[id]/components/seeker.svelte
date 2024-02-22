@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { recording } from '$lib/stores/recording.store';
+	import { recording } from '../stores/recording.store';
 	import { videoStatus } from '../stores/video-status.store';
 
 	export let startAt: number;
@@ -9,7 +9,7 @@
 	let isDragging = false;
 	let seekbarRef: HTMLButtonElement;
 	let dispatcher = createEventDispatcher();
-	$: totalVideoDuration = $recording?.duration ?? 0;
+	$: totalVideoDuration = $recording?.duration ?? 1;
 	$: position = +(($videoStatus.currentTime * 100) / totalVideoDuration).toFixed(2);
 
 	function handleSeeking(e: MouseEvent) {

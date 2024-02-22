@@ -1,12 +1,15 @@
 import { writable } from 'svelte/store';
-import type { Recording } from '$lib/types/recording';
 import { FPS } from '$lib/utils/constants';
 import EncodeWorker from '../workers/encode.worker?worker';
-import { getBlobDuration } from './get-blob-duration';
 import { BPS } from './constants';
 
+interface RecordingStorageInformation {
+	folder: string;
+	filename: string;
+}
+
 interface Params {
-	onEnd?: (recording: Recording) => void;
+	onEnd?: (recording: RecordingStorageInformation) => void;
 	onStart?: () => void;
 }
 
@@ -32,15 +35,10 @@ export function createScreenRecorder(params?: Params) {
 			});
 
 			worker.addEventListener('message', async (e) => {
-				if (e.data.type === 'result') {
-					const url = e.data.url;
-					const duration = await getBlobDuration(url);
+				const { type, ...rest } = e.data;
 
-					params?.onEnd?.({
-						id: stream?.id,
-						url,
-						duration
-					});
+				if (type === 'result') {
+					params?.onEnd?.(rest);
 				}
 			});
 
@@ -67,7 +65,8 @@ export function createScreenRecorder(params?: Params) {
 				{
 					type: 'start',
 					trackStream,
-					trackSettings
+					trackSettings,
+					name: stream?.id
 				},
 				[trackStream]
 			);

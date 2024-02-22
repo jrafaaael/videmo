@@ -1,40 +1,11 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { recording } from '$lib/stores/recording.store';
-	import { edits } from '$lib/stores/edits.store';
-	import Video from './components/icons/video.svelte';
-	import VideoSlash from './components/icons/video-slash.svelte';
-	import { createScreenRecorder } from './utils/create-screen-recorder';
-
-	const recorder = createScreenRecorder({
-		onEnd(video) {
-			recording.set(video);
-			edits.set({ startAt: 0, endAt: video.duration });
-			goto(video.id);
-		}
-	});
-
-	function handleClick() {
-		if ($recorder.isRecording) {
-			recorder.stop();
-		} else {
-			recorder.start();
-		}
-	}
+	import RecordingList from './components/recording-list.svelte';
+	import FloatingRecordingBar from './components/floating-recording-bar.svelte';
 </script>
 
-<main class="w-full h-full flex justify-center items-center">
-	<button
-		class="py-[6px] px-3 bg-purple-600 rounded-md flex items-center gap-2"
-		on:click={handleClick}
-	>
-		<div class="w-4 aspect-square">
-			{#if $recorder.isRecording}
-				<VideoSlash />
-			{:else}
-				<Video />
-			{/if}
-		</div>
-		<span>{$recorder.isRecording ? 'Stop' : 'Start'} recording</span>
-	</button>
+<main
+	class="w-full h-full p-8 pb-44 grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] auto-rows-min gap-8 md:p-16 md:pb-44 lg:px-32 lg:gap-y-16"
+>
+	<RecordingList />
+	<FloatingRecordingBar />
 </main>
