@@ -33,7 +33,9 @@
 		</a>
 		<div class="flex justify-between items-center">
 			<h3 class="text-sm font-medium">
-				{new Date(+record).toLocaleString(undefined)}
+				<a class="py-2" href="/{record}">
+					{new Date(+record).toLocaleString(undefined)}
+				</a>
 			</h3>
 			<button
 				class="p-2 text-neutral-300 flex transition-colors hover:text-red-500"
