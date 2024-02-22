@@ -20,7 +20,7 @@
 </script>
 
 <footer
-	class="w-auto h-11 bg-neutral-900 border-2 border-white/10 rounded-full flex items-center gap-2 fixed bottom-8 left-1/2 -translate-x-1/2"
+	class="w-auto h-11 bg-neutral-900 border-2 border-white/10 rounded-full flex items-center gap-2 fixed bottom-20 left-1/2 -translate-x-1/2"
 >
 	<button class="h-full px-4 flex items-center gap-2" on:click={handleClick}>
 		<span class="w-4 aspect-square">
