@@ -45,7 +45,7 @@
 			'.gif': () => null
 		};
 
-		EXPORTERS[$extension.label]();
+		await EXPORTERS[$extension.label]();
 
 		isExporting = false;
 	}
