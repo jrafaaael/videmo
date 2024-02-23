@@ -1,20 +1,25 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { createScreenRecorder } from '../utils/create-screen-recorder';
+	import { isRecording } from '../stores/is-recording';
+	import { recordScreen } from '../utils/record-screen';
 	import VideoSlash from './icons/video-slash.svelte';
 	import Video from './icons/video.svelte';
 
-	const recorder = createScreenRecorder({
-		onEnd(data) {
-			goto(data.folder);
+	const { start, stop } = recordScreen({
+		onStart() {
+			$isRecording = true;
+		},
+		async onEnd(data) {
+			$isRecording = false;
+			await goto(data.folder);
 		}
 	});
 
-	function handleClick() {
-		if ($recorder.isRecording) {
-			recorder.stop();
+	async function handleClick() {
+		if ($isRecording) {
+			stop();
 		} else {
-			recorder.start();
+			await start();
 		}
 	}
 </script>
@@ -24,12 +29,12 @@
 >
 	<button class="h-full px-4 flex items-center gap-2" on:click={handleClick}>
 		<span class="w-4 aspect-square">
-			{#if $recorder.isRecording}
+			{#if $isRecording}
 				<VideoSlash />
 			{:else}
 				<Video />
 			{/if}
 		</span>
-		<span>{$recorder.isRecording ? 'Stop' : 'Start'} recording</span>
+		<span>{$isRecording ? 'Stop' : 'Start'} recording</span>
 	</button>
 </footer>

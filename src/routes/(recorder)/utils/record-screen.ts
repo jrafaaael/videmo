@@ -1,4 +1,3 @@
-import { writable } from 'svelte/store';
 import { FPS } from '$lib/utils/constants';
 import EncodeWorker from '../workers/encode.worker?worker';
 import { BPS } from './constants';
@@ -15,8 +14,7 @@ interface Params {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export function createScreenRecorder(params?: Params) {
-	const { subscribe, set } = writable({ isRecording: false });
+export function recordScreen({ ...params }: Params) {
 	let worker: Worker;
 	let stream: MediaStream;
 	let recorder: MediaRecorder;
@@ -44,7 +42,6 @@ export function createScreenRecorder(params?: Params) {
 
 			recorder.addEventListener('stop', () => {
 				worker.postMessage({ type: 'end' });
-				set({ isRecording: false });
 			});
 
 			recorder.start();
@@ -70,7 +67,6 @@ export function createScreenRecorder(params?: Params) {
 				},
 				[trackStream]
 			);
-			set({ isRecording: true });
 			params?.onStart?.();
 		} catch (error) {
 			console.log(error);
@@ -83,7 +79,6 @@ export function createScreenRecorder(params?: Params) {
 	}
 
 	return {
-		subscribe,
 		start,
 		stop
 	};
