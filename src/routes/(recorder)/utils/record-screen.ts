@@ -8,13 +8,14 @@ interface RecordingStorageInformation {
 }
 
 interface Params {
+	countdown?: number;
 	onEnd?: (recording: RecordingStorageInformation) => void;
 	onStart?: () => void;
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export function recordScreen({ ...params }: Params) {
+export function recordScreen({ countdown = 1000, ...rest }: Params) {
 	let worker: Worker;
 	let stream: MediaStream;
 	let recorder: MediaRecorder;
@@ -33,10 +34,10 @@ export function recordScreen({ ...params }: Params) {
 			});
 
 			worker.addEventListener('message', async (e) => {
-				const { type, ...rest } = e.data;
+				const { type, ...data } = e.data;
 
 				if (type === 'result') {
-					params?.onEnd?.(rest);
+					rest?.onEnd?.(data);
 				}
 			});
 
@@ -51,8 +52,7 @@ export function recordScreen({ ...params }: Params) {
 			// The problem is: in the result video, I get a black rectangle at bottom because, at some point, the stream "fallbacks"
 			// to the tab/window height. When recording a tab, the "header"'s height is removed too a few ms later. However, If I
 			// wait a few seconds and then get the track details, I get the correct height value (only tab/window height).
-			// TODO: Handle wait time in UI
-			await sleep(1000);
+			await sleep(countdown);
 			const track = stream.getVideoTracks()[0];
 			const trackProcessor = new MediaStreamTrackProcessor({ track });
 			const trackStream: ReadableStream = trackProcessor.readable;
@@ -67,7 +67,7 @@ export function recordScreen({ ...params }: Params) {
 				},
 				[trackStream]
 			);
-			params?.onStart?.();
+			rest?.onStart?.();
 		} catch (error) {
 			console.log(error);
 		}
