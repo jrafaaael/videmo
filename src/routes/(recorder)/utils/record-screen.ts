@@ -8,19 +8,18 @@ interface RecordingStorageInformation {
 }
 
 interface Params {
-	countdown?: number;
 	onEnd?: (recording: RecordingStorageInformation) => void;
 	onStart?: () => void;
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export function recordScreen({ countdown = 1000, ...rest }: Params) {
+export function recordScreen({ ...rest }: Params) {
 	let worker: Worker;
 	let stream: MediaStream;
 	let recorder: MediaRecorder;
 
-	async function start() {
+	async function start({ countdown = 1000 } = {}) {
 		worker = new EncodeWorker();
 		stream = await navigator.mediaDevices.getDisplayMedia({
 			video: {

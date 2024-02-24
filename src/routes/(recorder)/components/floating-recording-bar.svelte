@@ -9,7 +9,6 @@
 	let countdown = 3000;
 	let interval: number | null = null;
 	const { start, stop } = recordScreen({
-		countdown: COUNTDOWN,
 		onStart() {
 			interval = setInterval(() => (countdown -= 1000), 1000);
 		},
@@ -26,7 +25,7 @@
 		}
 
 		try {
-			await start();
+			await start({ countdown });
 			$isRecording = true;
 		} catch (error) {
 			console.error(error);
