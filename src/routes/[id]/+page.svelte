@@ -25,6 +25,8 @@
 	let isTrimming = false;
 
 	onMount(async () => {
+		document.title = 'Videmo';
+
 		try {
 			const folderName = $page.params.id;
 			const values = localStorage.getItem(folderName)

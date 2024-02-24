@@ -52,6 +52,10 @@
 		$isRecording = true;
 		countdownInterval = null;
 	}
+
+	$: if ($isRecording) {
+		document.title = secondsToTime(recordingDuration / 1000);
+	}
 </script>
 
 <footer
