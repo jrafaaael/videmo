@@ -24,8 +24,8 @@
 		async onEnd(data) {
 			clearInterval(recordingDurationInterval!);
 			recordingDurationInterval = null;
-			$isRecording = false;
 			await goto(data.folder);
+			$isRecording = false;
 		}
 	});
 	$: countdown = $countdownDuration.value;
@@ -42,7 +42,6 @@
 			recordingStartDate = new Date();
 			now = new Date();
 			recordingDurationInterval = setInterval(() => (now = new Date()), 1000);
-			$isRecording = true;
 		} catch (error) {
 			console.error(error);
 		}
@@ -50,6 +49,7 @@
 
 	$: if (countdown <= 0) {
 		clearInterval(countdownInterval!);
+		$isRecording = true;
 		countdownInterval = null;
 	}
 </script>
