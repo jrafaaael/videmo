@@ -5,9 +5,12 @@
 	import VideoSlash from './icons/video-slash.svelte';
 	import Video from './icons/video.svelte';
 
+	let countdown = 3000;
+	let interval: number | null = null;
 	const { start, stop } = recordScreen({
+		countdown,
 		onStart() {
-			$isRecording = true;
+			interval = setInterval(() => (countdown -= 1000), 1000);
 		},
 		async onEnd(data) {
 			$isRecording = false;
@@ -18,9 +21,20 @@
 	async function handleClick() {
 		if ($isRecording) {
 			stop();
-		} else {
-			await start();
+			return;
 		}
+
+		try {
+			await start();
+			$isRecording = true;
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	$: if (countdown <= 0) {
+		clearInterval(interval!);
+		interval = null;
 	}
 </script>
 
@@ -35,6 +49,6 @@
 				<Video />
 			{/if}
 		</span>
-		<span>{$isRecording ? 'Stop' : 'Start'} recording</span>
+		<span>{$isRecording ? 'Stop' : 'Start'} recording {countdown}</span>
 	</button>
 </footer>
