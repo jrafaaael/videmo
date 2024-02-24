@@ -12,7 +12,7 @@
 	import Video from './icons/video.svelte';
 	import Clock from './icons/clock.svelte';
 
-	const countdownDuration = writable(COUNTDOWN_OPTIONS.at(0));
+	const countdownDuration = writable(COUNTDOWN_OPTIONS.at(1));
 	let countdownInterval: number | null = null;
 	let recordingStartDate: Date | null = null;
 	let now: Date | null = null;
