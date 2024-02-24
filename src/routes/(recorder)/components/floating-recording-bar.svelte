@@ -62,18 +62,16 @@
 	{#if !countdownInterval}
 		<button class="h-full px-5 flex items-center gap-2" on:click={handleClick}>
 			<span class="w-4 aspect-square text-neutral-50/50">
-				{#if $isRecording}
-					<VideoSlash />
-				{:else}
+				{#if !$isRecording}
 					<Video />
+				{:else}
+					<VideoSlash />
 				{/if}
 			</span>
-			<span>{$isRecording ? 'Stop' : 'Start'} recording</span>
+			<span>{!$isRecording ? 'Start' : 'Stop'} recording</span>
 		</button>
 		<div class="w-[2px] h-[40%] bg-white/20" />
-		{#if $isRecording}
-			<output class="px-5 tabular-nums">{secondsToTime(recordingDuration / 1000)}</output>
-		{:else}
+		{#if !$isRecording}
 			<Select.Root
 				selected={countdownDuration}
 				defaultSelected={$countdownDuration}
@@ -112,9 +110,11 @@
 					{/each}
 				</Select.Menu>
 			</Select.Root>
+		{:else}
+			<output class="px-5 tabular-nums">{secondsToTime(recordingDuration / 1000)}</output>
 		{/if}
 	{:else}
-		<div class="min-w-[100px] h-full px-4 flex justify-center items-center gap-12">
+		<div class="min-w-[150px] h-full px-4 flex justify-center items-center gap-12">
 			{#each Array.from({ length: $countdownDuration.value / 1000 }, (_, i) => i + 1).reverse() as second}
 				<span
 					class="text-2xl font-bold {second >= countdown / 1000
