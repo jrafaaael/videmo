@@ -55,9 +55,9 @@
 </script>
 
 <footer
-	class="w-auto h-12 rounded-full flex items-center fixed bottom-20 left-1/2 -translate-x-1/2 {!countdownInterval
-		? 'bg-neutral-900 border-2 border-white/10'
-		: 'bg-red-600 border-2 border-red-500/70'}"
+	class="w-auto h-12 border-2 border-white/10 rounded-full flex items-center fixed bottom-20 left-1/2 -translate-x-1/2 {!countdownInterval
+		? 'bg-neutral-900'
+		: 'bg-red-600'}"
 >
 	{#if !countdownInterval}
 		<button class="h-full px-5 flex items-center gap-2" on:click={handleClick}>
