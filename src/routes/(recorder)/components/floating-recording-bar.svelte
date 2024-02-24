@@ -50,7 +50,7 @@
 		: 'bg-red-600 border-2 border-red-500/70'}"
 >
 	{#if !interval}
-		<button class="h-full px-4 flex items-center gap-2" on:click={handleClick}>
+		<button class="h-full px-5 flex items-center gap-2" on:click={handleClick}>
 			<span class="w-4 aspect-square text-neutral-50/50">
 				{#if $isRecording}
 					<VideoSlash />
@@ -66,7 +66,10 @@
 			defaultSelected={$countdownDuration}
 			positioning={{ placement: 'top', gutter: 5 }}
 		>
-			<Select.Trigger class="h-full px-4 flex items-center gap-2">
+			<Select.Trigger class="h-full px-5 flex items-center gap-2">
+				<span class="w-4 aspect-square text-neutral-50/50">
+					<Clock />
+				</span>
 				<span>
 					<span>Countdown:</span>
 					<output class="font-bold tabular-nums">{$countdownDuration?.value / 1000}</output><span
