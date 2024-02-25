@@ -47,6 +47,10 @@
 		}
 	}
 
+	$: if (countdownInterval) {
+		document.title = 'Starting in ' + countdown / 1000 + 's';
+	}
+
 	$: if (countdown <= 0) {
 		clearInterval(countdownInterval!);
 		$isRecording = true;
