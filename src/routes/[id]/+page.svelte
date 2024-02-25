@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto, beforeNavigate } from '$app/navigation';
+	import { secondsToTime } from '$lib/utils/seconds-to-time';
 	import { recording } from './stores/recording.store';
 	import { edits } from './stores/edits.store';
 	import { videoStatus } from './stores/video-status.store';
@@ -16,7 +17,6 @@
 	import Seeker from './components/seeker.svelte';
 	import Trimmer from './components/trimmer.svelte';
 	import ZoomList from './components/zoom-list.svelte';
-	import { secondsToTime } from './utils/seconds-to-time';
 	import { getBlobDuration } from './utils/get-blob-duration';
 
 	let videoRef: Video;

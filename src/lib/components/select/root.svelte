@@ -12,7 +12,8 @@
 		forceVisible: true,
 		positioning,
 		defaultSelected,
-		selected
+		selected,
+		preventScroll: false
 	});
 </script>
 

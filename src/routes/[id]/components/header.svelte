@@ -2,13 +2,13 @@
 	import { writable } from 'svelte/store';
 	import { page } from '$app/stores';
 	import * as Select from '$lib/components/select';
+	import ChevronDown from '$lib/components/icons/chevron-down.svelte';
+	import Check from '$lib/components/icons/check.svelte';
 	import { EXPORT_OPTIONS, Status } from '../utils/export-options';
 	import { download } from '../utils/download';
 	import ArrowFat from './icons/arrow-fat.svelte';
 	import Loading from './icons/loading.animated.svelte';
-	import ChrevronDown from './icons/chevron-down.outlined.svelte';
 	import Download from './icons/download.svelte';
-	import Check from './icons/check.svelte';
 
 	export let getFrameAsImage: () => string;
 	export let getMP4: () => Promise<string>;
@@ -73,9 +73,9 @@
 		>
 			<Select.Trigger class="grow-0 shrink flex items-center gap-1">
 				<span>{$extension?.label}</span>
-				<div class="w-4 aspect-square translate-y-[2px]">
-					<ChrevronDown />
-				</div>
+				<span class="w-4 aspect-square translate-y-[2px]">
+					<ChevronDown />
+				</span>
 			</Select.Trigger>
 			<Select.Menu
 				class="bg-neutral-800/80 backdrop-blur-lg border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden"
@@ -90,9 +90,9 @@
 					>
 						<span class={isSelected ? 'font-bold' : 'font-normal'}>{option.label}</span>
 						{#if isSelected}
-							<div class="w-3 aspect-square">
+							<span class="w-3 aspect-square">
 								<Check />
-							</div>
+							</span>
 						{:else if option.status !== Status.AVAILABLE}
 							<span class="text-xs uppercase">{option.status}</span>
 						{/if}

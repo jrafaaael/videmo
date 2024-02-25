@@ -2,7 +2,7 @@
 	import { melt } from '@melt-ui/svelte';
 	import { getSelectContext } from './context';
 
-	export let value: string;
+	export let value: string | number;
 	export let label: string;
 	export let disabled = false;
 
