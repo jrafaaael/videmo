@@ -24,6 +24,7 @@
 		async onEnd(data) {
 			clearInterval(recordingDurationInterval!);
 			recordingDurationInterval = null;
+			document.title = 'Videmo';
 			await goto(data.folder);
 			$isRecording = false;
 		}
