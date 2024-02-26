@@ -1,38 +1,50 @@
-# create-svelte
+# 🎥 videmo
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Record your screen and create engaging videos without video-editing skills!
 
-## Creating a project
+## Contributing
 
-If you're seeing this, you've probably already done this step. Congrats!
+Any contributions you make are greatly appreciated. We welcome any idea that help us (the Videmo's community) to improve the project. Some ways to contribute to Videmo are:
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+1. Simply start using [Videmo](https://videmo.vercel.app/) :)
+2. Raising an issue
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+   - Before submitting a new issue, check if it already exists in issues
+   - **One issue, one bug:** Please report a single bug per issue.
+   - In title, start it with `[BUG]: `, then a descriptive title for your issue (e. g: [BUG]: Recording is broken in Firefox)
+   - Add `bug` label
+   - Include screenshots or videos in your issue whenever needed
 
-## Developing
+3. Contribute with your ideas!
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+   - Before submitting a new idea, check if it already exists in Planned features or if someone already suggest it
+   - In title, start it with `[FEATURE REQUEST]: `, then a descriptive title for your feature (e. g.: [FEATURE REQUEST]: GIF export)
+   - Add `enhancement` label
 
-```bash
-npm run dev
+4. Submitting a Pull Request
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+   - Before submitting a new PR, check if it already is being developed
+   - **DON'T USE `master` BRANCH TO DEVELOP YOUR PR!**
+   - If your PR refers to or fixes an issue, be sure to add `refs #XXX` or `fixes #XXX` to the PR description. Replacing `XXX` with the respective issue number. See more about [Linking a pull request to an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue)
+   - We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for our pull request titles (and commit messages). For types we use the [Angular's convention](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#type). If a change don't apply to any type of the Angular's Convention, then use `chore`
 
-## Building
+## Planned features
 
-To create a production version of your app:
+These are some features that we want to develop in the short, medium and long term. This doesn't mean that a long-term feature can be developed and shipped before that a short-term one
 
-```bash
-npm run build
-```
+| Short-term                | Status | Medium-term      | Status | Long-term            | Status |
+| ------------------------- | ------ | ---------------- | ------ | -------------------- | ------ |
+| Store videos              | ✅     | Selfie recording | ❌     | Auto zoom            | ❌     |
+| Upload background         | ❌     | Subtitles        | ❌     | 3D renderer          | ❌     |
+| Upload videos (recording) | ❌     | Upload audio     | ❌     | Auto trim low-volume | ❌     |
+| Crop                      | ❌     | Clips            | ❌     |                      |        |
+| Trim                      | ❌     | Layouts          | ❌     |                      |        |
+| Vertical export           | ❌     | Mockups          | ❌     |                      |        |
 
-You can preview the production build with `npm run preview`.
+> ✅: Done
+>
+> ❌: No done
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## Known bugs
+
+1. Some browser APIs used in Videmo only works in Chromium-based browsers (tested on Chrome only so far)
