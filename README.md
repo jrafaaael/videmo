@@ -37,7 +37,7 @@ These are some features that we want to develop in the short, medium and long te
 | Store videos              | ✅     | Selfie recording | ❌     | Auto zoom            | ❌     |
 | Upload background         | ❌     | Subtitles        | ❌     | 3D renderer          | ❌     |
 | Upload videos (recording) | ❌     | Upload audio     | ❌     | Auto trim low-volume | ❌     |
-| Crop                      | ❌     | Clips            | ❌     |                      |        |
+| Crop                      | ❌     | Clips            | ❌     | Mobile               | ❌     |
 | Trim                      | ❌     | Layouts          | ❌     |                      |        |
 | Vertical export           | ❌     | Mockups          | ❌     |                      |        |
 
