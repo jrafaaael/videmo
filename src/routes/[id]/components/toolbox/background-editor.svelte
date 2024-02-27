@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { WALLPAPERS } from '../../utils/wallpapers';
 	import { background } from '../../stores/background.store';
+	import { WALLPAPERS } from '../../utils/constants';
 </script>
 
 <div class="flex flex-wrap gap-4">

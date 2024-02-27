@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { type WallpaperNames, WALLPAPERS } from '../utils/wallpapers';
+import { type WallpaperNames, WALLPAPERS } from '../utils/constants';
 
 const DEFAULT_VALUE = WALLPAPERS.at(0)!;
 
