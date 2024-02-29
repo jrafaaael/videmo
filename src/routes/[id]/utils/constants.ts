@@ -39,4 +39,15 @@ export const WALLPAPERS = [
 	{ name: 'venturaDark', url: venturaDark }
 ];
 
-export const COLORS = ['#f00', '#0f0', '#00f', '#fff', '#000'];
+export const COLORS = [
+	'#fff',
+	'#333',
+	'#e2e8f0',
+	'#d9f99d',
+	'#bfdbfe',
+	'#a7f3d0',
+	'#fde68a',
+	'#e879f9',
+	'#c084fc',
+	'#fecdd3',
+];
