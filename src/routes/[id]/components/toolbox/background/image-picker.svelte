@@ -11,13 +11,13 @@
 		>
 			<img class="aspect-square object-fill" src={wallpaper.url} alt="{wallpaper.name} wallpaper" />
 			<input
-				checked={wallpaper.name === $background.name}
+				checked={typeof $background !== 'string' && wallpaper.name === $background.name}
 				type="radio"
 				class="sr-only"
 				name="wallpaper"
 				value={wallpaper.name}
 				id={wallpaper.name}
-				on:input={() => background.updateBackground(wallpaper.name)}
+				on:input={() => ($background = wallpaper)}
 			/>
 		</label>
 	{/each}

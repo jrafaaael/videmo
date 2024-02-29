@@ -11,13 +11,13 @@
 		>
 			<div class="aspect-square object-fill" style="background-color: {color};" />
 			<input
-				checked={color === $background.name}
+				checked={typeof $background === 'string' && color === $background}
 				type="radio"
 				class="sr-only"
 				name="wallpaper"
 				value={color}
 				id={color}
-				on:input={() => background.updateBackground(color)}
+				on:input={() => ($background = color)}
 			/>
 		</label>
 	{/each}

@@ -150,9 +150,14 @@
 
 		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
 
-		ctx.imageSmoothingEnabled = true;
-		ctx.imageSmoothingQuality = 'high';
-		ctx?.drawImage(backgroundImageRef, 0, 0, ctx.canvas.width, ctx.canvas.height);
+		if (typeof $background === 'string') {
+			ctx.fillStyle = $background;
+			ctx.fillRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
+		} else {
+			ctx.imageSmoothingEnabled = true;
+			ctx.imageSmoothingQuality = 'high';
+			ctx?.drawImage(backgroundImageRef, 0, 0, ctx.canvas.width, ctx.canvas.height);
+		}
 
 		ctx.save();
 		roundCorners({
@@ -230,9 +235,14 @@
 
 		ctx = canvasRef.getContext('2d', { alpha: false })!;
 
-		const unsubscribeBackgroundStore = background.subscribe(
-			() => (backgroundImageRef.src = $background.url)
-		);
+		const unsubscribeBackgroundStore = background.subscribe(() => {
+			if (typeof $background === 'string') {
+				draw(videoRef, $videoStatus.currentTime);
+				return;
+			}
+
+			backgroundImageRef.src = $background.url;
+		});
 		const unsubscribeAppearenceStore = appearence.subscribe(() =>
 			draw(videoRef, $videoStatus.currentTime)
 		);
