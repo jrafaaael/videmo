@@ -6,7 +6,7 @@
 	import { recording } from './stores/recording.store';
 	import { edits } from './stores/edits.store';
 	import { videoStatus } from './stores/video-status.store';
-	import { background } from './stores/background.store';
+	import { DEFAULT_VALUE as DEFAULT_BACKGROUND, background } from './stores/background.store';
 	import { appearence } from './stores/general-appearance.store';
 	import { zooms } from './stores/zooms.store';
 	import Header from './components/header.svelte';
@@ -33,12 +33,12 @@
 
 			if (values !== null) {
 				zooms.load(values.zooms);
-				background.updateBackground(values.background.name);
+				$background = values.background;
 				$appearence = values.appearence;
 				$edits = values.trimmings;
 			} else {
 				zooms.reset();
-				background.reset();
+				$background = DEFAULT_BACKGROUND!;
 				appearence.reset();
 			}
 
@@ -63,8 +63,10 @@
 	});
 
 	beforeNavigate(() => {
+		const previousConfig = JSON.parse(localStorage.getItem($page.params.id) ?? '{}');
 		const url = $recording?.url;
 		const values = {
+			...previousConfig,
 			background: $background,
 			appearence: $appearence,
 			zooms: $zooms,

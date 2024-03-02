@@ -37,6 +37,17 @@ export const WALLPAPERS = [
 	{ name: 'stock17_2', url: stock17_2 },
 	{ name: 'ventura', url: ventura },
 	{ name: 'venturaDark', url: venturaDark }
-] as const;
+];
 
-export type WallpaperNames = typeof WALLPAPERS[number]['name'];
+export const COLORS = [
+	'#fff',
+	'#333',
+	'#e2e8f0',
+	'#d9f99d',
+	'#bfdbfe',
+	'#a7f3d0',
+	'#fde68a',
+	'#e879f9',
+	'#c084fc',
+	'#fecdd3',
+];
