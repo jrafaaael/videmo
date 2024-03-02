@@ -11,7 +11,7 @@
 </script>
 
 <div class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-4">
-	<div class="border-2 border-white/10 rounded-lg">
+	<div class="border-2 border-white/10 rounded-lg hover:scale-95">
 		<button
 			class="w-full h-full flex justify-center items-center"
 			on:click={() => {
