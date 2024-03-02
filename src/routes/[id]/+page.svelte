@@ -63,8 +63,10 @@
 	});
 
 	beforeNavigate(() => {
+		const previousConfig = JSON.parse(localStorage.getItem($page.params.id) ?? '{}');
 		const url = $recording?.url;
 		const values = {
+			...previousConfig,
 			background: $background,
 			appearence: $appearence,
 			zooms: $zooms,
