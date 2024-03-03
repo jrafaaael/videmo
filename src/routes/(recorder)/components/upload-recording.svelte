@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Upload from './icons/upload.svelte';
 
 	let input: HTMLInputElement;
@@ -21,6 +22,8 @@
 		const writable = await video.createWritable();
 		await writable.write(file);
 		await writable.close();
+
+		await goto(now);
 	}
 </script>
 
