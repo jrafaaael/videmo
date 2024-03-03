@@ -15,15 +15,16 @@
 		if (!file) return;
 		if (!file.type.includes('video')) return;
 
+		const filename = file.name;
+		const folderName = file.name.split('.').slice(0, -1).join('.');
 		const root = await navigator.storage.getDirectory();
-		const now = new Date().getTime().toString();
-		const folder = await root.getDirectoryHandle(now, { create: true });
-		const video = await folder.getFileHandle(file.name, { create: true });
+		const folder = await root.getDirectoryHandle(folderName, { create: true });
+		const video = await folder.getFileHandle(filename, { create: true });
 		const writable = await video.createWritable();
 		await writable.write(file);
 		await writable.close();
 
-		await goto(now);
+		await goto(folderName);
 	}
 </script>
 
