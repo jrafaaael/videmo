@@ -27,6 +27,7 @@
 </script>
 
 {#each recordings as record}
+	{@const folderName = isNaN(Number(record)) ? record : new Date(+record).toLocaleString()}
 	<article class="flex flex-col gap-2">
 		<a href="/{record}">
 			<span class="w-full aspect-video bg-white/5 border border-white/5 rounded-md inline-block" />
@@ -34,7 +35,7 @@
 		<div class="flex justify-between items-center">
 			<h3 class="text-sm font-medium">
 				<a class="py-2" href="/{record}">
-					{new Date(+record).toLocaleString(undefined)}
+					{folderName}
 				</a>
 			</h3>
 			<button
