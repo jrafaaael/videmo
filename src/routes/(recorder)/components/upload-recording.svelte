@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import Upload from './icons/upload.svelte';
 
-	let input: HTMLInputElement;
+	let inputRef: HTMLInputElement;
 
 	async function handleUpload(
 		e: Event & {
@@ -31,7 +31,7 @@
 <button
 	class="h-full px-5 flex items-center gap-2"
 	on:click={() => {
-		input.showPicker();
+		inputRef.showPicker();
 	}}
 >
 	<span class="w-4 aspect-square text-neutral-50/50">
@@ -45,6 +45,6 @@
 	name="recording"
 	id="recording"
 	accept="video/*"
-	bind:this={input}
+	bind:this={inputRef}
 	on:change={handleUpload}
 />
