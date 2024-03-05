@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { saveFile } from '../utils/save-file';
 	import Upload from './icons/upload.svelte';
 
 	let inputRef: HTMLInputElement;
@@ -17,13 +18,8 @@
 
 		const filename = file.name;
 		const folderName = file.name.split('.').slice(0, -1).join('.');
-		const root = await navigator.storage.getDirectory();
-		const folder = await root.getDirectoryHandle(folderName, { create: true });
-		const video = await folder.getFileHandle(filename, { create: true });
-		const writable = await video.createWritable();
-		await writable.write(file);
-		await writable.close();
 
+		await saveFile(file, `${folderName}/${filename}`);
 		await goto(folderName);
 	}
 </script>
