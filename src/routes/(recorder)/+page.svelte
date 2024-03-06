@@ -30,7 +30,10 @@
 		on:dragenter={() => (isDroppingNewRecording = true)}
 		on:dragover={() => (isDroppingNewRecording = true)}
 		on:dragleave={() => (isDroppingNewRecording = false)}
-		on:drop={handleDrop}
+		on:drop={(e) => {
+			isDroppingNewRecording = false;
+			handleDrop(e);
+		}}
 	>
 		<article
 			class="w-full h-full bg-white/10 flex justify-center items-center flex-col gap-2 fixed inset-0 z-10 backdrop-blur {isDroppingNewRecording
