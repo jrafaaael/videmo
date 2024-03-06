@@ -13,6 +13,7 @@
 	) {
 		const dt = e.dataTransfer;
 		const files = dt?.files;
+
 		dispatch('drop', { files });
 	}
 </script>
