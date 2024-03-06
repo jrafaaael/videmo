@@ -17,14 +17,18 @@
 	}
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	role="button"
 	tabindex="0"
-	{...$$restProps}
 	class={$$restProps.class}
 	on:click={() => openPickerOnClick && inputRef.showPicker()}
-	on:dragenter|preventDefault|stopPropagation={() => {}}
-	on:dragover|preventDefault|stopPropagation={() => {}}
+	on:drag|preventDefault|stopPropagation
+	on:dragstart|preventDefault|stopPropagation
+	on:dragend|preventDefault|stopPropagation
+	on:dragenter|preventDefault|stopPropagation
+	on:dragover|preventDefault|stopPropagation
+	on:dragleave|preventDefault|stopPropagation
 	on:drop|preventDefault|stopPropagation={handleDrop}
 >
 	<slot />
