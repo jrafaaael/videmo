@@ -23,7 +23,7 @@
 
 <main>
 	<Dropzone
-		class="w-full min-h-dvh p-8 pb-44 grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] auto-rows-min gap-8 cursor-default md:p-16 md:pb-44 lg:px-32 lg:gap-y-16 {isDroppingNewRecording
+		class="w-full min-h-dvh p-8 pb-44 grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] auto-rows-min gap-8 cursor-default outline-none md:p-16 md:pb-44 lg:px-32 lg:gap-y-16 {isDroppingNewRecording
 			? '*:pointer-events-none'
 			: ''}"
 		openPickerOnClick={false}

@@ -21,7 +21,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	role="button"
-	tabindex="0"
+	tabindex="-1"
 	class={$$restProps.class}
 	on:click={() => openPickerOnClick && inputRef.showPicker()}
 	on:drag|preventDefault|stopPropagation
