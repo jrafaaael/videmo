@@ -13,6 +13,7 @@
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"dependencies": {
+		"@vercel/analytics": "^1.2.2",
 		"mp4-muxer": "^3.0.2",
 		"mp4box": "^0.5.2"
 	},
