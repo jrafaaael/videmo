@@ -61,7 +61,7 @@
 		</span>
 		<div class="flex flex-col gap-1">
 			<h3 class="font-medium">No recordings yet!</h3>
-			<p class="text-sm">Record your first video and it'll show up here!</p>
+			<p class="text-sm">Record, upload or drag 'n drop your first video and it'll show up here!</p>
 		</div>
 	</article>
 {/each}
