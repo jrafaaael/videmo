@@ -8,6 +8,7 @@
 	import { isRecording } from '../stores/is-recording';
 	import { COUNTDOWN_OPTIONS } from '../utils/constants';
 	import { recordScreen } from '../utils/record-screen';
+	import UploadRecording from './upload-recording.svelte';
 	import VideoSlash from './icons/video-slash.svelte';
 	import Video from './icons/video.svelte';
 	import Clock from './icons/clock.svelte';
@@ -69,6 +70,8 @@
 		: 'bg-red-600'}"
 >
 	{#if !countdownInterval}
+		<UploadRecording />
+		<div class="w-[2px] h-[40%] bg-white/20" />
 		<button class="h-full px-5 flex items-center gap-2" on:click={handleClick}>
 			<span class="w-4 aspect-square text-neutral-50/50">
 				{#if !$isRecording}

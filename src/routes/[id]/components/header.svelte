@@ -12,7 +12,9 @@
 
 	export let getFrameAsImage: () => string;
 	export let getMP4: () => Promise<string>;
-	const folderName = new Date(+$page.params.id).toLocaleString(undefined);
+	const folderName = isNaN(Number(+$page.params.id))
+		? $page.params.id
+		: new Date(+$page.params.id).toLocaleString();
 	let extension = writable(EXPORT_OPTIONS.at(0));
 	let isExporting = false;
 
