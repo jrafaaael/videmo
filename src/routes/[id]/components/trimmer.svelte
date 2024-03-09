@@ -60,20 +60,11 @@
 <div class="h-10 bg-blue-500/30 rounded-md overflow-hidden" bind:this={target} />
 <Moveable
 	{target}
-	origin
+	snappable
+	bounds={{ position: 'css', left: 0, top: 0, right: 0, bottom: 0 }}
 	resizable
-	throttleResize={0}
 	renderDirections={['e', 'w']}
-	on:resizeStart={({ detail }) => console.log(detail)}
 	on:resize={({ detail: e }) => {
-		const constrains = e.target.parentElement.getBoundingClientRect();
-		const trimmerRect = e.target.getBoundingClientRect();
-		console.log(e);
-
-		if (trimmerRect.left < constrains?.left) {
-			return;
-		}
-
 		e.target.style.width = `${e.width}px`;
 		e.target.style.transform = e.drag.transform;
 	}}
