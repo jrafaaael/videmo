@@ -65,7 +65,10 @@
 	resizable
 	renderDirections={['e', 'w']}
 	on:resize={({ detail: e }) => {
-		e.target.style.width = `${e.width}px`;
+		const bounds = e.target.parentElement?.getBoundingClientRect();
+		const width = Number(((e.width * 100) / bounds?.width).toFixed(2));
+
+		e.target.style.width = `${width}%`;
 		e.target.style.transform = e.drag.transform;
 	}}
 />
