@@ -53,8 +53,28 @@
 
 	export let isResizing: boolean;
 	let target: HTMLDivElement;
-	// $: width = (($edits.endAt - $edits.startAt) * 100) / $recording?.duration;
-	// $: left = ($edits.startAt * 100) / $recording?.duration;
+	let moveableRef: Moveable;
+	let isFirstRender = true;
+
+	$: if (moveableRef && target.parentElement && $recording) {
+		const bounds = target.parentElement?.getBoundingClientRect();
+		const width = (($edits.endAt - $edits.startAt) * bounds?.width) / $recording?.duration;
+		const left = ($edits.startAt * bounds?.width) / $recording?.duration;
+
+		if (isFirstRender) {
+			moveableRef.request(
+				'resizable',
+				{
+					offsetWidth: width
+				},
+				true
+			);
+
+			moveableRef.request('draggable', { x: left }, true);
+
+			isFirstRender = false;
+		}
+	}
 </script>
 
 <div class="h-full bg-blue-500/30 rounded-lg overflow-hidden" bind:this={target} />
@@ -69,6 +89,11 @@
 	useResizeObserver
 	throttleResize={0}
 	renderDirections={['e', 'w']}
+	draggable={isFirstRender}
+	bind:this={moveableRef}
+	on:drag={({ detail: e }) => {
+		e.target.style.transform = e.transform;
+	}}
 	on:resize={({ detail: e }) => {
 		const bounds = e.target.parentElement?.getBoundingClientRect();
 		const trimRect = e.target.getBoundingClientRect();
@@ -79,6 +104,12 @@
 		if (!$recording?.duration) return;
 
 		const width = Number(((e.width * 100) / bounds?.width).toFixed(2));
+
+		e.target.style.width = `${width}%`;
+		// TODO: try to use percentage instead of resize observer
+		e.target.style.transform = e.drag.transform;
+
+		if (isFirstRender) return;
 
 		if (direction === 'left') {
 			const start = +(
@@ -103,10 +134,6 @@
 				$videoStatus.currentTime = end;
 			}
 		}
-
-		e.target.style.width = `${width}%`;
-		// TODO: try to use percentage instead of resize observer
-		e.target.style.transform = e.drag.transform;
 	}}
 />
 
