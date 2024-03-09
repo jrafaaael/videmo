@@ -59,7 +59,10 @@
 
 <div class="h-10 bg-blue-500/30 rounded-md overflow-hidden" bind:this={target} />
 <Moveable
+	className="[&>*.moveable-line]:hidden"
 	{target}
+	hideDefaultLines
+	origin={false}
 	snappable
 	bounds={{ position: 'css', left: 0, top: 0, right: 0, bottom: 0 }}
 	resizable
