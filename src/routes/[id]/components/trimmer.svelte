@@ -47,9 +47,9 @@
 
 <script lang="ts">
 	import Moveable from 'svelte-moveable';
-	// import { edits } from '../stores/edits.store';
-	// import { recording } from '../stores/recording.store';
-	// import { videoStatus } from '../stores/video-status.store';
+	import { edits } from '../stores/edits.store';
+	import { recording } from '../stores/recording.store';
+	import { videoStatus } from '../stores/video-status.store';
 
 	export let isResizing: boolean;
 	let target: HTMLDivElement;
@@ -57,7 +57,7 @@
 	// $: left = ($edits.startAt * 100) / $recording?.duration;
 </script>
 
-<div class="h-10 bg-blue-500/30 rounded-md overflow-hidden" bind:this={target} />
+<div class="h-full bg-blue-500/30 rounded-lg overflow-hidden" bind:this={target} />
 <Moveable
 	className="[&>*.moveable-line]:hidden"
 	{target}
@@ -71,9 +71,41 @@
 	renderDirections={['e', 'w']}
 	on:resize={({ detail: e }) => {
 		const bounds = e.target.parentElement?.getBoundingClientRect();
+		const trimRect = e.target.getBoundingClientRect();
+		const [deltaX] = e.delta;
+		const direction = e.direction.at(0) === 1 ? 'right' : 'left';
+
+		if (!bounds) return;
+		if (!$recording?.duration) return;
+
 		const width = Number(((e.width * 100) / bounds?.width).toFixed(2));
 
+		if (direction === 'left') {
+			const start = +(
+				((trimRect.left - deltaX - bounds?.left) * $recording?.duration) /
+				(bounds?.right - bounds?.left)
+			).toFixed(2);
+
+			$edits.startAt = start;
+
+			if (start >= $videoStatus.currentTime) {
+				$videoStatus.currentTime = start;
+			}
+		} else if (direction === 'right') {
+			const end = +(
+				((trimRect.right + deltaX - bounds?.left) * $recording?.duration) /
+				(bounds?.right - bounds?.left)
+			).toFixed(2);
+
+			$edits.endAt = end;
+
+			if (end <= $videoStatus.currentTime) {
+				$videoStatus.currentTime = end;
+			}
+		}
+
 		e.target.style.width = `${width}%`;
+		// TODO: try to use percentage instead of resize observer
 		e.target.style.transform = e.drag.transform;
 	}}
 />
