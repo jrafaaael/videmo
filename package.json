@@ -15,7 +15,8 @@
 	"dependencies": {
 		"@vercel/analytics": "^1.2.2",
 		"mp4-muxer": "^3.0.2",
-		"mp4box": "^0.5.2"
+		"mp4box": "^0.5.2",
+		"svelte-moveable": "^0.45.0"
 	},
 	"devDependencies": {
 		"@melt-ui/pp": "^0.1.4",
