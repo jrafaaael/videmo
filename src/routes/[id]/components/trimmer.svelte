@@ -77,3 +77,22 @@
 		e.target.style.transform = e.drag.transform;
 	}}
 />
+
+<style lang="postcss">
+	:global(.moveable-control) {
+		@apply w-8 h-10 -mt-5 bg-transparent border-none flex justify-center items-center !important;
+	}
+
+	:global(.moveable-control.moveable-e) {
+		@apply -ml-8 !important;
+	}
+
+	:global(.moveable-control.moveable-w) {
+		@apply ml-0 !important;
+	}
+
+	:global(.moveable-control::after) {
+		@apply w-1 h-5 bg-white/50 rounded-full block;
+		content: '';
+	}
+</style>
