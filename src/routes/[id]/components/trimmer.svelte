@@ -15,6 +15,8 @@
 		const left = ($edits.startAt * bounds?.width) / $recording?.duration;
 
 		if (isFirstRender) {
+			target.classList.remove('invisible');
+
 			moveableRef.request(
 				'resizable',
 				{
@@ -22,7 +24,6 @@
 				},
 				true
 			);
-
 			moveableRef.request('draggable', { x: left }, true);
 
 			isFirstRender = false;
@@ -30,7 +31,7 @@
 	}
 </script>
 
-<div class="h-full bg-blue-500/30 rounded-lg overflow-hidden" bind:this={target} />
+<div class="h-full bg-blue-500/30 rounded-lg overflow-hidden invisible" bind:this={target} />
 <Moveable
 	className="[&>*.moveable-line]:hidden"
 	{target}
