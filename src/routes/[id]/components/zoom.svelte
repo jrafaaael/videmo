@@ -16,14 +16,9 @@
 		if (isFirstRender) {
 			target.classList.remove('invisible');
 
-			moveableRef.request(
-				'resizable',
-				{
-					offsetWidth: width
-				},
-				true
-			);
-			moveableRef.request('draggable', { x: left }, true);
+			// I don't know why I need to do this way instead of `request` (as trimmer) but it's the only way I found to make it work
+			target.style.width = `${width}px`;
+			target.style.transform = `translate3d(${left}px, 0, 0)`;
 
 			isFirstRender = false;
 		}
