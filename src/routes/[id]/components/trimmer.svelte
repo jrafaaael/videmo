@@ -31,7 +31,10 @@
 	}
 </script>
 
-<div class="h-full bg-blue-500/30 rounded-lg overflow-hidden invisible" bind:this={target} />
+<div
+	class="min-w-24 h-full bg-blue-500/30 rounded-lg overflow-hidden invisible"
+	bind:this={target}
+/>
 <Moveable
 	className="[&>*.moveable-line]:hidden"
 	{target}
