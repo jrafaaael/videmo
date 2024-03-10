@@ -16,7 +16,6 @@
 
 		if (isFirstRender) {
 			target.classList.remove('invisible');
-			moveableRef.getControlBoxElement().classList.remove('!invisible');
 
 			moveableRef.request(
 				'resizable',
@@ -37,7 +36,7 @@
 	bind:this={target}
 />
 <Moveable
-	className="!invisible [&>*.moveable-line]:hidden"
+	className="[&>*.moveable-line]:hidden {isFirstRender ? '!invisible ' : ''}"
 	{target}
 	hideDefaultLines
 	origin={false}
