@@ -1,6 +1,6 @@
-import { derived, get, writable } from 'svelte/store';
+import { derived, writable } from 'svelte/store';
 
-interface Zoom {
+export interface Zoom {
 	id: number;
 	start: number;
 	end: number;

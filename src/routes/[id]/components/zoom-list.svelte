@@ -85,6 +85,6 @@
 
 <div class="w-full h-10 relative">
 	{#each $zooms as zoom, idx (zoom.id)}
-		<Zoom />
+		<Zoom {zoom} />
 	{/each}
 </div>

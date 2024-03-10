@@ -1,16 +1,41 @@
 <script lang="ts">
 	import Moveable from 'svelte-moveable';
 	import { recording } from '../stores/recording.store';
+	import type { Zoom } from '../stores/zooms.store';
 
+	export let zoom: Zoom;
 	let target: HTMLDivElement;
+	let moveableRef: Moveable;
+	let isFirstRender = true;
+
+	$: if (moveableRef && target.parentElement && $recording) {
+		const bounds = target.parentElement?.getBoundingClientRect();
+		const width = ((zoom.end - zoom.start) * bounds?.width) / $recording?.duration;
+		const left = (zoom.start * bounds?.width) / $recording?.duration;
+
+		if (isFirstRender) {
+			target.classList.remove('invisible');
+
+			moveableRef.request(
+				'resizable',
+				{
+					offsetWidth: width
+				},
+				true
+			);
+			moveableRef.request('draggable', { x: left }, true);
+
+			isFirstRender = false;
+		}
+	}
 </script>
 
 <div
-	class="min-w-24 h-full bg-emerald-500/30 rounded-lg overflow-hidden absolute"
+	class="h-full bg-emerald-500/30 rounded-lg overflow-hidden absolute invisible"
 	bind:this={target}
 />
 <Moveable
-	className="zoom-control-box"
+	className="zoom-control-box {isFirstRender ? '!invisible ' : ''}"
 	{target}
 	hideDefaultLines
 	origin={false}
@@ -18,6 +43,11 @@
 	useResizeObserver
 	throttleResize={0}
 	renderDirections={['e', 'w']}
+	draggable={isFirstRender}
+	bind:this={moveableRef}
+	on:drag={({ detail: e }) => {
+		e.target.style.transform = e.transform;
+	}}
 	on:resize={({ detail: e }) => {
 		const bounds = e.target.parentElement?.getBoundingClientRect();
 		const zoomRect = e.target.getBoundingClientRect();
@@ -28,6 +58,12 @@
 		if (!$recording) return;
 
 		const width = Number(((e.width * 100) / bounds?.width).toFixed(2));
+
+		e.target.style.width = `${width}%`;
+		// TODO: try to use percentage instead of resize observer
+		e.target.style.transform = e.drag.transform;
+
+		if (isFirstRender) return;
 
 		if (direction === 'left') {
 			const start = +(
@@ -42,9 +78,6 @@
 				(bounds.right - bounds.left)
 			).toFixed(2);
 		}
-
-		e.target.style.width = `${width}%`;
-		e.target.style.transform = e.drag.transform;
 	}}
 />
 
