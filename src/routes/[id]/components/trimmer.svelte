@@ -51,6 +51,7 @@
 	on:drag={({ detail: e }) => {
 		e.target.style.transform = e.transform;
 	}}
+	on:resizeStart={() => (isResizing = true)}
 	on:resize={({ detail: e }) => {
 		const bounds = e.target.parentElement?.getBoundingClientRect();
 		const trimRect = e.target.getBoundingClientRect();
@@ -92,6 +93,7 @@
 			}
 		}
 	}}
+	on:resizeEnd={() => (isResizing = true)}
 />
 
 <style lang="postcss">
