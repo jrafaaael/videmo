@@ -13,16 +13,12 @@
 	import Toolbox from './components/toolbox/toolbox.svelte';
 	import Video from './components/video.svelte';
 	import Controls from './components/controls.svelte';
-	import TimeIndicator from './components/time-indicator.svelte';
-	import Seeker from './components/seeker.svelte';
-	import Trimmer from './components/trimmer.svelte';
-	import ZoomList from './components/zoom-list.svelte';
+	import Timeline from './components/timeline.svelte';
 	import { getBlobDuration } from './utils/get-blob-duration';
 
 	let videoRef: Video;
 	let paused = true;
 	let ended: boolean;
-	let isTrimming = false;
 
 	onMount(async () => {
 		try {
@@ -108,26 +104,7 @@
 					{secondsToTime(Math.floor($recording?.duration ?? 0))}
 				</span>
 			</div>
-			<div class="w-full h-12 px-10 border-b-2 border-b-white/5 flex items-end">
-				<TimeIndicator />
-			</div>
-			<div class="w-full px-10 bg-neutral-950">
-				<div class="w-full py-6 flex flex-col gap-4 relative">
-					<Seeker
-						startAt={$edits.startAt}
-						endAt={$edits.endAt}
-						{isTrimming}
-						on:changeTime={({ detail }) => {
-							videoRef.pause();
-							$videoStatus.currentTime = detail.newTime;
-						}}
-					/>
-					<div class="w-full h-10 relative">
-						<Trimmer bind:isResizing={isTrimming} />
-					</div>
-					<ZoomList />
-				</div>
-			</div>
+			<Timeline pause={videoRef?.pause} />
 		</footer>
 	</section>
 </main>
