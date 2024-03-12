@@ -1,4 +1,4 @@
-<!-- <script lang="ts">
+<script lang="ts">
 	import { recording } from '../stores/recording.store';
 	import { zooms } from '../stores/zooms.store';
 	import Resizable from './resizable.svelte';
@@ -75,16 +75,5 @@
 				}
 			}}
 		/>
-	{/each}
-</div> -->
-
-<script lang="ts">
-	import { zooms } from '../stores/zooms.store';
-	import Zoom from './zoom.svelte';
-</script>
-
-<div class="w-full h-10 relative">
-	{#each $zooms as zoom, idx (zoom.id)}
-		<Zoom {zoom} />
 	{/each}
 </div>
