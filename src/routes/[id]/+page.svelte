@@ -13,7 +13,7 @@
 	import Toolbox from './components/toolbox/toolbox.svelte';
 	import Video from './components/video.svelte';
 	import Controls from './components/controls.svelte';
-	import Timeline from './components/timeline.svelte';
+	import TimeIndicator from './components/time-indicator.svelte';
 	import Seeker from './components/seeker.svelte';
 	import Trimmer from './components/trimmer.svelte';
 	import ZoomList from './components/zoom-list.svelte';
@@ -109,7 +109,7 @@
 				</span>
 			</div>
 			<div class="w-full h-12 px-10 border-b-2 border-b-white/5 flex items-end">
-				<Timeline />
+				<TimeIndicator />
 			</div>
 			<div class="w-full px-10 bg-neutral-950">
 				<div class="w-full py-6 flex flex-col gap-4 relative">
