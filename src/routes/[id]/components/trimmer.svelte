@@ -25,22 +25,14 @@
 				(constrains.right - constrains.left)
 			).toFixed(2);
 
-			$edits.startAt = start;
-
-			if (start >= $videoStatus.currentTime) {
-				$videoStatus.currentTime = start;
-			}
+			$edits.startAt = Math.min(start, Math.abs($edits.endAt - MIN_VIDEO_DURATION_IN_SECONDS));
 		} else if (direction === 'right') {
 			const end = +(
 				((trimRect.right + delta - constrains.left) * $recording.duration) /
 				(constrains.right - constrains.left)
 			).toFixed(2);
 
-			$edits.endAt = end;
-
-			if (end <= $videoStatus.currentTime) {
-				$videoStatus.currentTime = end;
-			}
+			$edits.endAt = Math.max(end, Math.abs($edits.startAt + MIN_VIDEO_DURATION_IN_SECONDS));
 		}
 	}}
 />
