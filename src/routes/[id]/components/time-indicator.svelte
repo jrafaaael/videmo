@@ -25,22 +25,19 @@
 	) ?? 'default') as keyof typeof INDICATORS_PER_DURATION;
 </script>
 
-<div
-	class="w-full max-w-[100vw] flex items-end"
-	style="gap: calc(({availableWidth}%/{seconds.length - 1}) - 2px);"
->
+<div class="w-full flex justify-between gap-24">
 	{#each seconds as num}
-		{#if num % INDICATORS_PER_DURATION[indicator].big === 0}
-			<div class="flex flex-col items-center relative z-10">
-				<span class="text-xs text-white/40 absolute -top-4">
-					{secondsToTime(num)}
-				</span>
-				<div class="w-0.5 h-4 bg-white/20 translate-y-1/2" />
-			</div>
-		{:else if num % INDICATORS_PER_DURATION[indicator].small === 0}
+		<!-- {#if num % INDICATORS_PER_DURATION[indicator].big === 0} -->
+		<div class="flex flex-col items-center relative z-10">
+			<span class="text-xs text-white/40 absolute -top-4">
+				{secondsToTime(num)}
+			</span>
+			<div class="w-0.5 h-4 bg-white/20 translate-y-1/2" />
+		</div>
+		<!-- {:else if num % INDICATORS_PER_DURATION[indicator].small === 0}
 			<div class="w-0.5 h-2 bg-white/20 translate-y-0.5" />
 		{:else}
 			<div class="w-0.5 h-2 bg-white/20 translate-y-0.5 invisible" />
-		{/if}
+		{/if} -->
 	{/each}
 </div>

@@ -82,7 +82,7 @@
 <main class="w-full h-[calc(100dvh-4rem)] bg-neutral-950 flex overflow-hidden">
 	<Toolbox />
 
-	<section class="w-full flex-1 grid grid-rows-[minmax(0,1fr)_auto]">
+	<section class="w-full flex-1 grid grid-cols-1 grid-rows-[minmax(0,1fr)_auto]">
 		<div class="p-10 relative" id="video-wrapper">
 			<Video bind:this={videoRef} bind:ended bind:paused />
 		</div>
