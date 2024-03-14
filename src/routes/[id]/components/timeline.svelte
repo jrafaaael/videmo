@@ -10,7 +10,14 @@
 	let isTrimming = false;
 </script>
 
-<div class="overflow-x-auto">
+<div
+	class="overflow-x-auto"
+	on:wheel|preventDefault={(e) => {
+		if (e.target) {
+			e.currentTarget.scrollLeft += e.deltaY;
+		}
+	}}
+>
 	<div class="w-fit min-w-full">
 		<div class="w-full h-12 px-10 border-b-2 border-b-white/5 flex items-end">
 			<TimeIndicator />
