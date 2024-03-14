@@ -25,7 +25,11 @@
 	) ?? 'default') as keyof typeof INDICATORS_PER_DURATION;
 </script>
 
-<div class="w-full flex justify-between gap-24">
+<div
+	class="w-full flex"
+	style="gap: max(calc(({availableWidth}%/{seconds.length -
+		1}) - 2px), calc(125px - {availableWidth}%/{seconds.length - 1}));"
+>
 	{#each seconds as num}
 		<!-- {#if num % INDICATORS_PER_DURATION[indicator].big === 0} -->
 		<div class="flex flex-col items-center relative z-10">
