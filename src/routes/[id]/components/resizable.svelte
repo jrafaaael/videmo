@@ -3,7 +3,6 @@
 
 	type Direction = 'right' | 'left';
 
-	export let minWidth = 100;
 	export let width: number | null = null;
 	export let left: number | null = null;
 	export let className: string;
@@ -49,21 +48,19 @@
 				trimmerRectWhenResizingStart.width + delta
 			);
 
-			if (interalWidth >= minWidth) {
-				const deltaWidth = interalWidth - trimmerRect.width;
+			const deltaWidth = interalWidth - trimmerRect.width;
 
-				if (!width) {
-					const widthInPercentage = (interalWidth * 100) / constrains.width;
+			if (!width) {
+				const widthInPercentage = (interalWidth * 100) / constrains.width;
 
-					resizableRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
-				}
-
-				dispatcher('resize', {
-					direction: direction,
-					delta: deltaWidth,
-					refToElement: resizableRef
-				});
+				resizableRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
 			}
+
+			dispatcher('resize', {
+				direction,
+				delta: deltaWidth,
+				refToElement: resizableRef
+			});
 		} else if (direction === 'left') {
 			const delta = mousePositionWhenResizingStart - e.pageX;
 			const internalLeft = trimmerRectWhenResizingStart.left - delta - constrains.left;
@@ -73,23 +70,21 @@
 				trimmerRectWhenResizingStart.width + internalLeft + delta
 			);
 
-			if (internalWidth >= minWidth) {
-				const deltaWidth = internalWidth - trimmerRect.width;
+			const deltaWidth = internalWidth - trimmerRect.width;
 
-				if (!width) {
-					const widthInPercentage = (internalWidth * 100) / constrains.width;
-					const leftInPercentage = Math.max(0, (internalLeft * 100) / constrains.width);
+			if (!width) {
+				const widthInPercentage = (internalWidth * 100) / constrains.width;
+				const leftInPercentage = Math.max(0, (internalLeft * 100) / constrains.width);
 
-					resizableRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
-					resizableRef.style.setProperty('left', leftInPercentage.toFixed(1) + '%');
-				}
-
-				dispatcher('resize', {
-					direction: direction,
-					delta: deltaWidth,
-					refToElement: resizableRef
-				});
+				resizableRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
+				resizableRef.style.setProperty('left', leftInPercentage.toFixed(1) + '%');
 			}
+
+			dispatcher('resize', {
+				direction,
+				delta: deltaWidth,
+				refToElement: resizableRef
+			});
 		}
 	}
 

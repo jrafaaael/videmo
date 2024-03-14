@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { edits } from '../stores/edits.store';
 	import { recording } from '../stores/recording.store';
-	import { videoStatus } from '../stores/video-status.store';
 	import Resizable from './resizable.svelte';
 
 	export let isResizing: boolean;
+	const MIN_VIDEO_DURATION_IN_SECONDS = 1;
 	$: width = (($edits.endAt - $edits.startAt) * 100) / $recording?.duration;
 	$: left = ($edits.startAt * 100) / $recording?.duration;
 </script>
@@ -25,22 +25,14 @@
 				(constrains.right - constrains.left)
 			).toFixed(2);
 
-			$edits.startAt = start;
-
-			if ($edits.startAt >= $videoStatus.currentTime) {
-				$videoStatus.currentTime = start;
-			}
+			$edits.startAt = Math.min(start, Math.abs($edits.endAt - MIN_VIDEO_DURATION_IN_SECONDS));
 		} else if (direction === 'right') {
 			const end = +(
 				((zoomRect.right + delta - constrains.left) * $recording.duration) /
 				(constrains.right - constrains.left)
 			).toFixed(2);
 
-			$edits.endAt = end;
-
-			if ($edits.endAt <= $videoStatus.currentTime) {
-				$videoStatus.currentTime = end;
-			}
+			$edits.endAt = Math.max(end, Math.abs($edits.startAt + MIN_VIDEO_DURATION_IN_SECONDS));
 		}
 	}}
 />

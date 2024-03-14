@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { recording } from '../stores/recording.store';
 	import { zooms } from '../stores/zooms.store';
+	import { ZOOM_TRANSITION_DURATION } from '../utils/constants';
 	import Resizable from './resizable.svelte';
 </script>
 
@@ -35,7 +36,12 @@
 					 * so current edited zoom couldn't be set to end exactly when next one starts. when this happens, I set the `end` value of
 					 * the current edited zoom equals to `start` of next one
 					 */
-					if (!nextZoom || end < nextZoom.start) {
+					if (end - zoom.start < ZOOM_TRANSITION_DURATION * 2) {
+						zooms.updateZoomById({
+							...zoom,
+							end: zoom.start + ZOOM_TRANSITION_DURATION * 2
+						});
+					} else if (!nextZoom || end < nextZoom.start) {
 						zooms.updateZoomById({
 							...zoom,
 							end
@@ -61,7 +67,12 @@
 					 * so current edited zoom couldn't be set to start exactly when previous one ends. when this happens, I set the `start` value of
 					 * the current edited zoom equals to `end` of previous one
 					 */
-					if (!prevZoom || start > prevZoom.end) {
+					if (zoom.end - start < ZOOM_TRANSITION_DURATION * 2) {
+						zooms.updateZoomById({
+							...zoom,
+							start: zoom.end - ZOOM_TRANSITION_DURATION * 2
+						});
+					} else if (!prevZoom || start > prevZoom.end) {
 						zooms.updateZoomById({
 							...zoom,
 							start
