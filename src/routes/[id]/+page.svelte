@@ -112,7 +112,7 @@
 				<Timeline />
 			</div>
 			<div class="w-full px-10 bg-neutral-950">
-				<div class="w-full py-6 flex flex-col gap-4 relative">
+				<div class="w-full py-8 flex flex-col gap-6 relative">
 					<Seeker
 						startAt={$edits.startAt}
 						endAt={$edits.endAt}

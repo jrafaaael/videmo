@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { edits } from '../stores/edits.store';
 	import { recording } from '../stores/recording.store';
+	import { videoStatus } from '../stores/video-status.store';
 	import Resizable from './resizable.svelte';
 
 	export let isResizing: boolean;
@@ -10,7 +11,16 @@
 </script>
 
 <Resizable
-	className={{ root: 'h-10 bg-blue-500/30 rounded-md overflow-hidden' }}
+	className={{
+		root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 [&.current-trim]:bg-blue-800/30 [&.current-trim]:border-blue-800/80 [&.current-trim]:focus-within:ring-blue-800/30 hover:bg-blue-800/30 hover:border-blue-800/80 has-[:active]:bg-blue-800/30 has-[:active]:border-blue-800/80 focus-within:ring-white/5 focus-within:hover:ring-blue-800/30 *:hover:z-10 ${
+			$videoStatus.currentTime >= $edits.startAt && $videoStatus.currentTime <= $edits.endAt
+				? 'current-trim'
+				: ''
+		}`,
+		handle: 'h-full absolute cursor-ew-resize',
+		handleW: '-left-[12px]',
+		handleE: '-right-[12px]'
+	}}
 	{width}
 	{left}
 	bind:isResizing
@@ -36,10 +46,16 @@
 		}
 	}}
 >
-	<div slot="w" class="w-8 h-full flex justify-center items-center">
-		<div class="w-1 h-1/2 bg-white/50 rounded-full" />
+	<div
+		slot="w"
+		class="w-[12px] h-[75%] bg-blue-800/80 rounded-l-md flex justify-center items-center invisible group-hover:visible group-[.current-trim]:visible group-has-[:active]:visible"
+	>
+		<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
 	</div>
-	<div slot="e" class="w-8 h-full flex justify-center items-center">
-		<div class="w-1 h-1/2 bg-white/50 rounded-full" />
+	<div
+		slot="e"
+		class="w-[12px] h-[75%] bg-blue-800/80 rounded-r-md flex justify-center items-center invisible group-hover:visible group-[.current-trim]:visible group-has-[:active]:visible"
+	>
+		<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
 	</div>
 </Resizable>
