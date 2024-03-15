@@ -5,7 +5,7 @@
 
 	export let width: number | null = null;
 	export let left: number | null = null;
-	export let className: { root?: string; handle?: string };
+	export let className: { root?: string; handle?: string; handleE?: string; handleW?: string };
 	export let isResizing: boolean | null = null;
 	let direction: Direction | null = null;
 	let resizableRef: HTMLDivElement;
@@ -117,18 +117,20 @@
 
 <div
 	class={className.root}
-	style="width: {width ?? 100}%; left: {left ?? 0}%; position: absolute;"
+	style="width: {width ?? 100}%; left: {left ?? 0}%;"
 	bind:this={resizableRef}
 >
 	<div class="w-full h-full relative">
 		<button
-			class={className.handle ?? 'min-w-5 h-full cursor-ew-resize absolute top-0 left-0'}
+			class="{className.handle ??
+				'min-w-5 h-full cursor-ew-resize absolute top-0 left-0'} {className.handleW ?? ''}"
 			on:mousedown={(e) => handleResizeStart(e, 'left')}
 		>
 			<slot name="w" />
 		</button>
 		<button
-			class={className.handle ?? 'min-w-5 h-full cursor-ew-resize absolute top-0 right-0'}
+			class="{className.handle ??
+				'min-w-5 h-full cursor-ew-resize absolute top-0 right-0'} {className.handleE ?? ''}"
 			on:mousedown={(e) => handleResizeStart(e, 'right')}
 		>
 			<slot name="e" />
