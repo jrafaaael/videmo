@@ -10,7 +10,7 @@
 </script>
 
 <Resizable
-	className="h-10 bg-blue-500/30 rounded-md overflow-hidden"
+	className={{ root: 'h-10 bg-blue-500/30 rounded-md overflow-hidden' }}
 	{width}
 	{left}
 	bind:isResizing
@@ -35,4 +35,11 @@
 			$edits.endAt = Math.max(end, Math.abs($edits.startAt + MIN_VIDEO_DURATION_IN_SECONDS));
 		}
 	}}
-/>
+>
+	<div slot="w" class="w-8 h-full flex justify-center items-center">
+		<div class="w-1 h-1/2 bg-white/50 rounded-full" />
+	</div>
+	<div slot="e" class="w-8 h-full flex justify-center items-center">
+		<div class="w-1 h-1/2 bg-white/50 rounded-full" />
+	</div>
+</Resizable>

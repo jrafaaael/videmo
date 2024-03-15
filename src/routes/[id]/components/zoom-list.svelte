@@ -12,7 +12,7 @@
 		{@const nextZoom = $zooms.at(idx + 1)}
 		{@const prevZoom = idx === 0 ? null : $zooms.at(idx - 1)}
 		<Resizable
-			className="h-10 bg-emerald-500/30 rounded-md overflow-hidden absolute"
+			className={{ root: 'h-10 bg-emerald-500/30 rounded-md overflow-hidden absolute' }}
 			{width}
 			{left}
 			on:resize={({ detail }) => {
@@ -85,6 +85,13 @@
 					}
 				}
 			}}
-		/>
+		>
+			<div slot="w" class="w-8 h-full flex justify-center items-center">
+				<div class="w-1 h-1/2 bg-white/50 rounded-full" />
+			</div>
+			<div slot="e" class="w-8 h-full flex justify-center items-center">
+				<div class="w-1 h-1/2 bg-white/50 rounded-full" />
+			</div>
+		</Resizable>
 	{/each}
 </div>
