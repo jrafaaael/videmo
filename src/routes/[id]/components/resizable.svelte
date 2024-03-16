@@ -119,6 +119,8 @@
 	class={className.root}
 	style="width: {width ?? 100}%; left: {left ?? 0}%;"
 	bind:this={resizableRef}
+	on:mouseenter
+	on:mouseleave
 >
 	<div class="w-full h-full relative">
 		<button

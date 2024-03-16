@@ -14,13 +14,13 @@
 		{@const prevZoom = idx === 0 ? null : $zooms.at(idx - 1)}
 		<Resizable
 			className={{
-				root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 [&.current-zoom]:bg-emerald-800/30 [&.current-zoom]:border-emerald-800/80 [&.current-zoom]:focus-within:ring-emerald-800/30 hover:bg-emerald-800/30 hover:border-emerald-800/80 has-[:active]:bg-emerald-800/30 has-[:active]:border-emerald-800/80 focus-within:ring-white/5 focus-within:hover:ring-emerald-800/30 hover:z-10 ${
+				root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 [&.current-zoom]:bg-emerald-800/30 [&.current-zoom]:border-emerald-800/80 [&.current-zoom]:focus-within:ring-emerald-800/30 hover:bg-emerald-800/30 hover:border-emerald-800/80 has-[:active]:bg-emerald-800/30 has-[:active]:border-emerald-800/80 focus-within:ring-white/5 focus-within:hover:ring-emerald-800/30 ${
 					$videoStatus.currentTime >= zoom.start && $videoStatus.currentTime <= zoom.end
 						? 'current-zoom'
 						: ''
 				}`,
 				handle:
-					'h-full absolute cursor-ew-resize hidden group-hover:block group-has-[:active]:block',
+					'h-full absolute cursor-ew-resize hidden z-10 group-hover:block group-active:visible group-[.current-zoom]:block group-has-[:active]:block',
 				handleW: '-left-[12px]',
 				handleE: '-right-[12px]'
 			}}
@@ -95,6 +95,22 @@
 						});
 					}
 				}
+			}}
+			on:mouseenter={(e) => {
+				if (e.currentTarget?.classList.contains('current-zoom')) return;
+
+				const currentZoom = document.querySelector('.current-zoom');
+				const handles = currentZoom?.querySelectorAll('button');
+
+				handles?.forEach((e) => e.classList.add('invisible'));
+			}}
+			on:mouseleave={(e) => {
+				if (e.currentTarget?.classList.contains('current-zoom')) return;
+
+				const currentZoom = document.querySelector('.current-zoom');
+				const handles = currentZoom?.querySelectorAll('button');
+
+				handles?.forEach((e) => e.classList.remove('invisible'));
 			}}
 		>
 			<div
