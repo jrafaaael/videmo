@@ -96,7 +96,9 @@
 					}
 				}
 			}}
-			on:mouseenter={(e) => {
+			on:mouseenter={({ detail }) => {
+				const { e } = detail;
+
 				if (e.currentTarget?.classList.contains('current-zoom')) return;
 
 				const currentZoom = document.querySelector('.current-zoom');
@@ -104,7 +106,9 @@
 
 				handles?.forEach((e) => e.classList.add('invisible'));
 			}}
-			on:mouseleave={(e) => {
+			on:mouseleave={({ detail }) => {
+				const { e } = detail;
+
 				if (e.currentTarget?.classList.contains('current-zoom')) return;
 
 				const currentZoom = document.querySelector('.current-zoom');

@@ -115,12 +115,13 @@
 	}}
 /> -->
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
 	class={className.root}
 	style="width: {width ?? 100}%; left: {left ?? 0}%;"
 	bind:this={resizableRef}
-	on:mouseenter
-	on:mouseleave
+	on:mouseenter={(e) => dispatcher('mouseenter', { e })}
+	on:mouseleave={(e) => dispatcher('mouseleave', { e })}
 >
 	<div class="w-full h-full relative">
 		<button
