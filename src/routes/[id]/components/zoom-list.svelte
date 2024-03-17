@@ -14,13 +14,13 @@
 		{@const prevZoom = idx === 0 ? null : $zooms.at(idx - 1)}
 		<Resizable
 			className={{
-				root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 [&.current-zoom]:bg-emerald-800/30 [&.current-zoom]:border-emerald-800/80 [&.current-zoom]:focus-within:ring-emerald-800/30 hover:bg-emerald-800/30 hover:border-emerald-800/80 has-[:active]:bg-emerald-800/30 has-[:active]:border-emerald-800/80 focus-within:ring-white/5 focus-within:hover:ring-emerald-800/30 ${
+				root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 [&.current-zoom]:bg-emerald-800/30 [&.current-zoom]:border-emerald-800/80 [&.current-zoom]:focus-within:ring-emerald-800/30 hover:bg-emerald-800/30 hover:border-emerald-800/80 has-[:active]:bg-emerald-800/30 has-[:active]:border-emerald-800/80 focus-within:ring-white/5 focus-within:hover:ring-emerald-800/30 focus-within:active:ring-emerald-800/30 ${
 					$videoStatus.currentTime >= zoom.start && $videoStatus.currentTime <= zoom.end
 						? 'current-zoom'
 						: ''
 				}`,
 				handle:
-					'h-full absolute cursor-ew-resize hidden z-10 group-hover:block group-active:visible group-[.current-zoom]:block group-has-[:active]:block',
+					'h-full absolute cursor-ew-resize z-10 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-active:opacity-100 group-active:pointer-events-auto group-[.current-zoom]:opacity-100 group-[.current-zoom]:pointer-events-auto group-[.current-zoom]:has-[:active]:!opacity-100 group-[.current-zoom]:has-[:active]:!pointer-events-auto group-has-[:active]:opacity-100 group-has-[:active]:pointer-events-auto',
 				handleW: '-left-[12px]',
 				handleE: '-right-[12px]'
 			}}
@@ -104,7 +104,7 @@
 				const currentZoom = document.querySelector('.current-zoom');
 				const handles = currentZoom?.querySelectorAll('button');
 
-				handles?.forEach((e) => e.classList.add('invisible'));
+				handles?.forEach((e) => e.classList.add('!opacity-0', '!pointer-events-none'));
 			}}
 			on:mouseleave={({ detail }) => {
 				const { e } = detail;
@@ -114,7 +114,7 @@
 				const currentZoom = document.querySelector('.current-zoom');
 				const handles = currentZoom?.querySelectorAll('button');
 
-				handles?.forEach((e) => e.classList.remove('invisible'));
+				handles?.forEach((e) => e.classList.remove('!opacity-0', '!pointer-events-none'));
 			}}
 		>
 			<div
