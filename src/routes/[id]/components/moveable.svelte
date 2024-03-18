@@ -7,8 +7,9 @@
 	export let left: number | null = null;
 	export let className: { root?: string; handle?: string; handleE?: string; handleW?: string };
 	export let isResizing: boolean | null = null;
+	let isDragging = false;
 	let direction: Direction | null = null;
-	let resizableRef: HTMLDivElement;
+	let moveableRef: HTMLDivElement;
 	let mousePositionWhenResizingStart: number | null = null;
 	let trimmerRectWhenResizingStart: DOMRect | null = null;
 	let dispatcher = createEventDispatcher();
@@ -19,7 +20,7 @@
 		},
 		dir: Direction
 	) {
-		trimmerRectWhenResizingStart = resizableRef.getBoundingClientRect();
+		trimmerRectWhenResizingStart = moveableRef.getBoundingClientRect();
 		mousePositionWhenResizingStart = e.pageX;
 		isResizing = true;
 		direction = dir;
@@ -36,9 +37,9 @@
 			return;
 		}
 
-		const trimmerRect = resizableRef.getBoundingClientRect();
+		const trimmerRect = moveableRef.getBoundingClientRect();
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		const constrains = resizableRef.parentElement!.getBoundingClientRect();
+		const constrains = moveableRef.parentElement!.getBoundingClientRect();
 
 		if (direction === 'right') {
 			const delta = e.pageX - mousePositionWhenResizingStart;
@@ -53,13 +54,13 @@
 			if (!width) {
 				const widthInPercentage = (interalWidth * 100) / constrains.width;
 
-				resizableRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
+				moveableRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
 			}
 
 			dispatcher('resize', {
 				direction,
 				delta: deltaWidth,
-				refToElement: resizableRef
+				refToElement: moveableRef
 			});
 		} else if (direction === 'left') {
 			const delta = mousePositionWhenResizingStart - e.pageX;
@@ -76,31 +77,58 @@
 				const widthInPercentage = (internalWidth * 100) / constrains.width;
 				const leftInPercentage = Math.max(0, (internalLeft * 100) / constrains.width);
 
-				resizableRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
-				resizableRef.style.setProperty('left', leftInPercentage.toFixed(1) + '%');
+				moveableRef.style.setProperty('width', widthInPercentage.toFixed(1) + '%');
+				moveableRef.style.setProperty('left', leftInPercentage.toFixed(1) + '%');
 			}
 
 			dispatcher('resize', {
 				direction,
 				delta: deltaWidth,
-				refToElement: resizableRef
+				refToElement: moveableRef
 			});
 		}
 	}
 
-	function handleResizeEnd() {
+	function handleDragStart(e: MouseEvent) {
+		isDragging = true;
+		mousePositionWhenResizingStart = e.pageX;
+		dispatcher('dragStart');
+	}
+
+	function handleDrag(e: MouseEvent) {
+		if (isDragging) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			const constrains = moveableRef.parentElement!.getBoundingClientRect();
+			const positionInPx = Math.min(Math.max(e.clientX - constrains.left, 0), constrains.width);
+			const positionInPercentage = (positionInPx * 100) / constrains.width;
+
+			moveableRef.style.setProperty('left', positionInPercentage.toFixed(1) + '%');
+		}
+	}
+
+	function handleEvents(e: MouseEvent) {
+		if (isResizing) {
+			handleResize(e);
+		} else if (isDragging) {
+			handleDrag(e);
+		}
+	}
+
+	function handleEnd() {
 		isResizing = false;
+		isDragging = false;
 		direction = null;
 		dispatcher('resizeEnd');
+		dispatcher('dragEnd');
 	}
 
 	onMount(() => {
-		document.addEventListener('mousemove', handleResize);
-		document.addEventListener('mouseup', handleResizeEnd);
+		document.addEventListener('mousemove', handleEvents);
+		document.addEventListener('mouseup', handleEnd);
 
 		return () => {
-			document.removeEventListener('mousemove', handleResize);
-			document.removeEventListener('mouseup', handleResizeEnd);
+			document.removeEventListener('mousemove', handleEvents);
+			document.removeEventListener('mouseup', handleEnd);
 		};
 	});
 </script>
@@ -119,7 +147,8 @@
 <div
 	class={className.root}
 	style="width: {width ?? 100}%; left: {left ?? 0}%;"
-	bind:this={resizableRef}
+	bind:this={moveableRef}
+	on:mousedown={handleDragStart}
 	on:mouseenter={(e) => dispatcher('mouseenter', { e })}
 	on:mouseleave={(e) => dispatcher('mouseleave', { e })}
 >
@@ -127,14 +156,14 @@
 		<button
 			class="{className.handle ??
 				'min-w-5 h-full cursor-ew-resize absolute top-0 left-0'} {className.handleW ?? ''}"
-			on:mousedown={(e) => handleResizeStart(e, 'left')}
+			on:mousedown|stopPropagation={(e) => handleResizeStart(e, 'left')}
 		>
 			<slot name="w" />
 		</button>
 		<button
 			class="{className.handle ??
 				'min-w-5 h-full cursor-ew-resize absolute top-0 right-0'} {className.handleE ?? ''}"
-			on:mousedown={(e) => handleResizeStart(e, 'right')}
+			on:mousedown|stopPropagation={(e) => handleResizeStart(e, 'right')}
 		>
 			<slot name="e" />
 		</button>
