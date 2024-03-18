@@ -100,16 +100,16 @@
 				const { refToElement, left } = detail;
 				const constrains = refToElement.parentElement.getBoundingClientRect();
 				const dif = zoom.end - zoom.start;
-				const start = Math.max(
+				const start = +Math.max(
 					0,
 					(left * $recording.duration) / (constrains.right - constrains.left),
 					prevZoom?.end ?? -Infinity
-				);
-				const end = Math.min(
+				).toFixed(2);
+				const end = +Math.min(
 					$recording?.duration ?? Infinity,
 					start + dif,
 					nextZoom?.start ?? Infinity
-				);
+				).toFixed(2);
 
 				zooms.updateZoomById({
 					...zoom,
