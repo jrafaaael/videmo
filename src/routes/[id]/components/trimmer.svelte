@@ -46,6 +46,19 @@
 			$edits.endAt = Math.max(end, Math.abs($edits.startAt + MIN_VIDEO_DURATION_IN_SECONDS));
 		}
 	}}
+	on:drag={({ detail }) => {
+		const { refToElement, left } = detail;
+		const constrains = refToElement.parentElement.getBoundingClientRect();
+		const dif = $edits.endAt - $edits.startAt;
+		const start = +Math.max(
+			0,
+			(left * $recording.duration) / (constrains.right - constrains.left)
+		).toFixed(2);
+		const end = +Math.min($recording?.duration ?? Infinity, start + dif).toFixed(2);
+
+		$edits.startAt = Math.min(start, end - dif);
+		$edits.endAt = end;
+	}}
 >
 	<div slot="w" class="w-[12px] h-[75%] bg-blue-900 rounded-l-md flex justify-center items-center">
 		<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
