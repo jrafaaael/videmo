@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { edits } from '../stores/edits.store';
+	import { isEditingTrim } from '../stores/is-editing-trim.store';
 	import { recording } from '../stores/recording.store';
 	import { videoStatus } from '../stores/video-status.store';
 	import Moveable from './moveable.svelte';
 
-	export let isResizing: boolean;
 	const MIN_VIDEO_DURATION_IN_SECONDS = 1;
 	$: width = (($edits.endAt - $edits.startAt) * 100) / $recording?.duration;
 	$: left = ($edits.startAt * 100) / $recording?.duration;
@@ -24,7 +24,7 @@
 	}}
 	{width}
 	{left}
-	bind:isResizing
+	on:resizeStart={() => ($isEditingTrim = true)}
 	on:resize={({ detail }) => {
 		const { direction, delta, refToElement } = detail;
 		const zoomRect = refToElement.getBoundingClientRect();
@@ -46,6 +46,8 @@
 			$edits.endAt = Math.max(end, Math.abs($edits.startAt + MIN_VIDEO_DURATION_IN_SECONDS));
 		}
 	}}
+	on:resizeEnd={() => ($isEditingTrim = false)}
+	on:dragStart={() => ($isEditingTrim = true)}
 	on:drag={({ detail }) => {
 		const { refToElement, left } = detail;
 		const constrains = refToElement.parentElement.getBoundingClientRect();
@@ -59,6 +61,7 @@
 		$edits.startAt = Math.min(start, end - dif);
 		$edits.endAt = end;
 	}}
+	on:dragEnd={() => ($isEditingTrim = false)}
 >
 	<div slot="w" class="w-[12px] h-[75%] bg-blue-900 rounded-l-md flex justify-center items-center">
 		<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />

@@ -6,8 +6,8 @@
 	export let width: number | null = null;
 	export let left: number | null = null;
 	export let className: { root?: string; handle?: string; handleE?: string; handleW?: string };
-	export let isResizing: boolean | null = null;
 	let moveableRef: HTMLDivElement;
+	let isResizing: boolean | null = null;
 	let direction: Direction | null = null;
 	let mousePositionWhenResizingStart: number | null = null;
 	let trimmerRectWhenResizingStart: DOMRect | null = null;

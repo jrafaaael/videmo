@@ -22,7 +22,6 @@
 	let videoRef: Video;
 	let paused = true;
 	let ended: boolean;
-	let isTrimming = false;
 
 	onMount(async () => {
 		try {
@@ -116,14 +115,13 @@
 					<Seeker
 						startAt={$edits.startAt}
 						endAt={$edits.endAt}
-						{isTrimming}
 						on:changeTime={({ detail }) => {
 							videoRef.pause();
 							$videoStatus.currentTime = detail.newTime;
 						}}
 					/>
 					<div class="w-full h-10 relative">
-						<Trimmer bind:isResizing={isTrimming} />
+						<Trimmer />
 					</div>
 					<ZoomList />
 				</div>
