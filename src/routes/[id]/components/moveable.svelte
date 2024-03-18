@@ -7,11 +7,12 @@
 	export let left: number | null = null;
 	export let className: { root?: string; handle?: string; handleE?: string; handleW?: string };
 	export let isResizing: boolean | null = null;
-	let isDragging = false;
-	let direction: Direction | null = null;
 	let moveableRef: HTMLDivElement;
+	let direction: Direction | null = null;
 	let mousePositionWhenResizingStart: number | null = null;
 	let trimmerRectWhenResizingStart: DOMRect | null = null;
+	let isDragging = false;
+	let moveablePositionWhenDragStart: { top: number; left: number } | null = null;
 	let dispatcher = createEventDispatcher();
 
 	function handleResizeStart(
@@ -91,19 +92,28 @@
 
 	function handleDragStart(e: MouseEvent) {
 		isDragging = true;
-		mousePositionWhenResizingStart = e.pageX;
+		moveablePositionWhenDragStart = {
+			top: e.clientY - moveableRef.offsetTop,
+			left: e.clientX - moveableRef.offsetLeft
+		};
 		dispatcher('dragStart');
 	}
 
 	function handleDrag(e: MouseEvent) {
-		if (isDragging) {
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const constrains = moveableRef.parentElement!.getBoundingClientRect();
-			const positionInPx = Math.min(Math.max(e.clientX - constrains.left, 0), constrains.width);
-			const positionInPercentage = (positionInPx * 100) / constrains.width;
+		if (!isDragging) return;
+		if (!moveablePositionWhenDragStart) return;
 
-			moveableRef.style.setProperty('left', positionInPercentage.toFixed(1) + '%');
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		const left = e.clientX - moveablePositionWhenDragStart.left;
+
+		if (!left) {
+			moveableRef.style.setProperty('left', left.toFixed(1) + 'px');
 		}
+
+		dispatcher('drag', {
+			left,
+			refToElement: moveableRef
+		});
 	}
 
 	function handleEvents(e: MouseEvent) {
