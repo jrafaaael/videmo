@@ -3,7 +3,7 @@
 	import { videoStatus } from '../stores/video-status.store';
 	import { zooms } from '../stores/zooms.store';
 	import { ZOOM_TRANSITION_DURATION } from '../utils/constants';
-	import Resizable from './resizable.svelte';
+	import Moveable from './moveable.svelte';
 </script>
 
 <div class="w-full h-10 relative">
@@ -12,9 +12,9 @@
 		{@const left = (zoom.start * 100) / $recording?.duration}
 		{@const nextZoom = $zooms.at(idx + 1)}
 		{@const prevZoom = idx === 0 ? null : $zooms.at(idx - 1)}
-		<Resizable
+		<Moveable
 			className={{
-				root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 [&.current-zoom]:bg-emerald-800/30 [&.current-zoom]:border-emerald-800/80 [&.current-zoom]:focus-within:ring-emerald-800/30 hover:bg-emerald-800/30 hover:border-emerald-800/80 has-[:active]:bg-emerald-800/30 has-[:active]:border-emerald-800/80 focus-within:ring-white/5 focus-within:hover:ring-emerald-800/30 focus-within:active:ring-emerald-800/30 ${
+				root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 cursor-grab active:cursor-grabbing [&.current-zoom]:bg-emerald-800/30 [&.current-zoom]:border-emerald-800/80 [&.current-zoom]:focus-within:ring-emerald-800/30 hover:bg-emerald-800/30 hover:border-emerald-800/80 has-[:active]:bg-emerald-800/30 has-[:active]:border-emerald-800/80 focus-within:ring-white/5 focus-within:hover:ring-emerald-800/30 focus-within:active:ring-emerald-800/30 ${
 					$videoStatus.currentTime >= zoom.start && $videoStatus.currentTime <= zoom.end
 						? 'current-zoom'
 						: ''
@@ -96,6 +96,27 @@
 					}
 				}
 			}}
+			on:drag={({ detail }) => {
+				const { refToElement, left } = detail;
+				const constrains = refToElement.parentElement.getBoundingClientRect();
+				const dif = zoom.end - zoom.start;
+				const start = +Math.max(
+					0,
+					(left * $recording.duration) / (constrains.right - constrains.left),
+					prevZoom?.end ?? -Infinity
+				).toFixed(2);
+				const end = +Math.min(
+					$recording?.duration ?? Infinity,
+					start + dif,
+					nextZoom?.start ?? Infinity
+				).toFixed(2);
+
+				zooms.updateZoomById({
+					...zoom,
+					start: Math.min(start, end - dif),
+					end
+				});
+			}}
 			on:mouseenter={({ detail }) => {
 				const { e } = detail;
 
@@ -129,6 +150,6 @@
 			>
 				<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
 			</div>
-		</Resizable>
+		</Moveable>
 	{/each}
 </div>

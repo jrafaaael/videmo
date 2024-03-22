@@ -2,10 +2,10 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { recording } from '../stores/recording.store';
 	import { videoStatus } from '../stores/video-status.store';
+	import { isEditingTrim } from '../stores/is-editing-trim.store';
 
 	export let startAt: number;
 	export let endAt: number;
-	export let isTrimming: boolean;
 	let isDragging = false;
 	let seekbarRef: HTMLButtonElement;
 	let dispatcher = createEventDispatcher();
@@ -57,7 +57,7 @@
 	class="h-[calc(100%+8px)] px-2 absolute bottom-0 z-50 cursor-col-resize {$videoStatus.currentTime <=
 		startAt ||
 	isDragging ||
-	(isTrimming && (endAt <= $videoStatus.currentTime || startAt >= $videoStatus.currentTime))
+	($isEditingTrim && (endAt <= $videoStatus.currentTime || startAt >= $videoStatus.currentTime))
 		? 'transition-none'
 		: 'transition-[left] ease-linear duration-100'}"
 	style="--position: {position}%; left: calc(var(--position, 0%) - 8px);"
