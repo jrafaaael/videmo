@@ -21,7 +21,6 @@
 
 	let videoRef: Video;
 	let paused = true;
-	let ended: boolean;
 
 	onMount(async () => {
 		try {
@@ -87,7 +86,7 @@
 
 	<section class="w-full flex-1 grid grid-rows-[minmax(0,1fr)_auto]">
 		<div class="p-10 relative" id="video-wrapper">
-			<Video bind:this={videoRef} bind:ended bind:paused />
+			<Video bind:this={videoRef} bind:paused />
 		</div>
 
 		<footer class="w-full bg-neutral-900 border-t-2 border-t-white/5">

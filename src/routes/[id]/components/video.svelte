@@ -16,12 +16,12 @@
 	} from '../utils/constants';
 
 	export let paused: boolean;
-	export let ended: boolean;
 	let videoRef: HTMLVideoElement;
 	let canvasRef: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
 	let backgroundImageRef = new Image();
 	let currentTime = 0;
+	let ended: boolean;
 	let animationId: number;
 	$: $videoStatus.currentTime = Math.max($edits.startAt, Math.min(currentTime, $edits.endAt));
 
