@@ -112,8 +112,6 @@
 			<div class="w-full px-10 bg-neutral-950">
 				<div class="w-full py-8 flex flex-col gap-6 relative">
 					<Seeker
-						startAt={$edits.startAt}
-						endAt={$edits.endAt}
 						on:changeTime={({ detail }) => {
 							videoRef.pause();
 							$videoStatus.currentTime = detail.newTime;
