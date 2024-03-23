@@ -46,10 +46,10 @@
 		>
 			<div class="aspect-square" style="background-color: {color};" />
 			<input
-				checked={typeof $background === 'string' && color === $background}
 				type="radio"
 				class="sr-only"
 				name="wallpaper"
+				checked={typeof $background === 'string' && color === $background}
 				value={color}
 				id={color}
 				on:input={() => ($background = color)}
