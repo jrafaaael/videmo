@@ -23,7 +23,7 @@
 			</span>
 		</button>
 		<input
-			class="sr-only translate-y-4"
+			class="sr-only"
 			type="color"
 			name="color-picker"
 			id="color-picker"
