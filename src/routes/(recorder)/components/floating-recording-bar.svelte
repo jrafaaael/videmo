@@ -70,8 +70,10 @@
 		: 'bg-red-600'}"
 >
 	{#if !countdownInterval}
-		<UploadRecording />
-		<div class="w-[2px] h-[40%] bg-white/20" />
+		{#if !$isRecording}
+			<UploadRecording />
+			<div class="w-[2px] h-[40%] bg-white/20" />
+		{/if}
 		<button class="h-full px-5 flex items-center gap-2" on:click={handleClick}>
 			<span class="w-4 aspect-square text-neutral-50/50">
 				{#if !$isRecording}
