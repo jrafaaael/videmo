@@ -13,8 +13,8 @@
 		if (!file) return;
 		if (!file.type.includes('video')) return;
 
+		const folderName = new Date().getTime().toString();
 		const filename = file.name;
-		const folderName = file.name.split('.').slice(0, -1).join('.');
 
 		await saveFile(file, `${folderName}/${filename}`);
 		await goto(folderName);
