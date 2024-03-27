@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { rename } from '$lib/utils/opfs';
 	import Trash from '$lib/components/icons/trash.svelte';
 
 	let recordings: string[] = [];
@@ -22,7 +23,40 @@
 	}
 
 	onMount(async () => {
-		recordings = await getRecordings();
+		const root = await navigator.storage.getDirectory();
+		const folders: string[] = await getRecordings();
+
+		recordings = await Promise.all(
+			folders.map(async (name) => {
+				/**
+				 * Previously, recordings that were drag-n-drop'd in Videmo were saved with their original filename. However, when users record directly from Chrome,
+				 * their filename is the recording date in UTC. This is a problem because OPFS sort files alphabetically, so:
+				 * 1. some recordings that were drag-n-drop'd are listed at top of recording list, even if the last user video was recorded directly from Chrome.
+				 * 2. some recordings that were drag-n-drop'd are listed at bottom of recording list, even if this was the latest video in Videmo.
+				 * With this conditional, I rename folders with original filename from drag-n-drop'd recordings and save it with the current date in UTC as filename
+				 * to keep compatibility with the old behavior. However, this create a new problem: users will search their recordings with original name because
+				 * those recordings were saved with this behavior. To solve this, in their associated object value in localStorage,
+				 * I create a new key called `name` to save the original name. This allows me to develop some new features:
+				 * 1. rename recordings
+				 * 2. sort recordings alphabetically and by date
+				 */
+				if (isNaN(Number(name))) {
+					const folder = await root.getDirectoryHandle(name);
+					const newFolderName = new Date().getTime().toString();
+					const info = JSON.parse(localStorage.getItem(name) ?? '{}');
+					const updated = { ...info, name };
+
+					await rename(folder, newFolderName);
+
+					localStorage.removeItem(name);
+					localStorage.setItem(newFolderName, JSON.stringify(updated));
+
+					return newFolderName;
+				}
+
+				return name;
+			})
+		);
 	});
 </script>
 
