@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { rename } from '$lib/utils/opfs';
-	import Trash from '$lib/components/icons/trash.svelte';
+	import Recording from './recording.svelte';
 
 	let recordings: string[] = [];
 
@@ -63,29 +63,7 @@
 {#each recordings as record}
 	{@const recordingInfo = JSON.parse(localStorage.getItem(record) ?? '{}')}
 	{@const folderName = recordingInfo.name ?? new Date(+record).toLocaleString()}
-	<article class="flex flex-col gap-2">
-		<a href="/{record}">
-			<span class="w-full aspect-video bg-white/5 border border-white/5 rounded-md inline-block" />
-		</a>
-		<div class="flex justify-between items-center">
-			<h3 class="text-sm font-medium">
-				<a class="py-2" href="/{record}">
-					{folderName}
-				</a>
-			</h3>
-			<button
-				class="p-2 text-neutral-300 flex transition-colors hover:text-red-500"
-				on:click|stopPropagation={async () => {
-					await removeRecording(record);
-					recordings = await getRecordings();
-				}}
-			>
-				<span class="w-4 aspect-square inline-block">
-					<Trash />
-				</span>
-			</button>
-		</div>
-	</article>
+	<Recording name={folderName} id={record} />
 {:else}
 	<article class="flex flex-col gap-2">
 		<span
