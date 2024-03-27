@@ -13,8 +13,14 @@
 		if (!file) return;
 		if (!file.type.includes('video')) return;
 
+		const folderName = new Date().getTime().toString();
 		const filename = file.name;
-		const folderName = file.name.split('.').slice(0, -1).join('.');
+		const filenameWithoutExtension = filename.split('.').slice(0, -1).join('.');
+		const info = {
+			name: filenameWithoutExtension
+		};
+
+		localStorage.setItem(folderName, JSON.stringify(info));
 
 		await saveFile(file, `${folderName}/${filename}`);
 		await goto(folderName);
