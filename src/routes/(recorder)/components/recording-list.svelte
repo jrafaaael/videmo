@@ -61,7 +61,8 @@
 </script>
 
 {#each recordings as record}
-	{@const folderName = isNaN(Number(record)) ? record : new Date(+record).toLocaleString()}
+	{@const recordingInfo = JSON.parse(localStorage.getItem(record) ?? '{}')}
+	{@const folderName = recordingInfo.name ?? new Date(+record).toLocaleString()}
 	<article class="flex flex-col gap-2">
 		<a href="/{record}">
 			<span class="w-full aspect-video bg-white/5 border border-white/5 rounded-md inline-block" />

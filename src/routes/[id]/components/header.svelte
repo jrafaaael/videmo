@@ -12,9 +12,9 @@
 
 	export let getFrameAsImage: () => string;
 	export let getMP4: () => Promise<string>;
-	const folderName = isNaN(Number(+$page.params.id))
-		? $page.params.id
-		: new Date(+$page.params.id).toLocaleString();
+	const folderId = $page.params.id;
+	const recordingInfo = JSON.parse(localStorage.getItem(folderId) ?? '{}');
+	const folderName = recordingInfo.name ?? new Date(+folderId).toLocaleString();
 	let extension = writable(EXPORT_OPTIONS.at(0));
 	let isExporting = false;
 
