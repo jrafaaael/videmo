@@ -29,15 +29,17 @@
 				? JSON.parse(localStorage.getItem(folderName)!)
 				: null;
 
-			if (values !== null) {
+			if (values?.zooms) {
 				zooms.load(values.zooms);
+			}
+			if (values?.background) {
 				$background = values.background;
+			}
+			if (values?.appearence) {
 				$appearence = values.appearence;
+			}
+			if (values?.trimmings) {
 				$edits = values.trimmings;
-			} else {
-				zooms.reset();
-				$background = DEFAULT_BACKGROUND!;
-				appearence.reset();
 			}
 
 			const root = await navigator.storage.getDirectory();
@@ -50,7 +52,7 @@
 				const duration = await getBlobDuration(mp4);
 
 				recording.set({ id: '1', url: mp4, duration });
-				if (!values) {
+				if ($edits.endAt > duration) {
 					edits.set({ startAt: 0, endAt: duration });
 				}
 			}
