@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
 	import * as Dropdown from '$lib/components/dropdown';
 	import Trash from '$lib/components/icons/trash.svelte';
 	import Dots from './icons/dots.svelte';
@@ -6,6 +7,13 @@
 
 	export let name: string;
 	export let id: string;
+	const dispatcher = createEventDispatcher();
+
+	async function removeRecordingById(id: string) {
+		const root = await navigator.storage.getDirectory();
+
+		await root.removeEntry(id, { recursive: true });
+	}
 </script>
 
 <article class="flex flex-col gap-2">
@@ -29,21 +37,27 @@
 			<Dropdown.Menu
 				class="bg-neutral-800/80 backdrop-blur-lg border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden"
 			>
-				<Dropdown.Item
-					class="w-36 py-1 px-2 flex items-center gap-2 cursor-pointer data-[highlighted]:bg-white/10 data-[disabled]:text-neutral-400 data-[disabled]:cursor-not-allowed"
-				>
-					<span class="w-4 aspect-square inline-block">
-						<Rename />
-					</span>
-					<span>Rename</span>
+				<Dropdown.Item class="w-36 hover:bg-white/5">
+					<button class="w-full py-1 px-2 flex items-center gap-2 cursor-pointer">
+						<span class="w-4 aspect-square inline-block">
+							<Rename />
+						</span>
+						<span>Rename</span>
+					</button>
 				</Dropdown.Item>
-				<Dropdown.Item
-					class="w-36 py-1 px-2 flex items-center gap-2 cursor-pointer data-[highlighted]:bg-white/10 data-[disabled]:text-neutral-400 data-[disabled]:cursor-not-allowed"
-				>
-					<span class="w-4 aspect-square inline-block">
-						<Trash />
-					</span>
-					<span>Remove</span>
+				<Dropdown.Item class="w-36 hover:bg-red-600/15">
+					<button
+						class="w-full py-1 px-2 text-red-500 flex items-center gap-2 cursor-pointer"
+						on:click={async () => {
+							await removeRecordingById(id);
+							dispatcher('remove');
+						}}
+					>
+						<span class="w-4 aspect-square inline-block">
+							<Trash />
+						</span>
+						<span>Remove</span>
+					</button>
 				</Dropdown.Item>
 			</Dropdown.Menu>
 		</Dropdown.Root>

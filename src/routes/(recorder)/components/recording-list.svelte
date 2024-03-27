@@ -16,12 +16,6 @@
 		return folders;
 	}
 
-	async function removeRecording(name: string) {
-		const root = await navigator.storage.getDirectory();
-
-		await root.removeEntry(name, { recursive: true });
-	}
-
 	onMount(async () => {
 		const root = await navigator.storage.getDirectory();
 		const folders: string[] = await getRecordings();
@@ -63,7 +57,11 @@
 {#each recordings as record}
 	{@const recordingInfo = JSON.parse(localStorage.getItem(record) ?? '{}')}
 	{@const folderName = recordingInfo.name ?? new Date(+record).toLocaleString()}
-	<Recording name={folderName} id={record} />
+	<Recording
+		name={folderName}
+		id={record}
+		on:remove={async () => (recordings = await getRecordings())}
+	/>
 {:else}
 	<article class="flex flex-col gap-2">
 		<span
