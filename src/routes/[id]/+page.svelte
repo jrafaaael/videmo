@@ -7,7 +7,10 @@
 	import { edits } from './stores/edits.store';
 	import { videoStatus } from './stores/video-status.store';
 	import { DEFAULT_VALUE as DEFAULT_BACKGROUND, background } from './stores/background.store';
-	import { appearence } from './stores/general-appearance.store';
+	import {
+		DEFAULT_VALUE as DEFAULT_APPEARENCE,
+		appearence
+	} from './stores/general-appearance.store';
 	import { zooms } from './stores/zooms.store';
 	import Header from './components/header.svelte';
 	import Toolbox from './components/toolbox/toolbox.svelte';
@@ -29,17 +32,11 @@
 				? JSON.parse(localStorage.getItem(folderName)!)
 				: null;
 
-			if (values?.zooms) {
-				zooms.load(values.zooms);
-			}
-			if (values?.background) {
-				$background = values.background;
-			}
-			if (values?.appearence) {
-				$appearence = values.appearence;
-			}
+			zooms.load(values?.zooms ?? []);
+			$background = values?.background ?? DEFAULT_BACKGROUND;
+			$appearence = values?.appearence ?? DEFAULT_APPEARENCE;
 			if (values?.trimmings) {
-				$edits = values.trimmings;
+				$edits = values?.trimmings;
 			}
 
 			const root = await navigator.storage.getDirectory();

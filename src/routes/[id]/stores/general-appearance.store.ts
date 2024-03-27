@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-const DEFAULT_VALUE = {
+export const DEFAULT_VALUE = {
 	padding: 24,
 	cornerRadius: 12,
 	shadow: {
