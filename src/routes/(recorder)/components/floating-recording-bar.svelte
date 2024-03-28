@@ -111,7 +111,7 @@
 					{#each [...COUNTDOWN_OPTIONS].reverse() as option}
 						<Select.Option
 							let:isSelected
-							class="w-36 py-1 px-4 flex justify-between items-center gap-4 cursor-pointer data-[highlighted]:bg-white/10 data-[disabled]:text-neutral-400 data-[disabled]:cursor-not-allowed"
+							class="w-36 py-1 px-4 flex justify-between items-center gap-4 cursor-pointer data-[highlighted]:bg-white/5 data-[disabled]:text-neutral-400 data-[disabled]:cursor-not-allowed"
 							{...option}
 						>
 							<span class={isSelected ? 'font-bold' : 'font-normal'}>{option.label}</span>
