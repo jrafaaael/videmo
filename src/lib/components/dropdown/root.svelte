@@ -5,11 +5,13 @@
 	type $$Props = CreateSelectProps;
 
 	export let positioning: $$Props['positioning'] = undefined;
+	export let onOpenChange: $$Props['onOpenChange'] = undefined;
 
 	setDropdownContext({
 		forceVisible: true,
+		preventScroll: false,
 		positioning,
-		preventScroll: false
+		onOpenChange
 	});
 </script>
 
