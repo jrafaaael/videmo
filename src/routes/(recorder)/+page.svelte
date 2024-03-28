@@ -41,14 +41,14 @@
 			handleDrop(e);
 		}}
 	>
-		<article
-			class="w-full h-full bg-white/10 flex justify-center items-center flex-col gap-2 fixed inset-0 z-10 backdrop-blur {isDroppingNewRecording
-				? 'block'
-				: 'hidden'}"
-		>
-			<h2 class="text-2xl font-bold">Drop it!</h2>
-			<p>Drop here any video to upload it and star editing!</p>
-		</article>
+		{#if isDroppingNewRecording}
+			<article
+				class="w-full h-full bg-white/10 flex justify-center items-center flex-col gap-2 fixed inset-0 z-10 backdrop-blur"
+			>
+				<h2 class="text-2xl font-bold">Drop it!</h2>
+				<p>Drop here any video to upload it and star editing!</p>
+			</article>
+		{/if}
 		<RecordingList />
 		<FloatingRecordingBar />
 	</Dropzone>

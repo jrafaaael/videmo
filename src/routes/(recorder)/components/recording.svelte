@@ -40,8 +40,8 @@
 		aria-label="recording with name {name}"
 	/>
 	<div class="flex justify-between items-center gap-16">
-		<h3 class="text-sm font-medium line-clamp-1 flex-1">
-			<a class="w-full py-2 inline-block" href="/{id}" tabindex="-1">
+		<h3 class="text-sm font-medium flex-1">
+			<a class="w-full line-clamp-1 leading-10" href="/{id}" tabindex="-1">
 				{name}
 			</a>
 		</h3>
@@ -61,7 +61,7 @@
 				</span>
 			</Dropdown.Trigger>
 			<Dropdown.Menu
-				class="bg-neutral-800/80 backdrop-blur-lg border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden"
+				class="bg-neutral-800/80 border-2 border-white/5 rounded-md flex flex-col gap-1 outline-none overflow-hidden backdrop-blur-lg"
 			>
 				<Dropdown.Item
 					class="w-36 outline-none hover:bg-white/5 focus:bg-white/5"
