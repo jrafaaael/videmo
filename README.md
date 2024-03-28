@@ -32,14 +32,14 @@ Any contributions you make are greatly appreciated. We welcome any idea that hel
 
 These are some features that we want to develop in the short, medium and long term. This doesn't mean that a long-term feature can be developed and shipped before a short-term one
 
-| Short-term                | Status | Medium-term      | Status | Long-term            | Status |
-| ------------------------- | ------ | ---------------- | ------ | -------------------- | ------ |
-| Store videos              | ✅     | Selfie recording | ❌     | Auto zoom            | ❌     |
-| Upload videos (recording) | ✅     | Upload audio     | ❌     | Auto trim low-volume | ❌     |
-| Crop                      | ❌     | Clips            | ❌     | Mobile               | ❌     |
-| Trim                      | ❌     | Layouts          | ❌     | 3D renderer          | ❌     |
-| Vertical export           | ❌     | Mockups          | ❌     |                      |        |
-|                           |        | Subtitles        | ❌     |                      |        |
+| Short-term                                     | Status | Medium-term      | Status | Long-term            | Status |
+| ---------------------------------------------- | ------ | ---------------- | ------ | -------------------- | ------ |
+| Store videos                                   | ✅     | Selfie recording | ❌     | Auto zoom            | ❌     |
+| Upload videos (recording)                      | ✅     | Upload audio     | ❌     | Auto trim low-volume | ❌     |
+| Crop                                           | ❌     | Clips            | ❌     | Mobile               | ❌     |
+| Trim                                           | ❌     | Layouts          | ❌     | 3D renderer          | ❌     |
+| Multiple export aspect ratios (mobile, square) | ❌     | Mockups          | ❌     |                      |        |
+|                                                |        | Subtitles        | ❌     |                      |        |
 
 > ✅: Done
 >
