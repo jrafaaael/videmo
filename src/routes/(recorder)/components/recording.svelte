@@ -37,7 +37,7 @@
 	</a>
 	<div class="flex justify-between items-center gap-16">
 		<h3 class="text-sm font-medium line-clamp-1 flex-1">
-			<a class="w-full py-2 inline-block" href="/{id}">
+			<a class="w-full py-2 inline-block" href="/{id}" tabindex="-1">
 				{name}
 			</a>
 		</h3>
@@ -59,9 +59,11 @@
 			<Dropdown.Menu
 				class="bg-neutral-800/80 backdrop-blur-lg border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden"
 			>
-				<Dropdown.Item class="w-36 hover:bg-white/5">
+				<Dropdown.Item class="w-36 outline-none hover:bg-white/5 focus:bg-white/5">
 					<Dialog.Root {open}>
-						<Dialog.Trigger class="w-full py-1 px-2 flex items-center gap-2 cursor-pointer">
+						<Dialog.Trigger
+							class="w-full py-1 px-2 flex items-center gap-2 cursor-pointer outline-none"
+						>
 							<span class="w-4 aspect-square inline-block text-neutral-50/50">
 								<Rename />
 							</span>
@@ -114,7 +116,7 @@
 						</Dialog.Content>
 					</Dialog.Root>
 				</Dropdown.Item>
-				<Dropdown.Item class="w-36 hover:bg-red-600/15">
+				<Dropdown.Item class="w-36 outline-none hover:bg-red-600/15 focus:bg-red-600/15">
 					<button
 						class="w-full py-1 px-2 text-red-500 flex items-center gap-2 cursor-pointer"
 						on:click={async () => {
