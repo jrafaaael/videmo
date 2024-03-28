@@ -5,16 +5,16 @@
 </script>
 
 <Tabs.Root>
-	<Tabs.List class="mb-8 p-1 rounded-lg bg-white/5 text-neutral-300 flex justify-between gap-4">
+	<Tabs.List class="mb-8 p-1 bg-white/5 rounded-lg flex justify-between gap-4">
 		<Tabs.Trigger
 			id="image"
-			class="py-[6px] px-3 border border-transparent rounded-md w-full data-[state=active]:bg-white/5 data-[state=active]:border-white/[0.025]"
+			class="w-full py-[5px] px-3 border-t-2 border-t-transparent rounded-md text-neutral-50/50 data-[state=active]:bg-white/5 data-[state=active]:border-t-white/[0.025] data-[state=active]:text-neutral-50 data-[state=active]:font-medium"
 		>
 			Image
 		</Tabs.Trigger>
 		<Tabs.Trigger
 			id="color"
-			class="py-[6px] px-3 border border-transparent rounded-md w-full data-[state=active]:bg-white/5 data-[state=active]:border-white/[0.025]"
+			class="w-full py-[5px] px-3 border-t-2 border-t-transparent rounded-md text-neutral-50/50 data-[state=active]:bg-white/5 data-[state=active]:border-t-white/[0.025] data-[state=active]:text-neutral-50 data-[state=active]:font-medium"
 		>
 			Color
 		</Tabs.Trigger>
