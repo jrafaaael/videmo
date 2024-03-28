@@ -62,7 +62,7 @@
 				<Dropdown.Item class="w-36 hover:bg-white/5">
 					<Dialog.Root {open}>
 						<Dialog.Trigger class="w-full py-1 px-2 flex items-center gap-2 cursor-pointer">
-							<span class="w-4 aspect-square inline-block">
+							<span class="w-4 aspect-square inline-block text-neutral-50/50">
 								<Rename />
 							</span>
 							<span>Rename</span>
