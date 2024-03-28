@@ -61,6 +61,7 @@
 		name={folderName}
 		id={record}
 		on:remove={async () => (recordings = await getRecordings())}
+		on:rename={async () => (recordings = await getRecordings())}
 	/>
 {:else}
 	<article class="flex flex-col gap-2">
