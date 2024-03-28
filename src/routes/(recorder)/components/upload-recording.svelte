@@ -41,6 +41,7 @@
 	name="recording"
 	id="recording"
 	accept="video/*"
+	tabindex="-1"
 	bind:this={inputRef}
 	on:change={handleUpload}
 />

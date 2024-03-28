@@ -11,29 +11,29 @@
 
 <div class="flex justify-center items-center gap-2">
 	<button
-		class="p-2 rounded-md text-neutral-300 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
+		class="p-2 rounded-md text-neutral-300 flex justify-center items-center transition-all hover:bg-white/5 hover:text-neutral-200"
 	>
-		<div class="w-5 aspect-square -scale-100">
+		<span class="w-5 aspect-square inline-block -scale-100">
 			<Forward />
-		</div>
+		</span>
 	</button>
 	<button
-		class="p-2 rounded-md text-neutral-300 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
+		class="p-2 rounded-md text-neutral-300 flex justify-center items-center transition-all hover:bg-white/5 hover:text-neutral-200"
 		on:click={() => dispatch('changeVideoState')}
 	>
-		<div class="w-5 aspect-square">
+		<span class="w-5 aspect-square inline-block">
 			{#if paused}
 				<Play />
 			{:else}
 				<Pause />
 			{/if}
-		</div>
+		</span>
 	</button>
 	<button
-		class="p-2 rounded-md text-neutral-300 transition-all hover:bg-white/[0.075] hover:text-neutral-200"
+		class="p-2 rounded-md text-neutral-300 flex justify-center items-center transition-all hover:bg-white/5 hover:text-neutral-200"
 	>
-		<div class="w-5 aspect-square">
+		<span class="w-5 aspect-square inline-block">
 			<Forward />
-		</div>
+		</span>
 	</button>
 </div>
