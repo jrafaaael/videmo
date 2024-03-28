@@ -7,6 +7,6 @@
 	} = getDropdownContext();
 </script>
 
-<div use:melt={$item} {...$$restProps}>
+<div use:melt={$item} {...$$restProps} on:m-click>
 	<slot />
 </div>

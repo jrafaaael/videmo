@@ -59,7 +59,10 @@
 			<Dropdown.Menu
 				class="bg-neutral-800/80 backdrop-blur-lg border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden"
 			>
-				<Dropdown.Item class="w-36 outline-none hover:bg-white/5 focus:bg-white/5">
+				<Dropdown.Item
+					class="w-36 outline-none hover:bg-white/5 focus:bg-white/5"
+					on:m-click={() => ($open = true)}
+				>
 					<Dialog.Root {open}>
 						<Dialog.Trigger
 							class="w-full py-1 px-2 flex items-center gap-2 cursor-pointer outline-none"
@@ -116,7 +119,13 @@
 						</Dialog.Content>
 					</Dialog.Root>
 				</Dropdown.Item>
-				<Dropdown.Item class="w-36 outline-none hover:bg-red-600/15 focus:bg-red-600/15">
+				<Dropdown.Item
+					class="w-36 outline-none hover:bg-red-600/15 focus:bg-red-600/15"
+					on:m-click={async () => {
+						await handleRemoveById(id);
+						dispatcher('remove');
+					}}
+				>
 					<button
 						class="w-full py-1 px-2 text-red-500 flex items-center gap-2 cursor-pointer"
 						on:click={async () => {
