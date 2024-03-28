@@ -20,6 +20,8 @@
 	}
 
 	function handleRename() {
+		if (name === newName) return;
+
 		const info = JSON.parse(localStorage.getItem(id) ?? '{}');
 		const infoWithName = { ...info, name: newName };
 
