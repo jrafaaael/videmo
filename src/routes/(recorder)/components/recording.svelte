@@ -79,7 +79,12 @@
 								slot="overlay"
 								class="fixed inset-0 z-10 bg-black/50 backdrop-blur-sm"
 							/>
-							<form>
+							<form
+								on:submit|preventDefault={() => {
+									handleRename();
+									$open = false;
+								}}
+							>
 								<label for="rename" class="mb-2 inline-block text-neutral-50 text-sm">
 									New name
 								</label>
