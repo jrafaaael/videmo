@@ -35,8 +35,8 @@ These are some features that we want to develop in the short, medium and long te
 | Short-term                                     | Status | Medium-term      | Status | Long-term            | Status |
 | ---------------------------------------------- | ------ | ---------------- | ------ | -------------------- | ------ |
 | Store videos                                   | ✅     | Selfie recording | ❌     | Auto zoom            | ❌     |
-| Upload videos (recording)                      | ✅     | Upload audio     | ❌     | Auto trim low-volume | ❌     |
-| Crop                                           | ❌     | Clips            | ❌     | Mobile               | ❌     |
+| Upload videos (recording)                      | ✅     | Upload audio     | ❌     | Mobile               | ❌     |
+| Crop                                           | ❌     | Clips            | ❌     | Auto trim low-volume | ❌     |
 | Trim                                           | ❌     | Layouts          | ❌     | 3D renderer          | ❌     |
 | Multiple export aspect ratios (mobile, square) | ❌     | Mockups          | ❌     |                      |        |
 |                                                |        | Subtitles        | ❌     |                      |        |
