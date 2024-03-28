@@ -17,6 +17,8 @@
 		const root = await navigator.storage.getDirectory();
 
 		await root.removeEntry(id, { recursive: true });
+
+		dispatcher('remove');
 	}
 
 	function handleRename() {
@@ -121,17 +123,11 @@
 				</Dropdown.Item>
 				<Dropdown.Item
 					class="w-36 outline-none hover:bg-red-600/15 focus:bg-red-600/15"
-					on:m-click={async () => {
-						await handleRemoveById(id);
-						dispatcher('remove');
-					}}
+					on:m-click={async () => await handleRemoveById(id)}
 				>
 					<button
 						class="w-full py-1 px-2 text-red-500 flex items-center gap-2 cursor-pointer"
-						on:click={async () => {
-							await handleRemoveById(id);
-							dispatcher('remove');
-						}}
+						on:click={async () => await handleRemoveById(id)}
 					>
 						<span class="w-4 aspect-square inline-block">
 							<Trash />
