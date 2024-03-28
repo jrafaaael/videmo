@@ -12,7 +12,7 @@
 	const dispatcher = createEventDispatcher();
 	const open = writable(false);
 
-	async function removeRecordingById(id: string) {
+	async function handleRemoveById(id: string) {
 		const root = await navigator.storage.getDirectory();
 
 		await root.removeEntry(id, { recursive: true });
@@ -97,7 +97,7 @@
 					<button
 						class="w-full py-1 px-2 text-red-500 flex items-center gap-2 cursor-pointer"
 						on:click={async () => {
-							await removeRecordingById(id);
+							await handleRemoveById(id);
 							dispatcher('remove');
 						}}
 					>
