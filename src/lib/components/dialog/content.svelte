@@ -4,6 +4,7 @@
 
 	export let title: string;
 	export let className: {
+		dialog?: string;
 		title?: string;
 	} = {};
 	const {
@@ -15,7 +16,7 @@
 <div use:melt={$portalled}>
 	{#if $open}
 		<slot name="overlay" />
-		<div use:melt={$content} {...$$restProps}>
+		<div use:melt={$content} {...$$restProps} class={className.dialog ?? ''}>
 			<h2 use:melt={$titleElement} class={className?.title ?? 'text-lg font-medium'}>
 				{title}
 			</h2>

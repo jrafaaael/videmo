@@ -56,14 +56,40 @@
 							<span>Rename</span>
 						</Dialog.Trigger>
 						<Dialog.Content
-							class="max-h-[85vh] w-[90vw] max-w-[450px] p-6 bg-neutral-800 border border-white/5 rounded-xl fixed left-1/2 top-1/2 z-10 shadow-lg -translate-x-1/2 -translate-y-1/2"
+							className={{
+								dialog:
+									'max-h-[85vh] w-[90vw] max-w-[450px] p-6 bg-neutral-800 border border-white/5 rounded-xl fixed left-1/2 top-1/2 z-10 shadow-lg -translate-x-1/2 -translate-y-1/2',
+								title: 'mb-4 text-lg font-medium'
+							}}
 							title="Rename recording"
 						>
 							<Dialog.Overlay
 								slot="overlay"
 								class="fixed inset-0 z-10 bg-black/50 backdrop-blur-sm"
 							/>
-							Holaaaaaaaaaa
+							<form>
+								<label for="rename" class="mb-2 inline-block text-neutral-50">New name</label>
+								<input
+									type="text"
+									name="rename"
+									id="rename"
+									autocomplete="off"
+									placeholder="name"
+									class="w-full p-1 px-2 bg-transparent border-2 border-white/10 rounded text-base outline-none ring ring-transparent focus:border-blue-600/80 focus:ring-blue-600/25"
+								/>
+							</form>
+							<div class="mt-8 flex justify-end gap-2">
+								<Dialog.Close
+									class="w-20 py-1 bg-white/5 border-t-2 border-t-white/5 rounded-md text-sm text-neutral-50 hover:bg-white/10"
+								>
+									Cancel
+								</Dialog.Close>
+								<Dialog.Close
+									class="w-20 py-1 bg-gradient-to-b from-blue-700 to-blue-800 border-t-2 border-t-white/20 rounded-md text-sm text-neutral-50 hover:to-blue-700 hover:border-t-white/10"
+								>
+									Save
+								</Dialog.Close>
+							</div>
 						</Dialog.Content>
 					</Dialog.Root>
 				</Dropdown.Item>
