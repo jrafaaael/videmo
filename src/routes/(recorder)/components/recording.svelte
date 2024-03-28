@@ -35,9 +35,9 @@
 	<a href="/{id}">
 		<span class="w-full aspect-video bg-white/5 border border-white/5 rounded-md inline-block" />
 	</a>
-	<div class="flex justify-between items-center">
-		<h3 class="text-sm font-medium">
-			<a class="py-2" href="/{id}">
+	<div class="flex justify-between items-center gap-16">
+		<h3 class="text-sm font-medium line-clamp-1 flex-1">
+			<a class="w-full py-2 inline-block" href="/{id}">
 				{name}
 			</a>
 		</h3>
