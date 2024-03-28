@@ -94,7 +94,7 @@
 									id="rename"
 									autocomplete="off"
 									placeholder="name"
-									class="w-full p-1 px-2 bg-transparent border-2 border-white/10 rounded text-base outline-none ring ring-transparent focus:border-blue-600/80 focus:ring-blue-600/25"
+									class="w-full p-1 px-2 bg-transparent border-2 border-white/10 rounded text-base outline-none ring ring-transparent focus:border-purple-600/80 focus:ring-purple-600/25"
 									bind:value={newName}
 								/>
 							</form>
@@ -105,7 +105,7 @@
 									Cancel
 								</Dialog.Close>
 								<Dialog.Close
-									class="w-20 py-1 bg-gradient-to-b from-blue-700 to-blue-800 border-t-2 border-t-white/20 rounded-md text-sm text-neutral-50 hover:to-blue-700 hover:border-t-white/10"
+									class="w-20 py-1 bg-purple-600 rounded-md text-sm text-neutral-50 hover:bg-purple-600/90"
 									on:m-click={handleRename}
 								>
 									Save
