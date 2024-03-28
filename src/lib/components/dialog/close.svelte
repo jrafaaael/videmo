@@ -7,6 +7,6 @@
 	} = getDialogContext();
 </script>
 
-<button use:melt={$close} {...$$restProps}>
+<button use:melt={$close} on:m-click {...$$restProps}>
 	<slot />
 </button>

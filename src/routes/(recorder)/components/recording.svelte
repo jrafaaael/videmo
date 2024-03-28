@@ -11,11 +11,21 @@
 	export let id: string;
 	const dispatcher = createEventDispatcher();
 	const open = writable(false);
+	let newName = name;
 
 	async function handleRemoveById(id: string) {
 		const root = await navigator.storage.getDirectory();
 
 		await root.removeEntry(id, { recursive: true });
+	}
+
+	function handleRename() {
+		const info = JSON.parse(localStorage.getItem(id) ?? '{}');
+		const infoWithName = { ...info, name: newName };
+
+		localStorage.setItem(id, JSON.stringify(infoWithName));
+
+		dispatcher('rename');
 	}
 </script>
 
@@ -68,7 +78,9 @@
 								class="fixed inset-0 z-10 bg-black/50 backdrop-blur-sm"
 							/>
 							<form>
-								<label for="rename" class="mb-2 inline-block text-neutral-50">New name</label>
+								<label for="rename" class="mb-2 inline-block text-neutral-50 text-sm">
+									New name
+								</label>
 								<input
 									type="text"
 									name="rename"
@@ -76,6 +88,7 @@
 									autocomplete="off"
 									placeholder="name"
 									class="w-full p-1 px-2 bg-transparent border-2 border-white/10 rounded text-base outline-none ring ring-transparent focus:border-blue-600/80 focus:ring-blue-600/25"
+									bind:value={newName}
 								/>
 							</form>
 							<div class="mt-8 flex justify-end gap-2">
@@ -86,6 +99,7 @@
 								</Dialog.Close>
 								<Dialog.Close
 									class="w-20 py-1 bg-gradient-to-b from-blue-700 to-blue-800 border-t-2 border-t-white/20 rounded-md text-sm text-neutral-50 hover:to-blue-700 hover:border-t-white/10"
+									on:m-click={handleRename}
 								>
 									Save
 								</Dialog.Close>
