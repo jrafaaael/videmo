@@ -68,7 +68,7 @@
 <footer
 	class="w-max h-12 border-2 border-white/10 rounded-full flex items-center fixed bottom-20 left-1/2 -translate-x-1/2 pointer-coarse:hidden {!countdownInterval
 		? 'bg-neutral-900'
-		: 'bg-red-600'} {!$isChrome ? '!hidden' : ''}"
+		: 'bg-red-600'} {!$isChrome ? 'hidden' : ''}"
 >
 	{#if !countdownInterval}
 		{#if !$isRecording}

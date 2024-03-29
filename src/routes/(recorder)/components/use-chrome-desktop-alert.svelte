@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { isChrome } from '../stores/is-chrome';
 	import Warning from './icons/warning.svelte';
+
+	let footerRef: HTMLElement;
+
+	$: if (!$isChrome) footerRef?.classList.replace('hidden', 'flex');
 </script>
 
 <footer
-	class="w-full max-w-screen-lg p-4 sm:px-8 bg-amber-950/80 border border-white/10 flex gap-4 fixed left-0 bottom-0 backdrop-blur pointer-fine:hidden md:px-16 md:left-1/2 md:-translate-x-1/2 lg:bottom-8 lg:rounded-md {!$isChrome
-		? '!block'
-		: ''}"
+	class="w-full max-w-screen-lg p-4 sm:px-8 bg-amber-950/80 border border-white/10 hidden gap-4 fixed left-0 bottom-0 backdrop-blur pointer-coarse:flex md:px-16 md:left-1/2 md:-translate-x-1/2 lg:bottom-8 lg:rounded-md"
 	role="alert"
+	bind:this={footerRef}
 >
 	<div class="hidden sm:block">
 		<span class="w-4 aspect-square text-amber-100 align-text-bottom inline-block">

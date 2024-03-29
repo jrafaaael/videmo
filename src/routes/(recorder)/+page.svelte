@@ -4,7 +4,7 @@
 	import Dropzone from './components/dropzone.svelte';
 	import RecordingList from './components/recording-list.svelte';
 	import FloatingRecordingBar from './components/floating-recording-bar.svelte';
-	import NoMobileAlert from './components/no-mobile-alert.svelte';
+	import UseChromeDesktopAlert from './components/use-chrome-desktop-alert.svelte';
 
 	let isDroppingNewRecording = false;
 
@@ -52,6 +52,6 @@
 		{/if}
 		<RecordingList />
 		<FloatingRecordingBar />
-		<NoMobileAlert />
+		<UseChromeDesktopAlert />
 	</Dropzone>
 </main>
