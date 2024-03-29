@@ -1,3 +1,4 @@
+const plugin = require('tailwindcss/plugin');
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 /** @type {import('tailwindcss').Config} */
@@ -15,5 +16,10 @@ export default {
 			}
 		}
 	},
-	plugins: []
+	plugins: [
+		plugin(({ addVariant }) => {
+			addVariant('pointer-coarse', '@media (pointer: coarse)');
+			addVariant('pointer-fine', '@media (pointer: fine)');
+		})
+	]
 };

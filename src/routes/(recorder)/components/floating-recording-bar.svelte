@@ -12,6 +12,7 @@
 	import VideoSlash from './icons/video-slash.svelte';
 	import Video from './icons/video.svelte';
 	import Clock from './icons/clock.svelte';
+	import { isChrome } from '../stores/is-chrome';
 
 	const countdownDuration = writable(COUNTDOWN_OPTIONS.at(1));
 	let countdownInterval: number | null = null;
@@ -65,9 +66,9 @@
 </script>
 
 <footer
-	class="w-auto h-12 border-2 border-white/10 rounded-full flex items-center fixed bottom-20 left-1/2 -translate-x-1/2 {!countdownInterval
+	class="w-max h-12 border-2 border-white/10 rounded-full flex items-center fixed bottom-20 left-1/2 -translate-x-1/2 pointer-coarse:hidden {!countdownInterval
 		? 'bg-neutral-900'
-		: 'bg-red-600'}"
+		: 'bg-red-600'} {!$isChrome ? '!hidden' : ''}"
 >
 	{#if !countdownInterval}
 		{#if !$isRecording}
