@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { saveFile } from './utils/save-file';
+	import { isChrome } from './stores/is-chrome';
 	import Dropzone from './components/dropzone.svelte';
 	import RecordingList from './components/recording-list.svelte';
 	import FloatingRecordingBar from './components/floating-recording-bar.svelte';
@@ -51,7 +52,9 @@
 			</article>
 		{/if}
 		<RecordingList />
-		<FloatingRecordingBar />
+		{#if $isChrome}
+			<FloatingRecordingBar />
+		{/if}
 		<UseChromeDesktopAlert />
 	</Dropzone>
 </main>
