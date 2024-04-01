@@ -226,13 +226,6 @@
 	}
 
 	onMount(() => {
-		if (videoRef && canvasRef) {
-			canvasRef.style.maxWidth = '100%';
-			canvasRef.style.height = 'fit-content';
-			canvasRef.style.maxHeight = '100%';
-			canvasRef.style.objectFit = 'contain';
-		}
-
 		ctx = canvasRef.getContext('2d', { alpha: false })!;
 
 		const unsubscribeBackgroundStore = background.subscribe(() => {
@@ -322,5 +315,10 @@
 			draw(videoRef, $videoStatus.currentTime);
 		}}
 	/>
-	<canvas width="1920" height="1080" class="rounded-md" bind:this={canvasRef} />
+	<canvas
+		width="1920"
+		height="1080"
+		class="max-w-full h-fit max-h-full object-contain rounded-md"
+		bind:this={canvasRef}
+	/>
 </div>
