@@ -6,13 +6,13 @@ export enum Status {
 
 export const EXPORT_OPTIONS = [
 	{
-		label: '.png',
-		value: '.png',
+		label: '.mp4',
+		value: '.mp4',
 		status: Status.AVAILABLE
 	},
 	{
-		label: '.mp4',
-		value: '.mp4',
+		label: '.png',
+		value: '.png',
 		status: Status.AVAILABLE
 	},
 	{
