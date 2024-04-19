@@ -135,12 +135,12 @@
 				const progress = (frameTime - zoomOutStart) / (zoomOutEnd - zoomOutStart);
 				const eased = expoOut(Math.min(progress, 1));
 
-				zoom = Math.min(MAX_ZOOM_LEVEL, MAX_ZOOM_LEVEL - eased);
+				zoom = lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, eased);
 			} else if (isOverlappingNextZoom || (frameTime >= zoomInStart && frameTime <= zoomOutStart)) {
-				const progress = Math.min((frameTime - zoomInStart) / (zoomInEnd - zoomInStart), 1);
-				const eased = expoOut(progress);
+				const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+				const eased = expoOut(Math.min(progress, 1));
 
-				zoom = Math.max(MIN_ZOOM_LEVEL, eased + MIN_ZOOM_LEVEL);
+				zoom = lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, eased);
 			} else {
 				zoom = MAX_ZOOM_LEVEL;
 			}
