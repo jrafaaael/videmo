@@ -47,10 +47,10 @@
 					 * so current edited zoom couldn't be set to end exactly when next one starts. when this happens, I set the `end` value of
 					 * the current edited zoom equals to `start` of next one
 					 */
-					if (end - zoom.start < ZOOM_TRANSITION_DURATION * 2) {
+					if (end - zoom.start < ZOOM_TRANSITION_DURATION) {
 						zooms.updateZoomById({
 							...zoom,
-							end: zoom.start + ZOOM_TRANSITION_DURATION * 2
+							end: zoom.start + ZOOM_TRANSITION_DURATION
 						});
 					} else if (!nextZoom || end < nextZoom.start) {
 						zooms.updateZoomById({
@@ -78,10 +78,10 @@
 					 * so current edited zoom couldn't be set to start exactly when previous one ends. when this happens, I set the `start` value of
 					 * the current edited zoom equals to `end` of previous one
 					 */
-					if (zoom.end - start < ZOOM_TRANSITION_DURATION * 2) {
+					if (zoom.end - start < ZOOM_TRANSITION_DURATION) {
 						zooms.updateZoomById({
 							...zoom,
-							start: zoom.end - ZOOM_TRANSITION_DURATION * 2
+							start: zoom.end - ZOOM_TRANSITION_DURATION
 						});
 					} else if (!prevZoom || start > prevZoom.end) {
 						zooms.updateZoomById({

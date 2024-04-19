@@ -3,16 +3,18 @@
 	import { edits } from '../../stores/edits.store';
 	import { videoStatus } from '../../stores/video-status.store';
 	import { zooms, currentZoom } from '../../stores/zooms.store';
+	import { ZOOM_TRANSITION_DURATION } from '../../utils/constants';
 	import CoordinatesEditor from './zoom/coordinates-editor.svelte';
 
 	function handleAddZoom() {
 		if (
 			$zooms.some(
 				(zoom) =>
-					($videoStatus.currentTime >= zoom.start || $videoStatus.currentTime + 1 >= zoom.start) &&
+					($videoStatus.currentTime >= zoom.start ||
+						$videoStatus.currentTime + ZOOM_TRANSITION_DURATION * 2 >= zoom.start) &&
 					$videoStatus.currentTime <= zoom.end
 			) ||
-			$videoStatus.currentTime + 1 >= $edits.endAt
+			$videoStatus.currentTime + ZOOM_TRANSITION_DURATION * 2 >= $edits.endAt
 		) {
 			return;
 		}
@@ -22,7 +24,7 @@
 		zooms.addZoom({
 			id: new Date().getTime(),
 			start: currentTime,
-			end: currentTime + 1,
+			end: currentTime + ZOOM_TRANSITION_DURATION * 2,
 			x: 0,
 			y: 0
 		});
