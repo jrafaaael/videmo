@@ -50,7 +50,7 @@
 					if (end - zoom.start < ZOOM_TRANSITION_DURATION) {
 						zooms.updateZoomById({
 							...zoom,
-							end: +(zoom.start + ZOOM_TRANSITION_DURATION * 2).toFixed(2)
+							end: +(zoom.start + ZOOM_TRANSITION_DURATION).toFixed(2)
 						});
 					} else if (!nextZoom || end < nextZoom.start) {
 						zooms.updateZoomById({
@@ -81,7 +81,7 @@
 					if (zoom.end - start < ZOOM_TRANSITION_DURATION) {
 						zooms.updateZoomById({
 							...zoom,
-							start: +(zoom.end - ZOOM_TRANSITION_DURATION * 2).toFixed(2)
+							start: +(zoom.end - ZOOM_TRANSITION_DURATION).toFixed(2)
 						});
 					} else if (!prevZoom || start > prevZoom.end) {
 						zooms.updateZoomById({
