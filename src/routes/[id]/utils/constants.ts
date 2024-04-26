@@ -18,7 +18,7 @@ import venturaDark from '$lib/assets/images/wallpapers/ventura-dark.webp';
 export const MICROSECONDS_PER_SECOND = 1_000_000;
 export const MIN_ZOOM_LEVEL = 1;
 export const MAX_ZOOM_LEVEL = 2;
-export const ZOOM_TRANSITION_DURATION = 0.25;
+export const ZOOM_TRANSITION_DURATION = 1;
 
 export const WALLPAPERS = [
 	{ name: 'bigSur', url: bigSur },
@@ -49,5 +49,5 @@ export const COLORS = [
 	'#fde68a',
 	'#e879f9',
 	'#c084fc',
-	'#fecdd3',
+	'#fecdd3'
 ];

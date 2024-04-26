@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { expoOut } from 'svelte/easing';
 	import { recording } from '../stores/recording.store';
 	import { edits } from '../stores/edits.store';
 	import { videoStatus } from '../stores/video-status.store';
@@ -117,10 +118,11 @@
 		if (!isInsideZoom) {
 		} else if (isOverlappingPrevZoom && frameTime >= zoomInStart && frameTime <= zoomInEnd) {
 			const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+			const eased = expoOut(progress);
 			const prevX = (prevZoom?.x * width) / 100;
 			const prevY = (prevZoom?.y * height) / 100;
-			const left = lerp(prevX, x, progress);
-			const top = lerp(prevY, y, progress);
+			const left = lerp(prevX, x, eased);
+			const top = lerp(prevY, y, eased);
 
 			zoom = MAX_ZOOM_LEVEL;
 			leftWithZoom -= left * (zoom - 1);
@@ -131,12 +133,14 @@
 				(!isOverlappingNextZoom && frameTime >= zoomOutStart && frameTime <= zoomOutEnd)
 			) {
 				const progress = (frameTime - zoomOutStart) / (zoomOutEnd - zoomOutStart);
+				const eased = expoOut(Math.min(progress, 1));
 
-				zoom = Math.max(MIN_ZOOM_LEVEL, lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, progress));
+				zoom = lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, eased);
 			} else if (isOverlappingNextZoom || (frameTime >= zoomInStart && frameTime <= zoomOutStart)) {
 				const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+				const eased = expoOut(Math.min(progress, 1));
 
-				zoom = Math.min(MAX_ZOOM_LEVEL, lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, progress));
+				zoom = lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, eased);
 			} else {
 				zoom = MAX_ZOOM_LEVEL;
 			}
