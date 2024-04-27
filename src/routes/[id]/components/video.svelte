@@ -161,7 +161,6 @@
 			const eased = expoOut(Math.min(progress, 1));
 
 			currentZoomLevel = lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, eased);
-			console.log('out', { currentZoomLevel });
 			leftWithZoom -= x * (currentZoomLevel - 1);
 			topWithZoom -= y * (currentZoomLevel - 1);
 		} else if (frameTime >= zoomInStart && frameTime <= zoomOutStart) {
