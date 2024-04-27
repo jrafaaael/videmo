@@ -93,28 +93,39 @@
 		 * VIDEMO'S ZOOM WORKING PRINCIPLE
 		 *
 		 * zoom-in: `currentZoom.start` to `currentZoom.start + zoom transition duration`
-		 * zoom-out: `currentZoom.end - transition duration` to `currentZoom.end`
+		 * zoom-out: `currentZoom.end` to `currentZoom.end + zoom transition duration`
 		 *
-		 * EXAMPLE: [{start: 1, end: 2}, {start: 3, end: 4}]
+		 * EXAMPLE: [{start: 1, end: 2.5}, {start: 4, end: 5}]
 		 * WORKFLOW:
 		 * 1. zoom-in transition start at 1
-		 * 2. zoom-in transition end at 1.25
-		 * 3. zoom level remains up to 1.75
-		 * 4. zoom-out transition start at 1.75
-		 * 5. zoom-out transition end at 2
-		 * 6. gap between zooms (2 to 3)
+		 * 2. zoom-in transition end at 2
+		 * 3. zoom level remains up to 2.5
+		 * 4. zoom-out transition start at 2.5
+		 * 5. zoom-out transition end at 3.5
+		 * 6. gap between zooms (3.5 to 4)
 		 * 7. repeat with new zoom
 		 *
-		 * ZOOM OVERLAP: two zooms overlap when `end` time of one is equal to `start` time of the other
-		 * in this case, i don't want to zoom-in and zoom-out for every zoom. instead, i want to zoom-in on the first zoom `start` time, move zoom coordinates
-		 * on every next zoom `start` time and zoom-out on the last zoom `end` time
+		 * ZOOM CHAIN: zoom chain exists when `end` time of one zoom is equal to `start` time of the next one
+		 * in this case, i don't want to zoom-in and zoom-out for every zoom. instead, i want to zoom-in on the first `start` time, move zoom coordinates
+		 * on every next `start` time and zoom-out on the last `end` time
 		 *
 		 * EXAMPLE: [{start: 1, end: 2}, {start: 2, end: 3}, {start: 3, end: 4}]
 		 * WORKFLOW:
-		 * 1. zoom-in transition start at 1 and end at 1.25 to (x, y) coordinates
-		 * 2. change zoom coordinates start at 2 and end at 2.25 to (x, y) coordinates
-		 * 3. change zoom coordinates start at 3 and end at 3.25 to (x, y) coordinates
-		 * 4. zoom-out transition start at 3.75 and end at 4
+		 * 1. zoom-in transition start at 1 and end at 2 to (x, y) coordinates
+		 * 2. change zoom coordinates start at 2 and end at 3 to (x, y) coordinates
+		 * 3. change zoom coordinates start at 3 and end at 4 to (x, y) coordinates
+		 * 4. zoom-out transition start at 4 and end at 5
+		 *
+		 * ZOOM OVERLAP: zoom overlap exists when `end` time of one zoom + zoom transition duration is greater than `start` time of the next one but not equals
+		 * in this case, i want to start zooming-out and reconciliate the zoom progress for the zoom-in phase of the next zoom
+		 *
+		 * EXAMPLE: [{start: 1, end: 2}, {start: 2.25, end: 4}]
+		 * WORKFLOW:
+		 * 1. zoom-in transition start at 1 and end at 2 to (x, y) coordinates
+		 * 2. zoom-out transition start at 2. zoom-out phase should end at 3 but next zoom-in phase start at 2.25
+		 * 3. zoom-in transition start at 2.25. zoom level begins at last zoom level from previous zoom-out phase
+		 * 4. zoom-in transition end at 3.25
+		 * 5. zoom-out transition start at 4 and end at 5
 		 */
 		// TODO: zoom speed
 		// TODO: zoom level
