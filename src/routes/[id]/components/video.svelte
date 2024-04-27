@@ -24,6 +24,7 @@
 	let currentTime = 0;
 	let ended: boolean;
 	let animationId: number;
+	let currentZoomLevel = 1;
 	$: $videoStatus.currentTime = Math.max($edits.startAt, Math.min(currentTime, $edits.endAt));
 
 	function roundCorners({
@@ -65,24 +66,26 @@
 		const height = Math.min(width / VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.height);
 		const left = (ctx.canvas.width - width) / 2;
 		const top = (ctx.canvas.height - height) / 2;
+		let nextZoom = $zooms.at($currentZoomIndex + 1);
 
-		if ($currentZoomIndex < $zooms.length - 1 && $currentZoom && frameTime >= $currentZoom.end) {
+		if (
+			$currentZoomIndex < $zooms.length - 1 &&
+			$currentZoom &&
+			(frameTime >= $currentZoom.end + ZOOM_TRANSITION_DURATION ||
+				(nextZoom && frameTime >= nextZoom.start))
+		) {
 			$currentZoomIndex++;
 		}
 
 		const zoomInStart = $currentZoom?.start ?? Infinity;
 		const zoomInEnd = zoomInStart + ZOOM_TRANSITION_DURATION;
-		const zoomOutEnd = $currentZoom?.end ?? Infinity;
-		const zoomOutStart = zoomOutEnd - ZOOM_TRANSITION_DURATION;
+		const zoomOutStart = $currentZoom?.end ?? Infinity;
+		const zoomOutEnd = zoomOutStart + ZOOM_TRANSITION_DURATION;
 		const prevZoom = $zooms[$currentZoomIndex - 1];
-		const nextZoom = $zooms.at($currentZoomIndex + 1);
-		const isInsideZoom =
-			currentZoom !== null && frameTime >= zoomInStart && frameTime <= zoomOutEnd;
-		const isOverlappingNextZoom = nextZoom ? nextZoom?.start <= zoomOutEnd : false;
-		const isOverlappingPrevZoom = prevZoom ? zoomInStart <= prevZoom?.end : false;
+		nextZoom = $zooms.at($currentZoomIndex + 1);
+		const isOverlappingPrevZoom = prevZoom?.end + ZOOM_TRANSITION_DURATION >= zoomInStart;
 		const x = ($currentZoom?.x * width) / 100;
 		const y = ($currentZoom?.y * height) / 100;
-		let zoom = 1;
 		let leftWithZoom = left;
 		let topWithZoom = top;
 
@@ -90,32 +93,58 @@
 		 * VIDEMO'S ZOOM WORKING PRINCIPLE
 		 *
 		 * zoom-in: `currentZoom.start` to `currentZoom.start + zoom transition duration`
-		 * zoom-out: `currentZoom.end - transition duration` to `currentZoom.end`
+		 * zoom-out: `currentZoom.end` to `currentZoom.end + zoom transition duration`
 		 *
-		 * EXAMPLE: [{start: 1, end: 2}, {start: 3, end: 4}]
+		 * EXAMPLE: [{start: 1, end: 2.5}, {start: 4, end: 5}]
 		 * WORKFLOW:
 		 * 1. zoom-in transition start at 1
-		 * 2. zoom-in transition end at 1.25
-		 * 3. zoom level remains up to 1.75
-		 * 4. zoom-out transition start at 1.75
-		 * 5. zoom-out transition end at 2
-		 * 6. gap between zooms (2 to 3)
+		 * 2. zoom-in transition end at 2
+		 * 3. zoom level remains up to 2.5
+		 * 4. zoom-out transition start at 2.5
+		 * 5. zoom-out transition end at 3.5
+		 * 6. gap between zooms (3.5 to 4)
 		 * 7. repeat with new zoom
 		 *
-		 * ZOOM OVERLAP: two zooms overlap when `end` time of one is equal to `start` time of the other
-		 * in this case, i don't want to zoom-in and zoom-out for every zoom. instead, i want to zoom-in on the first zoom `start` time, move zoom coordinates
-		 * on every next zoom `start` time and zoom-out on the last zoom `end` time
+		 * ZOOM CHAIN: zoom chain exists when `end` time of one zoom is equal to `start` time of the next one
+		 * in this case, i don't want to zoom-in and zoom-out for every zoom. instead, i want to zoom-in on the first `start` time, move zoom coordinates
+		 * on every next `start` time and zoom-out on the last `end` time
 		 *
 		 * EXAMPLE: [{start: 1, end: 2}, {start: 2, end: 3}, {start: 3, end: 4}]
 		 * WORKFLOW:
-		 * 1. zoom-in transition start at 1 and end at 1.25 to (x, y) coordinates
-		 * 2. change zoom coordinates start at 2 and end at 2.25 to (x, y) coordinates
-		 * 3. change zoom coordinates start at 3 and end at 3.25 to (x, y) coordinates
-		 * 4. zoom-out transition start at 3.75 and end at 4
+		 * 1. zoom-in transition start at 1 and end at 2 to (x, y) coordinates
+		 * 2. change zoom coordinates start at 2 and end at 3 to (x, y) coordinates
+		 * 3. change zoom coordinates start at 3 and end at 4 to (x, y) coordinates
+		 * 4. zoom-out transition start at 4 and end at 5
+		 *
+		 * ZOOM OVERLAP: zoom overlap exists when `end` time of one zoom + zoom transition duration is greater than `start` time of the next one but not equals
+		 * in this case, i want to start zooming-out and reconciliate the zoom progress for the zoom-in phase of the next zoom
+		 *
+		 * EXAMPLE: [{start: 1, end: 2}, {start: 2.25, end: 4}]
+		 * WORKFLOW:
+		 * 1. zoom-in transition start at 1 and end at 2 to (x, y) coordinates
+		 * 2. zoom-out transition start at 2. zoom-out phase should end at 3 but next zoom-in phase start at 2.25
+		 * 3. zoom-in transition start at 2.25. zoom level begins at last zoom level from previous zoom-out phase
+		 * 4. zoom-in transition end at 3.25
+		 * 5. zoom-out transition start at 4 and end at 5
 		 */
 		// TODO: zoom speed
 		// TODO: zoom level
-		if (!isInsideZoom) {
+		if (
+			isOverlappingPrevZoom &&
+			zoomInStart !== prevZoom.end &&
+			prevZoom.end + ZOOM_TRANSITION_DURATION >= zoomInStart &&
+			frameTime <= zoomOutStart
+		) {
+			const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+			const eased = expoOut(Math.min(progress, 1));
+			const prevX = (prevZoom?.x * width) / 100;
+			const prevY = (prevZoom?.y * height) / 100;
+			const left = lerp(prevX, x, eased);
+			const top = lerp(prevY, y, eased);
+
+			currentZoomLevel = Math.max(currentZoomLevel, lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, eased));
+			leftWithZoom -= left * (currentZoomLevel - 1);
+			topWithZoom -= top * (currentZoomLevel - 1);
 		} else if (isOverlappingPrevZoom && frameTime >= zoomInStart && frameTime <= zoomInEnd) {
 			const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
 			const eased = expoOut(progress);
@@ -124,33 +153,27 @@
 			const left = lerp(prevX, x, eased);
 			const top = lerp(prevY, y, eased);
 
-			zoom = MAX_ZOOM_LEVEL;
-			leftWithZoom -= left * (zoom - 1);
-			topWithZoom -= top * (zoom - 1);
-		} else {
-			if (
-				(isOverlappingPrevZoom && !isOverlappingNextZoom && frameTime >= zoomOutStart) ||
-				(!isOverlappingNextZoom && frameTime >= zoomOutStart && frameTime <= zoomOutEnd)
-			) {
-				const progress = (frameTime - zoomOutStart) / (zoomOutEnd - zoomOutStart);
-				const eased = expoOut(Math.min(progress, 1));
+			currentZoomLevel = MAX_ZOOM_LEVEL;
+			leftWithZoom -= left * (currentZoomLevel - 1);
+			topWithZoom -= top * (currentZoomLevel - 1);
+		} else if (frameTime >= zoomOutStart && frameTime <= zoomOutEnd) {
+			const progress = (frameTime - zoomOutStart) / (zoomOutEnd - zoomOutStart);
+			const eased = expoOut(Math.min(progress, 1));
 
-				zoom = lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, eased);
-			} else if (isOverlappingNextZoom || (frameTime >= zoomInStart && frameTime <= zoomOutStart)) {
-				const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
-				const eased = expoOut(Math.min(progress, 1));
+			currentZoomLevel = lerp(MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, eased);
+			leftWithZoom -= x * (currentZoomLevel - 1);
+			topWithZoom -= y * (currentZoomLevel - 1);
+		} else if (frameTime >= zoomInStart && frameTime <= zoomOutStart) {
+			const progress = (frameTime - zoomInStart) / (zoomInEnd - zoomInStart);
+			const eased = expoOut(Math.min(progress, 1));
 
-				zoom = lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, eased);
-			} else {
-				zoom = MAX_ZOOM_LEVEL;
-			}
-
-			leftWithZoom -= x * (zoom - 1);
-			topWithZoom -= y * (zoom - 1);
+			currentZoomLevel = lerp(MIN_ZOOM_LEVEL, MAX_ZOOM_LEVEL, eased);
+			leftWithZoom -= x * (currentZoomLevel - 1);
+			topWithZoom -= y * (currentZoomLevel - 1);
 		}
 
-		const widthWithZoom = width * zoom;
-		const heightWithZoom = height * zoom;
+		const widthWithZoom = width * currentZoomLevel;
+		const heightWithZoom = height * currentZoomLevel;
 
 		ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
 
