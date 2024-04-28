@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { expoOut } from 'svelte/easing';
 	import { recording } from '../stores/recording.store';
 	import { edits } from '../stores/edits.store';
@@ -266,12 +266,10 @@
 		const unsubscribeAppearenceStore = appearence.subscribe(() =>
 			draw(videoRef, $videoStatus.currentTime)
 		);
-		const unsubscribeZoomStore = zooms.subscribe(() => {
-			$currentZoomIndex = $zooms.findIndex(
-				(zoom) => zoom.start >= $videoStatus.currentTime || zoom.end >= $videoStatus.currentTime
-			);
-
+		const unsubscribeZoomStore = zooms.subscribe(async () => {
 			if (paused) {
+				await tick();
+				currentZoomLevel = 1;
 				draw(videoRef, $videoStatus.currentTime);
 			}
 		});
