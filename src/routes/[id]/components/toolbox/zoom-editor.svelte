@@ -11,10 +11,10 @@
 			$zooms.some(
 				(zoom) =>
 					($videoStatus.currentTime >= zoom.start ||
-						$videoStatus.currentTime + ZOOM_TRANSITION_DURATION * 2 >= zoom.start) &&
+						$videoStatus.currentTime + ZOOM_TRANSITION_DURATION >= zoom.start) &&
 					$videoStatus.currentTime <= zoom.end
 			) ||
-			$videoStatus.currentTime + ZOOM_TRANSITION_DURATION * 2 >= $edits.endAt
+			$videoStatus.currentTime + ZOOM_TRANSITION_DURATION >= $edits.endAt
 		) {
 			return;
 		}
@@ -24,7 +24,7 @@
 		zooms.addZoom({
 			id: new Date().getTime(),
 			start: currentTime,
-			end: currentTime + ZOOM_TRANSITION_DURATION * 2,
+			end: currentTime + ZOOM_TRANSITION_DURATION,
 			x: 0,
 			y: 0
 		});
