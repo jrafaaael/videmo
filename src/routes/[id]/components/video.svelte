@@ -319,6 +319,8 @@
 			animationId = window?.requestAnimationFrame(animate);
 
 			if (ended || $videoStatus.currentTime >= $edits.endAt) {
+				$currentZoomIndex = 0;
+				currentZoomLevel = 1;
 				$videoStatus.currentTime = $edits.startAt;
 			}
 		}}
