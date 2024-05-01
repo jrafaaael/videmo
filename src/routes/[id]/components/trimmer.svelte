@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { secondsToTime } from '$lib/utils/seconds-to-time';
 	import { edits } from '../stores/edits.store';
 	import { isEditingTrim } from '../stores/is-editing-trim.store';
 	import { recording } from '../stores/recording.store';
@@ -12,15 +13,15 @@
 
 <Moveable
 	className={{
-		root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 cursor-grab active:cursor-grabbing [&.current-trim]:bg-blue-700/20 [&.current-trim]:border-blue-700/50 [&.current-trim]:focus-within:ring-blue-700/20 hover:bg-blue-700/20 hover:border-blue-700/50 has-[:active]:bg-blue-700/20 has-[:active]:border-blue-700/50 focus-within:ring-white/5 focus-within:hover:ring-blue-700/20 hover:z-10 ${
+		root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 cursor-grab active:cursor-grabbing [&.current-trim]:bg-blue-700/20 [&.current-trim]:border-blue-700/50 [&.current-trim]:focus-within:ring-blue-700/20 hover:bg-blue-700/20 hover:border-blue-700/50 has-[:active]:bg-blue-700/20 has-[:active]:border-blue-700/50 focus-within:ring-white/5 focus-within:hover:ring-blue-700/20 ${
 			$videoStatus.currentTime >= $edits.startAt && $videoStatus.currentTime <= $edits.endAt
 				? 'current-trim'
 				: ''
 		}`,
 		handle:
-			'h-full absolute cursor-ew-resize hidden group-hover:z-10 group-hover:block group-[.current-trim]:block group-has-[:active]:block',
-		handleW: '-left-[12px]',
-		handleE: '-right-[12px]'
+			'h-full absolute cursor-ew-resize hidden group-hover:block group-[.current-trim]:block group-has-[:active]:block',
+		handleW: 'group/w -left-[12px]',
+		handleE: 'group/e -right-[12px]'
 	}}
 	{width}
 	{left}
@@ -63,10 +64,26 @@
 	}}
 	on:dragEnd={() => ($isEditingTrim = false)}
 >
-	<div slot="w" class="w-[12px] h-[75%] bg-blue-900 rounded-l-md flex justify-center items-center">
+	<div
+		slot="w"
+		class="w-[12px] h-[75%] bg-blue-900 rounded-l-md flex justify-center items-center relative"
+	>
+		<output
+			class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-8 -translate-x-1/2 tabular-nums group-active/w:block"
+		>
+			{secondsToTime($edits.startAt, { showMilliseconds: true })}
+		</output>
 		<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
 	</div>
-	<div slot="e" class="w-[12px] h-[75%] bg-blue-900 rounded-r-md flex justify-center items-center">
+	<div
+		slot="e"
+		class="w-[12px] h-[75%] bg-blue-900 rounded-r-md flex justify-center items-center relative"
+	>
+		<output
+			class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-8 -translate-x-1/2 tabular-nums group-active/e:block"
+		>
+			{secondsToTime($edits.endAt, { showMilliseconds: true })}
+		</output>
 		<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
 	</div>
 </Moveable>

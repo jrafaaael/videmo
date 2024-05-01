@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { secondsToTime } from '$lib/utils/seconds-to-time';
 	import { recording } from '../stores/recording.store';
 	import { videoStatus } from '../stores/video-status.store';
 	import { zooms } from '../stores/zooms.store';
@@ -20,9 +21,9 @@
 						: ''
 				}`,
 				handle:
-					'h-full absolute cursor-ew-resize z-10 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-active:opacity-100 group-active:pointer-events-auto group-[.current-zoom]:opacity-100 group-[.current-zoom]:pointer-events-auto group-[.current-zoom]:has-[:active]:!opacity-100 group-[.current-zoom]:has-[:active]:!pointer-events-auto group-has-[:active]:opacity-100 group-has-[:active]:pointer-events-auto',
-				handleW: '-left-[12px]',
-				handleE: '-right-[12px]'
+					'h-full absolute cursor-ew-resize opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-active:opacity-100 group-active:pointer-events-auto group-[.current-zoom]:opacity-100 group-[.current-zoom]:pointer-events-auto group-[.current-zoom]:has-[:active]:!opacity-100 group-[.current-zoom]:has-[:active]:!pointer-events-auto group-has-[:active]:opacity-100 group-has-[:active]:pointer-events-auto',
+				handleW: 'group/w -left-[12px]',
+				handleE: 'group/e z-10 -right-[12px]'
 			}}
 			{width}
 			{left}
@@ -140,14 +141,24 @@
 		>
 			<div
 				slot="w"
-				class="w-[12px] h-[75%] bg-emerald-900 rounded-l-md flex justify-center items-center"
+				class="w-[12px] h-[75%] bg-emerald-900 rounded-l-md flex justify-center items-center relative"
 			>
+				<output
+					class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-8 -translate-x-1/2 tabular-nums group-active/w:block"
+				>
+					{secondsToTime(zoom.start, { showMilliseconds: true })}
+				</output>
 				<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
 			</div>
 			<div
 				slot="e"
 				class="w-[12px] h-[75%] bg-emerald-900 rounded-r-md flex justify-center items-center"
 			>
+				<output
+					class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-8 -translate-x-1/2 tabular-nums group-active/e:block"
+				>
+					{secondsToTime(zoom.end, { showMilliseconds: true })}
+				</output>
 				<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
 			</div>
 		</Moveable>
