@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
+	import { secondsToTime } from '$lib/utils/seconds-to-time';
 	import { recording } from '../stores/recording.store';
 	import { edits } from '../stores/edits.store';
 	import { videoStatus } from '../stores/video-status.store';
@@ -53,7 +54,7 @@
 /> -->
 
 <button
-	class="h-[calc(100%+8px)] px-2 absolute bottom-0 z-50 cursor-col-resize {$videoStatus.currentTime <=
+	class="group h-[calc(100%+8px)] px-2 absolute bottom-0 z-20 cursor-col-resize {$videoStatus.currentTime <=
 		$edits.startAt ||
 	isDragging ||
 	($isEditingTrim &&
@@ -65,6 +66,11 @@
 	bind:this={seekbarRef}
 >
 	<div class="h-full relative">
+		<output
+			class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-50 -translate-y-8 -translate-x-1/2 tabular-nums group-active:block"
+		>
+			{secondsToTime($videoStatus.currentTime, { showMilliseconds: true })}
+		</output>
 		<div class="w-2 aspect-square bg-orange-hard rounded-full absolute left-1/2 -translate-x-1/2" />
 		<div class="w-0.5 h-full bg-orange-hard" />
 	</div>
