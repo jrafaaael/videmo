@@ -154,7 +154,7 @@
 			</div>
 			<div
 				slot="e"
-				class="w-[12px] h-[75%] bg-emerald-900 rounded-r-md flex justify-center items-center"
+				class="w-[12px] h-[75%] bg-emerald-900 rounded-r-md flex justify-center items-center relative"
 			>
 				<output
 					class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-8 -translate-x-1/2 tabular-nums group-active/e:block"
