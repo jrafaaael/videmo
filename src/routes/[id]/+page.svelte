@@ -93,7 +93,7 @@
 				class="h-12 px-4 border-b-2 border-b-white/5 flex justify-center items-center gap-12 relative"
 			>
 				<span
-					class="tabular-nums"
+					class="tabular-nums select-none"
 					title={secondsToTime($videoStatus.currentTime, { showMilliseconds: true })}
 				>
 					{secondsToTime(Math.floor($videoStatus.currentTime))}
@@ -105,7 +105,7 @@
 					}}
 				/>
 				<span
-					class="text-white/50 tabular-nums"
+					class="text-white/50 tabular-nums select-none"
 					title={secondsToTime($recording?.duration ?? 0, { showMilliseconds: true })}
 				>
 					{secondsToTime(Math.floor($recording?.duration ?? 0))}
