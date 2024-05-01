@@ -53,14 +53,14 @@
 	on:drag={({ detail }) => {
 		const { refToElement, left } = detail;
 		const constrains = refToElement.parentElement.getBoundingClientRect();
-		const dif = $edits.endAt - $edits.startAt;
-		const start = +Math.max(
+		const diff = Math.max(MIN_VIDEO_DURATION_IN_SECONDS, $edits.endAt - $edits.startAt);
+		const start = Math.max(
 			0,
 			(left * currentRecordingDuration) / (constrains.right - constrains.left)
-		).toFixed(2);
-		const end = +Math.min(currentRecordingDuration ?? Infinity, start + dif).toFixed(2);
+		);
+		const end = +Math.min(currentRecordingDuration, start + diff).toFixed(2);
 
-		$edits.startAt = Math.min(start, end - dif);
+		$edits.startAt = +Math.min(start, end - diff).toFixed(2);
 		$edits.endAt = end;
 	}}
 	on:dragEnd={() => ($isEditingTrim = false)}
