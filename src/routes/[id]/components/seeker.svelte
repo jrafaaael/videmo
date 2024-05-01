@@ -26,9 +26,11 @@
 				startPositionInPercentage,
 				Math.min(positionInPercentage, endPositionInPercentage)
 			);
-			const newTime = (newPosition * totalVideoDuration) / 100;
+			const newTime = +((newPosition * totalVideoDuration) / 100).toFixed(2);
 
-			dispatcher('changeTime', { newTime });
+			dispatcher('changeTime', {
+				newTime: Math.min($edits.endAt, newTime)
+			});
 		}
 	}
 
