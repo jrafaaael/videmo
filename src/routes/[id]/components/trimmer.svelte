@@ -21,8 +21,8 @@
 		}`,
 		handle:
 			'h-full absolute cursor-ew-resize hidden group-hover:block group-[.current-trim]:block group-has-[:active]:block',
-		handleW: 'group/w -left-[12px]',
-		handleE: 'group/e -right-[12px]'
+		handleW: '-left-[12px]',
+		handleE: '-right-[12px]'
 	}}
 	{width}
 	{left}
@@ -70,7 +70,7 @@
 		class="w-[12px] h-[75%] bg-blue-900 rounded-l-md flex justify-center items-center relative"
 	>
 		<output
-			class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-8 -translate-x-1/2 tabular-nums group-active/w:block"
+			class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-9 -translate-x-1/2 tabular-nums group-active:block"
 		>
 			{secondsToTime($edits.startAt, { showMilliseconds: true })}
 		</output>
@@ -81,7 +81,7 @@
 		class="w-[12px] h-[75%] bg-blue-900 rounded-r-md flex justify-center items-center relative"
 	>
 		<output
-			class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-8 -translate-x-1/2 tabular-nums group-active/e:block"
+			class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-9 -translate-x-1/2 tabular-nums group-active:block"
 		>
 			{secondsToTime($edits.endAt, { showMilliseconds: true })}
 		</output>

@@ -24,8 +24,8 @@
 				}`,
 				handle:
 					'h-full absolute cursor-ew-resize opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-active:opacity-100 group-active:pointer-events-auto group-[.current-zoom]:opacity-100 group-[.current-zoom]:pointer-events-auto group-[.current-zoom]:has-[:active]:!opacity-100 group-[.current-zoom]:has-[:active]:!pointer-events-auto group-has-[:active]:opacity-100 group-has-[:active]:pointer-events-auto',
-				handleW: 'group/w -left-[12px]',
-				handleE: 'group/e z-10 -right-[12px]'
+				handleW: '-left-[12px]',
+				handleE: 'z-10 -right-[12px]'
 			}}
 			{width}
 			{left}
@@ -146,7 +146,7 @@
 				class="w-[12px] h-[75%] bg-emerald-900 rounded-l-md flex justify-center items-center relative"
 			>
 				<output
-					class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-8 -translate-x-1/2 tabular-nums group-active/w:block"
+					class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-9 -translate-x-1/2 tabular-nums group-active:block"
 				>
 					{secondsToTime(zoom.start, { showMilliseconds: true })}
 				</output>
@@ -157,7 +157,7 @@
 				class="w-[12px] h-[75%] bg-emerald-900 rounded-r-md flex justify-center items-center relative"
 			>
 				<output
-					class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-8 -translate-x-1/2 tabular-nums group-active/e:block"
+					class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-9 -translate-x-1/2 tabular-nums group-active:block"
 				>
 					{secondsToTime(zoom.end, { showMilliseconds: true })}
 				</output>
