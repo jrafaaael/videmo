@@ -5,12 +5,14 @@
 	import { zooms } from '../stores/zooms.store';
 	import { ZOOM_TRANSITION_DURATION } from '../utils/constants';
 	import Moveable from './moveable.svelte';
+
+	$: currentRecordingDuration = $recording?.duration ?? 0;
 </script>
 
 <div class="w-full h-10 relative">
 	{#each $zooms as zoom, idx (zoom.id)}
-		{@const width = ((zoom.end - zoom.start) * 100) / $recording?.duration}
-		{@const left = (zoom.start * 100) / $recording?.duration}
+		{@const width = ((zoom.end - zoom.start) * 100) / currentRecordingDuration}
+		{@const left = (zoom.start * 100) / currentRecordingDuration}
 		{@const nextZoom = $zooms.at(idx + 1)}
 		{@const prevZoom = idx === 0 ? null : $zooms.at(idx - 1)}
 		<Moveable
@@ -35,7 +37,7 @@
 
 				if (direction === 'right') {
 					const end = +(
-						((zoomRect.right + delta - constrains.left) * $recording.duration) /
+						((zoomRect.right + delta - constrains.left) * currentRecordingDuration) /
 						(constrains.right - constrains.left)
 					).toFixed(2);
 
@@ -66,7 +68,7 @@
 					}
 				} else if (direction === 'left') {
 					const start = +(
-						((zoomRect.left - delta - constrains.left) * $recording.duration) /
+						((zoomRect.left - delta - constrains.left) * currentRecordingDuration) /
 						(constrains.right - constrains.left)
 					).toFixed(2);
 
@@ -103,11 +105,11 @@
 				const dif = zoom.end - zoom.start;
 				const start = +Math.max(
 					0,
-					(left * $recording.duration) / (constrains.right - constrains.left),
+					(left * currentRecordingDuration) / (constrains.right - constrains.left),
 					prevZoom?.end ?? -Infinity
 				).toFixed(2);
 				const end = +Math.min(
-					$recording?.duration ?? Infinity,
+					currentRecordingDuration ?? Infinity,
 					start + dif,
 					nextZoom?.start ?? Infinity
 				).toFixed(2);

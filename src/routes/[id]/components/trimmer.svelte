@@ -7,8 +7,9 @@
 	import Moveable from './moveable.svelte';
 
 	const MIN_VIDEO_DURATION_IN_SECONDS = 1;
-	$: width = (($edits.endAt - $edits.startAt) * 100) / $recording?.duration;
-	$: left = ($edits.startAt * 100) / $recording?.duration;
+	$: currentRecordingDuration = $recording?.duration ?? 0;
+	$: width = (($edits.endAt - $edits.startAt) * 100) / currentRecordingDuration;
+	$: left = ($edits.startAt * 100) / currentRecordingDuration;
 </script>
 
 <Moveable
@@ -33,14 +34,14 @@
 
 		if (direction === 'left') {
 			const start = +(
-				((zoomRect.left - delta - constrains.left) * $recording.duration) /
+				((zoomRect.left - delta - constrains.left) * currentRecordingDuration) /
 				(constrains.right - constrains.left)
 			).toFixed(2);
 
 			$edits.startAt = Math.min(start, Math.abs($edits.endAt - MIN_VIDEO_DURATION_IN_SECONDS));
 		} else if (direction === 'right') {
 			const end = +(
-				((zoomRect.right + delta - constrains.left) * $recording.duration) /
+				((zoomRect.right + delta - constrains.left) * currentRecordingDuration) /
 				(constrains.right - constrains.left)
 			).toFixed(2);
 
@@ -55,9 +56,9 @@
 		const dif = $edits.endAt - $edits.startAt;
 		const start = +Math.max(
 			0,
-			(left * $recording.duration) / (constrains.right - constrains.left)
+			(left * currentRecordingDuration) / (constrains.right - constrains.left)
 		).toFixed(2);
-		const end = +Math.min($recording?.duration ?? Infinity, start + dif).toFixed(2);
+		const end = +Math.min(currentRecordingDuration ?? Infinity, start + dif).toFixed(2);
 
 		$edits.startAt = Math.min(start, end - dif);
 		$edits.endAt = end;
