@@ -297,7 +297,6 @@
 	<!-- svelte-ignore a11y-media-has-caption -->
 	<video
 		autoplay
-		playsinline
 		class="hidden"
 		src={$recording?.url}
 		bind:currentTime
@@ -318,7 +317,11 @@
 		on:play={() => {
 			animationId = window?.requestAnimationFrame(animate);
 
-			if (ended || $videoStatus.currentTime >= $edits.endAt) {
+			if (
+				ended ||
+				$videoStatus.currentTime >= $edits.endAt ||
+				$videoStatus.currentTime === $edits.startAt
+			) {
 				$currentZoomIndex = 0;
 				currentZoomLevel = 1;
 				$videoStatus.currentTime = $edits.startAt;
