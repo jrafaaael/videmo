@@ -1,7 +1,17 @@
-export function secondsToTime(time: number) {
-	time = +time.toFixed(0);
-	const minutes = Math.floor(+time.toFixed(0) / 60);
-	const seconds = time - minutes * 60;
+const DEFAULT_CONFIG = {
+	showMilliseconds: false
+};
 
-	return `${minutes.toString(10).padStart(2, '0')}:${seconds.toString(10).padStart(2, '0')}`;
+export function secondsToTime(time: number, { showMilliseconds } = DEFAULT_CONFIG) {
+	const minutes = Math.floor(time / 60);
+	const seconds = time - minutes * 60;
+	const milliseconds = (time - Math.floor(time)) * 100;
+
+	const formattedMinutes = minutes.toString(10).padStart(2, '0');
+	const formattedSeconds = Math.floor(seconds).toString(10).padStart(2, '0');
+	const formattedMilliseconds = Math.floor(milliseconds).toString(10).padStart(2, '0');
+
+	return showMilliseconds
+		? `${formattedMinutes}:${formattedSeconds}.${formattedMilliseconds}`
+		: `${formattedMinutes}:${formattedSeconds}`;
 }
