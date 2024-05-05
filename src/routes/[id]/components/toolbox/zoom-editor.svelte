@@ -39,7 +39,7 @@
 		</li>
 		<li class="flex gap-2">
 			<button
-				class="py-[5px] px-3 bg-white/5 border border-white/5 rounded-md text-neutral-50 flex-1 flex justify-center items-center gap-2 hover:bg-white/10 hover:border-white/10"
+				class="py-[5px] px-3 bg-white/5 border border-white/5 rounded-md text-neutral-300 flex-1 flex justify-center items-center gap-2 hover:bg-white/10 hover:border-white/10"
 				on:click={() => zooms.removeZoomById($currentZoom)}
 			>
 				<span class="w-4 aspect-square inline-block">
