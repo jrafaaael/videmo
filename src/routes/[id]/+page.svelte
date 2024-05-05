@@ -12,6 +12,7 @@
 		appearence
 	} from './stores/general-appearance.store';
 	import { zooms } from './stores/zooms.store';
+	import { getBlobDuration } from './utils/get-blob-duration';
 	import Header from './components/header.svelte';
 	import Toolbox from './components/toolbox/toolbox.svelte';
 	import Video from './components/video.svelte';
@@ -20,7 +21,6 @@
 	import Seeker from './components/seeker.svelte';
 	import Trimmer from './components/trimmer.svelte';
 	import ZoomList from './components/zoom-list.svelte';
-	import { getBlobDuration } from './utils/get-blob-duration';
 
 	let videoRef: Video;
 	let paused = true;
@@ -85,7 +85,9 @@
 
 	<section class="w-full flex-1 grid grid-rows-[minmax(0,1fr)_auto]">
 		<div class="p-10 relative" id="video-wrapper">
-			<Video bind:this={videoRef} bind:paused />
+			{#if $recording}
+				<Video bind:this={videoRef} bind:paused />
+			{/if}
 		</div>
 
 		<footer class="w-full bg-neutral-900 border-t-2 border-t-white/5">

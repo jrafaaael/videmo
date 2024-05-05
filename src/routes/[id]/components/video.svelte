@@ -25,7 +25,9 @@
 	let ended: boolean;
 	let animationId: number;
 	let currentZoomLevel = 1;
-	$: $videoStatus.currentTime = Math.max($edits.startAt, Math.min(currentTime, $edits.endAt));
+
+	$: if (!paused)
+		$videoStatus.currentTime = Math.max($edits.startAt, Math.min(currentTime, $edits.endAt));
 
 	function roundCorners({
 		ctx,
@@ -255,6 +257,8 @@
 	onMount(() => {
 		ctx = canvasRef.getContext('2d', { alpha: false })!;
 
+		const controller = new AbortController();
+		const signal = controller.signal;
 		const unsubscribeBackgroundStore = background.subscribe(() => {
 			if (typeof $background === 'string') {
 				draw(videoRef, $videoStatus.currentTime);
@@ -276,12 +280,11 @@
 		const unsubscribeVideoStatusStore = videoStatus.subscribe(() => {
 			currentTime = $videoStatus.currentTime;
 		});
-		const controller = new AbortController();
-		const signal = controller.signal;
-
 		backgroundImageRef.addEventListener('load', () => draw(videoRef, $videoStatus.currentTime), {
 			signal
 		});
+
+		$videoStatus.currentTime = $edits.startAt;
 
 		return () => {
 			unsubscribeVideoStatusStore();
@@ -303,17 +306,7 @@
 		bind:paused
 		bind:ended
 		bind:this={videoRef}
-		on:loadeddata={() => {
-			videoRef.pause();
-			/*
-			 * from mdn: "The loadeddata event is fired when the frame at the current playback position of the media has finished loading; often the first frame."
-			 * I use this event to draw the first frame on the canvas. However, when open editor from url or the page has been refreshed, the video isn't draw
-			 * on canvas for some reason. Routing from home page works as expected (lol).
-			 * A workaround I find to make it work in both ways is: update `currentTime` to a small value (to keep it at 0) in this event. This fires a `seeked` event
-			 * that draw the first frame normally
-			 */
-			currentTime = Number.MIN_SAFE_INTEGER;
-		}}
+		on:loadeddata={() => videoRef.pause()}
 		on:play={() => {
 			animationId = window?.requestAnimationFrame(animate);
 
