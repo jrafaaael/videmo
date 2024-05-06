@@ -306,7 +306,11 @@
 		bind:paused
 		bind:ended
 		bind:this={videoRef}
-		on:loadeddata={() => videoRef.pause()}
+		on:loadeddata={() => {
+			pause();
+			currentTime = $edits.startAt <= 0 ? Number.MIN_SAFE_INTEGER : $edits.startAt;
+			draw(videoRef, currentTime);
+		}}
 		on:play={() => {
 			animationId = window?.requestAnimationFrame(animate);
 
@@ -327,7 +331,7 @@
 		}}
 		on:timeupdate={() => {
 			if ($videoStatus.currentTime >= $edits.endAt) {
-				videoRef.pause();
+				pause();
 			}
 		}}
 		on:seeked={() => {
