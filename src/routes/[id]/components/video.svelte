@@ -285,6 +285,7 @@
 		});
 
 		$videoStatus.currentTime = $edits.startAt;
+		$videoStatus.ref = videoRef;
 
 		return () => {
 			unsubscribeVideoStatusStore();
