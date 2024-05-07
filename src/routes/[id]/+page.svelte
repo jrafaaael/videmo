@@ -21,6 +21,7 @@
 	import Seeker from './components/seeker.svelte';
 	import Trimmer from './components/trimmer.svelte';
 	import ZoomList from './components/zoom-list.svelte';
+	import CropButton from './components/crop-button.svelte';
 
 	let videoRef: Video;
 	let paused = true;
@@ -112,6 +113,7 @@
 				>
 					{secondsToTime(Math.floor($recording?.duration ?? 0))}
 				</span>
+				<CropButton />
 			</div>
 			<div class="w-full h-12 px-10 border-b-2 border-b-white/5 flex items-end">
 				<Timeline />
