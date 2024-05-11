@@ -17,6 +17,6 @@
 <div class="max-w-full rounded-md overflow-hidden relative">
 	<canvas class="max-w-full block" width="1920" height="1080" bind:this={canvasRef} />
 	{#if canvasRef}
-		<Cropper img={canvasRef} />
+		<Cropper img={canvasRef} on:crop />
 	{/if}
 </div>

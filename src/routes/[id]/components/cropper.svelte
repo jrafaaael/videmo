@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import Cropper from 'cropperjs';
 	import 'cropperjs/dist/cropper.min.css';
 
 	export let img: HTMLImageElement | HTMLCanvasElement;
+	const dispatch = createEventDispatcher();
 	let cropper = null;
 
 	onMount(() => {
@@ -15,7 +16,9 @@
 			scalable: false,
 			zoomable: false,
 			crop(event) {
-				console.log(event);
+				const { detail } = event;
+
+				dispatch('crop', { ...detail });
 			}
 		});
 	});
