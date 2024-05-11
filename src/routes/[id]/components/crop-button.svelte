@@ -1,7 +1,10 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/dialog';
+	import { crop, type Crop as ICrop } from '../stores/crop.store';
 	import Crop from './icons/crop.svelte';
 	import CropFrame from './crop-frame.svelte';
+
+	let cropValue: ICrop | null = null;
 </script>
 
 <Dialog.Root>
@@ -22,7 +25,7 @@
 		}}
 	>
 		<Dialog.Overlay slot="overlay" class="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm" />
-		<CropFrame />
+		<CropFrame on:crop={({ detail }) => (cropValue = detail)} />
 		<div class="mt-8 flex justify-end gap-2">
 			<Dialog.Close
 				class="w-20 py-1 bg-white/5 border border-white/5 rounded-md text-sm text-neutral-50 hover:bg-white/10 hover:border-white/10"
@@ -31,6 +34,10 @@
 			</Dialog.Close>
 			<Dialog.Close
 				class="w-20 py-1 bg-purple-600 rounded-md text-sm text-neutral-50 hover:bg-purple-600/90"
+				on:m-click={() => {
+					$crop = cropValue;
+					cropValue = null;
+				}}
 			>
 				Save
 			</Dialog.Close>
