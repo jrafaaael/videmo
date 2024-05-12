@@ -12,6 +12,7 @@
 		appearence
 	} from './stores/general-appearance.store';
 	import { zooms } from './stores/zooms.store';
+	import { crop } from './stores/crop.store';
 	import { getBlobDuration } from './utils/get-blob-duration';
 	import Header from './components/header.svelte';
 	import Toolbox from './components/toolbox/toolbox.svelte';
@@ -36,6 +37,8 @@
 			zooms.load(values?.zooms ?? []);
 			$background = values?.background ?? DEFAULT_BACKGROUND;
 			$appearence = values?.appearence ?? DEFAULT_APPEARENCE;
+			$crop = values?.crop ? values?.crop : null;
+
 			if (values?.trimmings) {
 				$edits = values?.trimmings;
 			}
@@ -68,7 +71,8 @@
 			background: $background,
 			appearence: $appearence,
 			zooms: $zooms,
-			trimmings: $edits
+			trimmings: $edits,
+			crop: $crop
 		};
 
 		localStorage.setItem($page.params.id, JSON.stringify(values));
