@@ -6,6 +6,7 @@
 	import { videoStatus } from '../stores/video-status.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
+	import { crop } from '../stores/crop.store';
 	import { zooms, currentZoomIndex, currentZoom } from '../stores/zooms.store';
 	import { createMP4 } from '../utils/create-mp4';
 	import { lerp } from '../utils/lerp';
@@ -58,14 +59,14 @@
 	}
 
 	function draw(frame: CanvasImageSource, frameTime: number) {
-		const VIDEO_NATURAL_WIDTH = videoRef?.videoWidth;
-		const VIDEO_NATURAL_HEIGHT = videoRef?.videoHeight;
-		const VIDEO_NATURAL_ASPECT_RATIO = VIDEO_NATURAL_WIDTH / VIDEO_NATURAL_HEIGHT;
+		const MAX_WIDTH = $crop ? $crop.width : videoRef?.videoWidth;
+		const MAX_HEIGHT = $crop ? $crop.height : videoRef?.videoHeight;
+		const ASPECT_RATIO = MAX_WIDTH / MAX_HEIGHT;
 		const p = $appearence.padding * 4;
 		const cornerRadius = $appearence.cornerRadius;
 		const shadow = $appearence.shadow;
-		const width = Math.min(ctx.canvas.height * VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.width) - p;
-		const height = Math.min(width / VIDEO_NATURAL_ASPECT_RATIO, ctx.canvas.height);
+		const width = Math.min(ctx.canvas.height * ASPECT_RATIO, ctx.canvas.width) - p;
+		const height = Math.min(width / ASPECT_RATIO, ctx.canvas.height);
 		const left = (ctx.canvas.width - width) / 2;
 		const top = (ctx.canvas.height - height) / 2;
 		let nextZoom = $zooms.at($currentZoomIndex + 1);
@@ -206,7 +207,17 @@
 		ctx.clip();
 		ctx.imageSmoothingEnabled = true;
 		ctx.imageSmoothingQuality = 'high';
-		ctx?.drawImage(frame, leftWithZoom, topWithZoom, widthWithZoom, heightWithZoom);
+		ctx.drawImage(
+			frame,
+			$crop?.x ?? 0,
+			$crop?.y ?? 0,
+			MAX_WIDTH,
+			MAX_HEIGHT,
+			leftWithZoom,
+			topWithZoom,
+			widthWithZoom,
+			heightWithZoom
+		);
 		ctx.restore();
 	}
 
@@ -280,6 +291,9 @@
 		const unsubscribeVideoStatusStore = videoStatus.subscribe(() => {
 			currentTime = $videoStatus.currentTime;
 		});
+		const unsubscribeCropStore = crop.subscribe(() => {
+			draw(videoRef, $videoStatus.currentTime);
+		});
 		backgroundImageRef.addEventListener('load', () => draw(videoRef, $videoStatus.currentTime), {
 			signal
 		});
@@ -292,6 +306,7 @@
 			unsubscribeBackgroundStore();
 			unsubscribeAppearenceStore();
 			unsubscribeZoomStore();
+			unsubscribeCropStore();
 			controller.abort();
 		};
 	});
