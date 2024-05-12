@@ -20,7 +20,7 @@
 		title="Crop recording"
 		className={{
 			dialog:
-				'w-[90vw] max-w-[1024px] max-h-[85vh] p-6 bg-neutral-800 border border-white/5 rounded-xl fixed left-1/2 top-1/2 z-20 shadow-lg -translate-x-1/2 -translate-y-1/2',
+				'w-[90vw] max-w-[1024px] max-h-[85vh] p-6 bg-neutral-800 border border-white/5 rounded-xl flex flex-col fixed left-1/2 top-1/2 z-20 shadow-lg -translate-x-1/2 -translate-y-1/2',
 			title: 'mb-4 text-lg font-medium'
 		}}
 	>

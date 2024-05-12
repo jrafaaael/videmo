@@ -5,11 +5,13 @@
 
 	export let img: HTMLImageElement | HTMLCanvasElement;
 	const dispatch = createEventDispatcher();
-	let cropper = null;
+	let cropper: Cropper | null = null;
 
 	onMount(() => {
 		cropper = new Cropper(img as HTMLImageElement, {
 			dragMode: 'none',
+			viewMode: 2,
+			autoCropArea: 1,
 			background: false,
 			movable: false,
 			rotatable: false,
