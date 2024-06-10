@@ -20,10 +20,10 @@
 	});
 </script>
 
-<div class="max-w-full rounded-md overflow-hidden relative">
+<div class="w-full rounded-md relative">
 	{#if $videoStatus.ref}
 		<canvas
-			class="max-w-full block"
+			class="max-w-full max-h-[720px] block"
 			width={$videoStatus.ref.videoWidth}
 			height={$videoStatus.ref.videoHeight}
 			bind:this={canvasRef}

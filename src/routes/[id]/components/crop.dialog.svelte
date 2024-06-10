@@ -20,13 +20,13 @@
 		title="Crop recording"
 		className={{
 			dialog:
-				'w-[90vw] max-w-[1024px] max-h-[85vh] p-6 bg-neutral-800 border border-white/5 rounded-xl flex flex-col fixed left-1/2 top-1/2 z-20 shadow-lg -translate-x-1/2 -translate-y-1/2',
-			title: 'mb-4 text-lg font-medium'
+				'w-[90vw] max-w-[1024px] h-fit p-6 bg-neutral-800 border border-white/5 rounded-xl flex flex-col gap-4 fixed left-1/2 top-1/2 z-20 shadow-lg -translate-x-1/2 -translate-y-1/2',
+			title: 'text-lg font-medium'
 		}}
 	>
 		<Dialog.Overlay slot="overlay" class="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm" />
 		<CropFrame on:crop={({ detail }) => (cropValue = detail)} />
-		<div class="mt-8 flex justify-end gap-2">
+		<div class="flex justify-end gap-2">
 			<Dialog.Close
 				class="w-20 py-1 bg-white/5 border border-white/5 rounded-md text-sm text-neutral-50 hover:bg-white/10 hover:border-white/10"
 			>
