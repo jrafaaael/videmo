@@ -351,17 +351,25 @@
 			}
 		}}
 		on:seeked={() => {
+			const zoomIndex = $zooms.findIndex((zoom, index) => {
+				const next = $zooms.at(index + 1);
+
+				return (
+					$videoStatus.currentTime < (next?.start ?? Infinity) ||
+					($videoStatus.currentTime >= zoom.start && $videoStatus.currentTime <= zoom.end)
+				);
+			});
+
+			$currentZoomIndex = zoomIndex === -1 ? $zooms.length - 1 : zoomIndex;
+
+			const currentZoom = $zooms.at($currentZoomIndex);
+
 			if (
-				$videoStatus.currentTime < $currentZoom?.start ||
-				$videoStatus.currentTime > $currentZoom?.end + ZOOM_TRANSITION_DURATION
+				$videoStatus.currentTime < (currentZoom?.start ?? Infinity) ||
+				$videoStatus.currentTime > (currentZoom?.end ?? -Infinity) + ZOOM_TRANSITION_DURATION
 			) {
 				currentZoomLevel = 1;
 			}
-
-			$currentZoomIndex =
-				$zooms.findIndex(
-					(zoom) => $videoStatus.currentTime >= zoom.start && $videoStatus.currentTime <= zoom.end
-				) ?? null;
 
 			draw(videoRef, $videoStatus.currentTime);
 		}}
