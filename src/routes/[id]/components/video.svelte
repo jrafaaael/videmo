@@ -342,11 +342,10 @@
 				currentZoomLevel = 1;
 			}
 
-			if ($videoStatus.currentTime < $currentZoom?.start) {
-				$currentZoomIndex = Math.max(0, $currentZoomIndex - 1);
-			} else if ($videoStatus.currentTime > $currentZoom?.end + ZOOM_TRANSITION_DURATION) {
-				$currentZoomIndex = Math.min($zooms.length - 1, $currentZoomIndex + 1);
-			}
+			$currentZoomIndex =
+				$zooms.findIndex(
+					(zoom) => $videoStatus.currentTime >= zoom.start && $videoStatus.currentTime <= zoom.end
+				) ?? null;
 
 			draw(videoRef, $videoStatus.currentTime);
 		}}
