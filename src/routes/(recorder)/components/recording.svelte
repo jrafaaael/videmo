@@ -123,10 +123,7 @@
 						</Dialog.Content>
 					</Dialog.Root>
 				</Dropdown.Item>
-				<Dropdown.Item
-					class="w-36 outline-none hover:bg-red-600/15 focus:bg-red-600/15"
-					on:m-click={async () => await handleRemoveById(id)}
-				>
+				<Dropdown.Item class="w-36 outline-none hover:bg-red-600/15 focus:bg-red-600/15">
 					<button
 						class="w-full py-1 px-2 text-red-500 flex items-center gap-2 cursor-pointer"
 						on:click={async () => await handleRemoveById(id)}
