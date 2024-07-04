@@ -9,13 +9,14 @@
 		const folders = [];
 
 		for await (let [name] of root) {
-			folders.push(name);
+			if (!isNaN(Number(name))) folders.push(name);
 		}
 
 		return folders;
 	}
 
 	onMount(async () => {
+		recordings = await getRecordings();
 	});
 </script>
 
