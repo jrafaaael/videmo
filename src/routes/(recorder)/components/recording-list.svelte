@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import Recording from './recording.svelte';
 
-	let recordings: string[] = [];
+	let recordings = getRecordings();
 
-	async function getRecordings() {
+	async function getRecordings(): Promise<string[]> {
 		const root = await navigator.storage.getDirectory();
 		const folders = [];
 
@@ -14,35 +13,35 @@
 
 		return folders;
 	}
-
-	onMount(async () => {
-		recordings = await getRecordings();
-	});
 </script>
 
-{#each recordings as record}
-	{@const recordingInfo = JSON.parse(localStorage.getItem(record) ?? '{}')}
-	{@const folderName = recordingInfo.name ?? new Date(+record).toLocaleString()}
-	<Recording
-		name={folderName}
-		id={record}
-		on:remove={async () => (recordings = await getRecordings())}
-		on:rename={async () => (recordings = await getRecordings())}
-	/>
-{:else}
-	<article class="flex flex-col gap-2">
-		<span
-			class="w-full aspect-video bg-white/5 border-2 border-white/10 rounded-md text-4xl flex justify-center items-center relative"
-			id="empty"
-		>
-			🕳️
-		</span>
-		<div class="flex flex-col gap-1">
-			<h3 class="font-medium">No recordings yet!</h3>
-			<p class="text-sm">Record, upload or drag 'n drop your first video and it'll show up here!</p>
-		</div>
-	</article>
-{/each}
+{#await recordings then videos}
+	{#each videos as record}
+		{@const recordingInfo = JSON.parse(localStorage.getItem(record) ?? '{}')}
+		{@const folderName = recordingInfo.name ?? new Date(+record).toLocaleString()}
+		<Recording
+			name={folderName}
+			id={record}
+			on:remove={async () => (recordings = getRecordings())}
+			on:rename={async () => (recordings = getRecordings())}
+		/>
+	{:else}
+		<article class="flex flex-col gap-2">
+			<span
+				class="w-full aspect-video bg-white/5 border-2 border-white/10 rounded-md text-4xl flex justify-center items-center relative"
+				id="empty"
+			>
+				🕳️
+			</span>
+			<div class="flex flex-col gap-1">
+				<h3 class="font-medium">No recordings yet!</h3>
+				<p class="text-sm">
+					Record, upload or drag 'n drop your first video and it'll show up here!
+				</p>
+			</div>
+		</article>
+	{/each}
+{/await}
 
 <style>
 	#empty::before {
