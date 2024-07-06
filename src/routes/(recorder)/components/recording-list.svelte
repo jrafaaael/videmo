@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Recording from './recording.svelte';
 
 	let recordings = getRecordings();
@@ -13,6 +14,20 @@
 
 		return folders;
 	}
+
+	onMount(async () => {
+		const root = await navigator.storage.getDirectory();
+
+		for await (let [name] of root) {
+			const folder = await root.getDirectoryHandle(name);
+
+			for await (let [filename] of folder) {
+				if (filename.includes('.mp4')) return;
+
+				root.removeEntry(name, { recursive: true });
+			}
+		}
+	});
 </script>
 
 {#await recordings then videos}
