@@ -14,7 +14,7 @@
 		const file = files?.[0];
 
 		if (!file) return;
-		if (!file.type.includes('video')) return;
+		if (!file.type.includes('mp4')) return;
 
 		const folderName = new Date().getTime().toString();
 		const filename = file.name;
@@ -46,7 +46,7 @@
 	type="file"
 	name="recording"
 	id="recording"
-	accept="video/*"
+	accept="video/mp4"
 	tabindex="-1"
 	bind:this={inputRef}
 	on:change={handleUpload}

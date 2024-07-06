@@ -13,7 +13,7 @@
 		const file = files?.[0];
 
 		if (!file) return;
-		if (!file.type.includes('video')) return;
+		if (!file.type.includes('mp4')) return;
 
 		const folderName = new Date().getTime().toString();
 		const filename = file.name;
