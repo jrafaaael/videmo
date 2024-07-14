@@ -245,7 +245,7 @@
 		return await generateVideo({
 			url: $recording?.url,
 			renderer(frame, time) {
-				draw(frame, 0);
+				draw(frame, time);
 
 				return canvasRef;
 			}
