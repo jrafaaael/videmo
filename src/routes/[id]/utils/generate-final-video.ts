@@ -13,6 +13,7 @@ type GenerateVideoParams = ExtractVideoFramesParams & {
 
 const WIDTH = 1920;
 const HEIGHT = 1080;
+const TIME_STEP = 1 / FPS;
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -70,7 +71,7 @@ export async function generateVideo({ url, renderer }: GenerateVideoParams) {
 			console.error(e);
 		}
 	});
-	let encodedFrames = 0;
+	let currentTime = 0;
 	let nextKeyFrameTimestamp = -Infinity;
 
 	encoder.configure({
@@ -83,30 +84,29 @@ export async function generateVideo({ url, renderer }: GenerateVideoParams) {
 
 	for await (const frames of extractor) {
 		for (const frame of frames) {
-			const time = 0 + encodedFrames / FPS;
-			const canvas = renderer(frame, time);
+			while (currentTime < frame.timestamp / MICROSECONDS_PER_SECOND) {
+				const canvas = renderer(frame, currentTime);
+				const finalFrame = new VideoFrame(canvas, {
+					timestamp: currentTime * MICROSECONDS_PER_SECOND,
+					duration: TIME_STEP * MICROSECONDS_PER_SECOND
+				});
+				let keyFrame = false;
 
-			frame.close();
+				if (finalFrame.timestamp >= nextKeyFrameTimestamp) {
+					keyFrame = true;
+					nextKeyFrameTimestamp =
+						finalFrame.timestamp + KEYFRAME_SEPARATION_IN_SECONDS * MICROSECONDS_PER_SECOND;
+				}
 
-			const finalFrame = new VideoFrame(canvas, {
-				timestamp: time * MICROSECONDS_PER_SECOND,
-				duration: (1 / FPS) * MICROSECONDS_PER_SECOND
-			});
-			let keyFrame = false;
+				encoder.encode(finalFrame, { keyFrame });
 
-			if (finalFrame.timestamp >= nextKeyFrameTimestamp) {
-				keyFrame = true;
-				nextKeyFrameTimestamp =
-					finalFrame.timestamp + KEYFRAME_SEPARATION_IN_SECONDS * MICROSECONDS_PER_SECOND;
+				finalFrame.close();
+
+				currentTime += TIME_STEP;
+
+				await sleep(25);
 			}
-
-			encoder.encode(finalFrame, { keyFrame });
-
-			finalFrame.close();
-
-			encodedFrames++;
-
-			await sleep(25);
+			frame.close();
 		}
 	}
 
