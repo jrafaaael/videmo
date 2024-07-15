@@ -245,6 +245,8 @@
 		return await generateVideo({
 			url: $recording?.url,
 			renderer(frame, time) {
+				if (time <= $edits.startAt || time >= $edits.endAt) return null;
+
 				draw(frame, time);
 
 				return canvasRef;

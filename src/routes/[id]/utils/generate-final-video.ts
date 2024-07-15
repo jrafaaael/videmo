@@ -8,7 +8,7 @@ interface ExtractVideoFramesParams {
 }
 
 type GenerateVideoParams = ExtractVideoFramesParams & {
-	renderer: (frame: VideoFrame, time: number) => CanvasImageSource;
+	renderer: (frame: VideoFrame, time: number) => CanvasImageSource | null;
 };
 
 const WIDTH = 1920;
@@ -86,8 +86,14 @@ export async function generateVideo({ url, renderer }: GenerateVideoParams) {
 		for (const frame of frames) {
 			while (currentTime < frame.timestamp / MICROSECONDS_PER_SECOND) {
 				const canvas = renderer(frame, currentTime);
+				const time = currentTime;
+
+				currentTime += TIME_STEP;
+
+				if (!canvas) continue;
+
 				const finalFrame = new VideoFrame(canvas, {
-					timestamp: currentTime * MICROSECONDS_PER_SECOND,
+					timestamp: time * MICROSECONDS_PER_SECOND,
 					duration: TIME_STEP * MICROSECONDS_PER_SECOND
 				});
 				let keyFrame = false;
@@ -102,10 +108,9 @@ export async function generateVideo({ url, renderer }: GenerateVideoParams) {
 
 				finalFrame.close();
 
-				currentTime += TIME_STEP;
-
 				await sleep(25);
 			}
+
 			frame.close();
 		}
 	}
