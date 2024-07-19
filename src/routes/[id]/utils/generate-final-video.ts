@@ -93,8 +93,7 @@ export async function generateVideo({ url, renderer }: GenerateVideoParams) {
 				if (!canvas) continue;
 
 				const finalFrame = new VideoFrame(canvas, {
-					timestamp: time * MICROSECONDS_PER_SECOND,
-					duration: TIME_STEP * MICROSECONDS_PER_SECOND
+					timestamp: time * MICROSECONDS_PER_SECOND
 				});
 				let keyFrame = false;
 
