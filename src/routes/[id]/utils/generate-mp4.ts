@@ -51,7 +51,7 @@ async function* extractVideoFrames({ url }: ExtractVideoFramesParams) {
 	yield frames;
 }
 
-export async function generateVideo({ url, renderer }: GenerateVideoParams) {
+export async function generateMP4({ url, renderer }: GenerateVideoParams) {
 	const extractor = extractVideoFrames({ url });
 	const muxer = new Muxer({
 		target: new ArrayBufferTarget(),

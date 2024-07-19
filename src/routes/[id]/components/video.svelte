@@ -9,7 +9,7 @@
 	import { crop } from '../stores/crop.store';
 	import { zooms, currentZoomIndex, currentZoom } from '../stores/zooms.store';
 	import { createMP4 } from '../utils/create-mp4';
-	import { generateVideo } from '../utils/generate-final-video';
+	import { generateMP4 } from '../utils/generate-mp4';
 	import { lerp } from '../utils/lerp';
 	import { MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, ZOOM_TRANSITION_DURATION } from '../utils/constants';
 
@@ -242,7 +242,7 @@
 
 		$currentZoomIndex = 0;
 
-		return await generateVideo({
+		return await generateMP4({
 			url: $recording?.url,
 			renderer(frame, time) {
 				if (time <= $edits.startAt || time >= $edits.endAt) return null;
