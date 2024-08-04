@@ -1,6 +1,6 @@
 <script>
 	import Trash from '$lib/components/icons/trash.svelte';
-	import { edits } from '../../stores/edits.store';
+	import { cuts } from '../../stores/cuts.store';
 	import { videoStatus } from '../../stores/video-status.store';
 	import { zooms, currentZoom } from '../../stores/zooms.store';
 	import { ZOOM_TRANSITION_DURATION } from '../../utils/constants';
@@ -14,7 +14,7 @@
 						$videoStatus.currentTime + ZOOM_TRANSITION_DURATION >= zoom.start) &&
 					$videoStatus.currentTime <= zoom.end
 			) ||
-			$videoStatus.currentTime + ZOOM_TRANSITION_DURATION >= $edits.endAt
+			$videoStatus.currentTime + ZOOM_TRANSITION_DURATION >= $cuts.endAt
 		) {
 			return;
 		}

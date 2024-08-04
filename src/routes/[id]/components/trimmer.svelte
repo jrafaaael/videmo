@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { secondsToTime } from '$lib/utils/seconds-to-time';
-	import { edits } from '../stores/edits.store';
+	import { cuts } from '../stores/cuts.store';
 	import { isEditingTrim } from '../stores/is-editing-trim.store';
 	import { recording } from '../stores/recording.store';
 	import { videoStatus } from '../stores/video-status.store';
@@ -8,14 +8,14 @@
 
 	const MIN_VIDEO_DURATION_IN_SECONDS = 1;
 	$: currentRecordingDuration = $recording?.duration ?? 0;
-	$: width = (($edits.endAt - $edits.startAt) * 100) / currentRecordingDuration;
-	$: left = ($edits.startAt * 100) / currentRecordingDuration;
+	$: width = (($cuts.endAt - $cuts.startAt) * 100) / currentRecordingDuration;
+	$: left = ($cuts.startAt * 100) / currentRecordingDuration;
 </script>
 
 <Moveable
 	className={{
 		root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 cursor-grab active:cursor-grabbing [&.current-trim]:bg-blue-700/20 [&.current-trim]:border-blue-700/50 [&.current-trim]:focus-within:ring-blue-700/20 hover:bg-blue-700/20 hover:border-blue-700/50 has-[:active]:bg-blue-700/20 has-[:active]:border-blue-700/50 focus-within:ring-white/5 focus-within:hover:ring-blue-700/20 ${
-			$videoStatus.currentTime >= $edits.startAt && $videoStatus.currentTime <= $edits.endAt
+			$videoStatus.currentTime >= $cuts.startAt && $videoStatus.currentTime <= $cuts.endAt
 				? 'current-trim'
 				: ''
 		}`,
@@ -38,14 +38,14 @@
 				(constrains.right - constrains.left)
 			).toFixed(2);
 
-			$edits.startAt = Math.min(start, Math.abs($edits.endAt - MIN_VIDEO_DURATION_IN_SECONDS));
+			$cuts.startAt = Math.min(start, Math.abs($cuts.endAt - MIN_VIDEO_DURATION_IN_SECONDS));
 		} else if (direction === 'right') {
 			const end = +(
 				((zoomRect.right + delta - constrains.left) * currentRecordingDuration) /
 				(constrains.right - constrains.left)
 			).toFixed(2);
 
-			$edits.endAt = Math.max(end, Math.abs($edits.startAt + MIN_VIDEO_DURATION_IN_SECONDS));
+			$cuts.endAt = Math.max(end, Math.abs($cuts.startAt + MIN_VIDEO_DURATION_IN_SECONDS));
 		}
 	}}
 	on:resizeEnd={() => ($isEditingTrim = false)}
@@ -53,15 +53,15 @@
 	on:drag={({ detail }) => {
 		const { refToElement, left } = detail;
 		const constrains = refToElement.parentElement.getBoundingClientRect();
-		const diff = Math.max(MIN_VIDEO_DURATION_IN_SECONDS, $edits.endAt - $edits.startAt);
+		const diff = Math.max(MIN_VIDEO_DURATION_IN_SECONDS, $cuts.endAt - $cuts.startAt);
 		const start = Math.max(
 			0,
 			(left * currentRecordingDuration) / (constrains.right - constrains.left)
 		);
 		const end = +Math.min(currentRecordingDuration, start + diff).toFixed(2);
 
-		$edits.startAt = +Math.min(start, end - diff).toFixed(2);
-		$edits.endAt = end;
+		$cuts.startAt = +Math.min(start, end - diff).toFixed(2);
+		$cuts.endAt = end;
 	}}
 	on:dragEnd={() => ($isEditingTrim = false)}
 >
@@ -72,7 +72,7 @@
 		<output
 			class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-9 -translate-x-1/2 tabular-nums select-none group-active:block"
 		>
-			{secondsToTime($edits.startAt, { showMilliseconds: true })}
+			{secondsToTime($cuts.startAt, { showMilliseconds: true })}
 		</output>
 		<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
 	</div>
@@ -83,7 +83,7 @@
 		<output
 			class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-9 -translate-x-1/2 tabular-nums select-none group-active:block"
 		>
-			{secondsToTime($edits.endAt, { showMilliseconds: true })}
+			{secondsToTime($cuts.endAt, { showMilliseconds: true })}
 		</output>
 		<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
 	</div>

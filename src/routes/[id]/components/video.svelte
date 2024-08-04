@@ -2,7 +2,7 @@
 	import { onMount, tick } from 'svelte';
 	import { expoOut } from 'svelte/easing';
 	import { recording } from '../stores/recording.store';
-	import { edits } from '../stores/edits.store';
+	import { cuts } from '../stores/cuts.store';
 	import { videoStatus } from '../stores/video-status.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
@@ -24,7 +24,7 @@
 	let currentZoomLevel = 1;
 
 	$: if (!paused)
-		$videoStatus.currentTime = Math.max($edits.startAt, Math.min(currentTime, $edits.endAt));
+		$videoStatus.currentTime = Math.max($cuts.startAt, Math.min(currentTime, $cuts.endAt));
 
 	function roundCorners({
 		ctx,
@@ -243,7 +243,7 @@
 		return await generateMP4({
 			url: $recording!.url,
 			renderer(frame, time) {
-				if (time <= $edits.startAt || time >= $edits.endAt) return null;
+				if (time <= $cuts.startAt || time >= $cuts.endAt) return null;
 
 				draw(frame, time);
 
@@ -285,7 +285,7 @@
 			signal
 		});
 
-		$videoStatus.currentTime = $edits.startAt;
+		$videoStatus.currentTime = $cuts.startAt;
 		$videoStatus.ref = videoRef;
 
 		return () => {
@@ -311,7 +311,7 @@
 		bind:this={videoRef}
 		on:loadeddata={() => {
 			pause();
-			currentTime = $edits.startAt <= 0 ? Number.MIN_SAFE_INTEGER : $edits.startAt;
+			currentTime = $cuts.startAt <= 0 ? Number.MIN_SAFE_INTEGER : $cuts.startAt;
 			draw(videoRef, currentTime);
 		}}
 		on:play={() => {
@@ -319,12 +319,12 @@
 
 			if (
 				ended ||
-				$videoStatus.currentTime >= $edits.endAt ||
-				$videoStatus.currentTime === $edits.startAt
+				$videoStatus.currentTime >= $cuts.endAt ||
+				$videoStatus.currentTime === $cuts.startAt
 			) {
 				$currentZoomIndex = 0;
 				currentZoomLevel = 1;
-				$videoStatus.currentTime = $edits.startAt;
+				$videoStatus.currentTime = $cuts.startAt;
 			}
 		}}
 		on:pause={() => {
@@ -333,7 +333,7 @@
 			}
 		}}
 		on:timeupdate={() => {
-			if ($videoStatus.currentTime >= $edits.endAt) {
+			if ($videoStatus.currentTime >= $cuts.endAt) {
 				pause();
 			}
 		}}
