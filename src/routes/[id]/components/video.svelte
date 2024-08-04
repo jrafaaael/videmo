@@ -238,12 +238,10 @@
 	}
 
 	export async function exportMP4() {
-		if (!$recording) return;
-
 		$currentZoomIndex = 0;
 
 		return await generateMP4({
-			url: $recording?.url,
+			url: $recording!.url,
 			renderer(frame, time) {
 				if (time <= $edits.startAt || time >= $edits.endAt) return null;
 
