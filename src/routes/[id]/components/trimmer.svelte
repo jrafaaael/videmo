@@ -7,84 +7,86 @@
 	import Moveable from './moveable.svelte';
 
 	const MIN_VIDEO_DURATION_IN_SECONDS = 1;
-	$: currentRecordingDuration = $recording?.duration ?? 0;
-	$: width = (($cuts.endAt - $cuts.startAt) * 100) / currentRecordingDuration;
-	$: left = ($cuts.startAt * 100) / currentRecordingDuration;
+	$: currentRecordingDuration = $recording?.duration!;
 </script>
 
-<Moveable
-	className={{
-		root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 cursor-grab active:cursor-grabbing [&.current-trim]:bg-blue-700/20 [&.current-trim]:border-blue-700/50 [&.current-trim]:focus-within:ring-blue-700/20 hover:bg-blue-700/20 hover:border-blue-700/50 has-[:active]:bg-blue-700/20 has-[:active]:border-blue-700/50 focus-within:ring-white/5 focus-within:hover:ring-blue-700/20 ${
-			$videoStatus.currentTime >= $cuts.startAt && $videoStatus.currentTime <= $cuts.endAt
-				? 'current-trim'
-				: ''
-		}`,
-		handle:
-			'h-full absolute cursor-ew-resize hidden group-hover:block group-[.current-trim]:block group-has-[:active]:block',
-		handleW: '-left-[12px]',
-		handleE: '-right-[12px]'
-	}}
-	{width}
-	{left}
-	on:resizeStart={() => ($isEditingTrim = true)}
-	on:resize={({ detail }) => {
-		const { direction, delta, refToElement } = detail;
-		const zoomRect = refToElement.getBoundingClientRect();
-		const constrains = refToElement.parentElement.getBoundingClientRect();
+{#each $cuts as cut}
+	{@const width = ((cut.endAt - cut.startAt) * 100) / currentRecordingDuration}
+	{@const left = (cut.startAt * 100) / currentRecordingDuration}
+	<Moveable
+		className={{
+			root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 cursor-grab active:cursor-grabbing [&.current-trim]:bg-blue-700/20 [&.current-trim]:border-blue-700/50 [&.current-trim]:focus-within:ring-blue-700/20 hover:bg-blue-700/20 hover:border-blue-700/50 has-[:active]:bg-blue-700/20 has-[:active]:border-blue-700/50 focus-within:ring-white/5 focus-within:hover:ring-blue-700/20 ${
+				$videoStatus.currentTime >= cut.startAt && $videoStatus.currentTime <= cut.endAt
+					? 'current-trim'
+					: ''
+			}`,
+			handle:
+				'h-full absolute cursor-ew-resize hidden group-hover:block group-[.current-trim]:block group-has-[:active]:block',
+			handleW: '-left-[12px]',
+			handleE: '-right-[12px]'
+		}}
+		{width}
+		{left}
+		on:resizeStart={() => ($isEditingTrim = true)}
+		on:resize={({ detail }) => {
+			const { direction, delta, refToElement } = detail;
+			const zoomRect = refToElement.getBoundingClientRect();
+			const constrains = refToElement.parentElement.getBoundingClientRect();
 
-		if (direction === 'left') {
-			const start = +(
-				((zoomRect.left - delta - constrains.left) * currentRecordingDuration) /
-				(constrains.right - constrains.left)
-			).toFixed(2);
+			if (direction === 'left') {
+				const start = +(
+					((zoomRect.left - delta - constrains.left) * currentRecordingDuration) /
+					(constrains.right - constrains.left)
+				).toFixed(2);
 
-			$cuts.startAt = Math.min(start, Math.abs($cuts.endAt - MIN_VIDEO_DURATION_IN_SECONDS));
-		} else if (direction === 'right') {
-			const end = +(
-				((zoomRect.right + delta - constrains.left) * currentRecordingDuration) /
-				(constrains.right - constrains.left)
-			).toFixed(2);
+				cut.startAt = Math.min(start, Math.abs(cut.endAt - MIN_VIDEO_DURATION_IN_SECONDS));
+			} else if (direction === 'right') {
+				const end = +(
+					((zoomRect.right + delta - constrains.left) * currentRecordingDuration) /
+					(constrains.right - constrains.left)
+				).toFixed(2);
 
-			$cuts.endAt = Math.max(end, Math.abs($cuts.startAt + MIN_VIDEO_DURATION_IN_SECONDS));
-		}
-	}}
-	on:resizeEnd={() => ($isEditingTrim = false)}
-	on:dragStart={() => ($isEditingTrim = true)}
-	on:drag={({ detail }) => {
-		const { refToElement, left } = detail;
-		const constrains = refToElement.parentElement.getBoundingClientRect();
-		const diff = Math.max(MIN_VIDEO_DURATION_IN_SECONDS, $cuts.endAt - $cuts.startAt);
-		const start = Math.max(
-			0,
-			(left * currentRecordingDuration) / (constrains.right - constrains.left)
-		);
-		const end = +Math.min(currentRecordingDuration, start + diff).toFixed(2);
+				cut.endAt = Math.max(end, Math.abs(cut.startAt + MIN_VIDEO_DURATION_IN_SECONDS));
+			}
+		}}
+		on:resizeEnd={() => ($isEditingTrim = false)}
+		on:dragStart={() => ($isEditingTrim = true)}
+		on:drag={({ detail }) => {
+			const { refToElement, left } = detail;
+			const constrains = refToElement.parentElement.getBoundingClientRect();
+			const diff = Math.max(MIN_VIDEO_DURATION_IN_SECONDS, cut.endAt - cut.startAt);
+			const start = Math.max(
+				0,
+				(left * currentRecordingDuration) / (constrains.right - constrains.left)
+			);
+			const end = +Math.min(currentRecordingDuration, start + diff).toFixed(2);
 
-		$cuts.startAt = +Math.min(start, end - diff).toFixed(2);
-		$cuts.endAt = end;
-	}}
-	on:dragEnd={() => ($isEditingTrim = false)}
->
-	<div
-		slot="w"
-		class="w-[12px] h-[75%] bg-blue-900 rounded-l-md flex justify-center items-center relative"
+			cut.startAt = +Math.min(start, end - diff).toFixed(2);
+			cut.endAt = end;
+		}}
+		on:dragEnd={() => ($isEditingTrim = false)}
 	>
-		<output
-			class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-9 -translate-x-1/2 tabular-nums select-none group-active:block"
+		<div
+			slot="w"
+			class="w-[12px] h-[75%] bg-blue-900 rounded-l-md flex justify-center items-center relative"
 		>
-			{secondsToTime($cuts.startAt, { showMilliseconds: true })}
-		</output>
-		<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
-	</div>
-	<div
-		slot="e"
-		class="w-[12px] h-[75%] bg-blue-900 rounded-r-md flex justify-center items-center relative"
-	>
-		<output
-			class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-9 -translate-x-1/2 tabular-nums select-none group-active:block"
+			<output
+				class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-9 -translate-x-1/2 tabular-nums select-none group-active:block"
+			>
+				{secondsToTime(cut.startAt, { showMilliseconds: true })}
+			</output>
+			<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
+		</div>
+		<div
+			slot="e"
+			class="w-[12px] h-[75%] bg-blue-900 rounded-r-md flex justify-center items-center relative"
 		>
-			{secondsToTime($cuts.endAt, { showMilliseconds: true })}
-		</output>
-		<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
-	</div>
-</Moveable>
+			<output
+				class="py-1 px-2 bg-neutral-300 rounded-md text-neutral-800 text-xs hidden absolute top-0 left-1/2 z-20 -translate-y-9 -translate-x-1/2 tabular-nums select-none group-active:block"
+			>
+				{secondsToTime(cut.endAt, { showMilliseconds: true })}
+			</output>
+			<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
+		</div>
+	</Moveable>
+{/each}
