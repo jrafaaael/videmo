@@ -337,6 +337,7 @@
 				$videoStatus.currentTime >= $cuts.at(-1)?.endAt ||
 				$videoStatus.currentTime === $cuts.at(0)?.startAt
 			) {
+				$currentCutIndex = 0;
 				$currentZoomIndex = 0;
 				currentZoomLevel = 1;
 				$videoStatus.currentTime = $cuts.startAt;
