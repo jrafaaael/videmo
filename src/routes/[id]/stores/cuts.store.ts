@@ -23,3 +23,5 @@ function createCutStore() {
 }
 
 export const cuts = createCutStore();
+export const currentCutIndex = writable(0);
+export const currentCut = derived([cuts, currentCutIndex], ([cuts, idx]) => cuts[idx] ?? null);

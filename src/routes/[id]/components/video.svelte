@@ -2,7 +2,7 @@
 	import { onMount, tick } from 'svelte';
 	import { expoOut } from 'svelte/easing';
 	import { recording } from '../stores/recording.store';
-	import { cuts } from '../stores/cuts.store';
+	import { currentCut, currentCutIndex, cuts } from '../stores/cuts.store';
 	import { videoStatus } from '../stores/video-status.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
@@ -28,6 +28,11 @@
 			$cuts.at(0)?.startAt!,
 			Math.min(currentTime, $cuts.at(-1)?.endAt!)
 		);
+
+	$: if (currentTime > $currentCut.endAt) {
+		pause();
+		$currentCutIndex = Math.min($currentCutIndex + 1, $cuts.length - 1);
+	}
 
 	function roundCorners({
 		ctx,
@@ -284,6 +289,11 @@
 		const unsubscribeCropStore = crop.subscribe(() => {
 			draw(videoRef, $videoStatus.currentTime);
 		});
+		const unsubscribeCutStore = currentCut.subscribe(async (cut) => {
+			await tick();
+			currentTime = cut.startAt;
+			play();
+		});
 		backgroundImageRef.addEventListener('load', () => draw(videoRef, $videoStatus.currentTime), {
 			signal
 		});
@@ -297,6 +307,7 @@
 			unsubscribeAppearenceStore();
 			unsubscribeZoomStore();
 			unsubscribeCropStore();
+			unsubscribeCutStore();
 			controller.abort();
 		};
 	});
