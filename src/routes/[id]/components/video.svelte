@@ -24,7 +24,10 @@
 	let currentZoomLevel = 1;
 
 	$: if (!paused)
-		$videoStatus.currentTime = Math.max($cuts.startAt, Math.min(currentTime, $cuts.endAt));
+		$videoStatus.currentTime = Math.max(
+			$cuts.at(0)?.startAt!,
+			Math.min(currentTime, $cuts.at(-1)?.endAt!)
+		);
 
 	function roundCorners({
 		ctx,
@@ -311,7 +314,8 @@
 		bind:this={videoRef}
 		on:loadeddata={() => {
 			pause();
-			currentTime = $cuts.startAt <= 0 ? Number.MIN_SAFE_INTEGER : $cuts.startAt;
+			currentTime =
+				($cuts.at(0)?.startAt ?? 0) <= 0 ? Number.MIN_SAFE_INTEGER : $cuts.at(0)?.startAt ?? 0;
 			draw(videoRef, currentTime);
 		}}
 		on:play={() => {
@@ -319,8 +323,8 @@
 
 			if (
 				ended ||
-				$videoStatus.currentTime >= $cuts.endAt ||
-				$videoStatus.currentTime === $cuts.startAt
+				$videoStatus.currentTime >= $cuts.at(-1)?.endAt ||
+				$videoStatus.currentTime === $cuts.at(0)?.startAt
 			) {
 				$currentZoomIndex = 0;
 				currentZoomLevel = 1;
@@ -333,7 +337,7 @@
 			}
 		}}
 		on:timeupdate={() => {
-			if ($videoStatus.currentTime >= $cuts.endAt) {
+			if ($videoStatus.currentTime >= $cuts.at(-1)?.endAt) {
 				pause();
 			}
 		}}
