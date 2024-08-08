@@ -289,9 +289,9 @@
 		const unsubscribeCropStore = crop.subscribe(() => {
 			draw(videoRef, $videoStatus.currentTime);
 		});
-		const unsubscribeCutStore = currentCut.subscribe(async (cut) => {
+		const unsubscribeCutStore = currentCutIndex.subscribe(async () => {
 			await tick();
-			currentTime = cut.startAt;
+			currentTime = $currentCut.startAt;
 			play();
 		});
 		backgroundImageRef.addEventListener('load', () => draw(videoRef, $videoStatus.currentTime), {
