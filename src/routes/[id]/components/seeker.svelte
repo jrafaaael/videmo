@@ -9,7 +9,7 @@
 	let isDragging = false;
 	let seekbarRef: HTMLButtonElement;
 	let dispatcher = createEventDispatcher();
-	$: totalVideoDuration = $recording?.duration ?? 0;
+	$: totalVideoDuration = $recording?.duration!;
 	$: position = +(($videoStatus.currentTime * 100) / totalVideoDuration).toFixed(2);
 
 	function handleSeeking(e: MouseEvent) {
@@ -18,9 +18,9 @@
 			const constrains = seekbarRef.parentElement!.getBoundingClientRect();
 			const positionInPx = Math.min(Math.max(e.clientX - constrains.left, 0), constrains.width);
 			const positionInPercentage = (positionInPx * 100) / constrains.width;
-			const startPosition = ($cuts.startAt * constrains.width) / totalVideoDuration;
+			const startPosition = ($cuts.at(0)!.startAt * constrains.width) / totalVideoDuration;
 			const startPositionInPercentage = (startPosition * 100) / constrains.width;
-			const endPosition = ($cuts.endAt * constrains.width) / totalVideoDuration;
+			const endPosition = ($cuts.at(-1)!.endAt * constrains.width) / totalVideoDuration;
 			const endPositionInPercentage = (endPosition * 100) / constrains.width;
 			const newPosition = Math.max(
 				startPositionInPercentage,
@@ -62,10 +62,11 @@
 
 <button
 	class="group h-[calc(100%+8px)] px-2 absolute bottom-0 z-20 cursor-col-resize {$videoStatus.currentTime <=
-		$cuts.startAt ||
+		$cuts.at(0)?.startAt ||
 	isDragging ||
 	($isEditingTrim &&
-		($cuts.endAt <= $videoStatus.currentTime || $cuts.startAt >= $videoStatus.currentTime))
+		($cuts.at(-1)?.endAt <= $videoStatus.currentTime ||
+			$cuts.at(0)?.startAt >= $videoStatus.currentTime))
 		? 'transition-none'
 		: 'transition-[left] ease-linear duration-100'}"
 	style="--position: {position}%; left: calc(var(--position, 0%) - 8px);"
