@@ -63,6 +63,7 @@
 <button
 	class="group h-[calc(100%+8px)] px-2 absolute bottom-0 z-20 cursor-col-resize {$videoStatus.currentTime <=
 		$cuts.at(0)?.startAt ||
+	$videoStatus.currentTime <= ($currentCut?.startAt ?? 0) ||
 	isDragging ||
 	($isEditingTrim &&
 		($cuts.at(-1)?.endAt <= $videoStatus.currentTime ||
