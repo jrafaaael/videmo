@@ -23,6 +23,7 @@
 	import Trimmer from './components/trimmer.svelte';
 	import ZoomList from './components/zoom-list.svelte';
 	import CropDialog from './components/crop.dialog.svelte';
+	import Cut from './components/cut.svelte';
 
 	let videoRef: Video;
 	let paused = true;
@@ -95,6 +96,7 @@
 			<div
 				class="h-12 px-4 border-b-2 border-b-white/5 flex justify-center items-center gap-12 relative"
 			>
+				<Cut />
 				<span
 					class="tabular-nums select-none"
 					title={secondsToTime($videoStatus.currentTime, { showMilliseconds: true })}
