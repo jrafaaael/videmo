@@ -331,11 +331,12 @@
 		}}
 		on:play={async () => {
 			animationId = window?.requestAnimationFrame(animate);
-			const nearest = $cuts.reduce((prev, curr) =>
-				Math.abs(curr.startAt - currentTime) < Math.abs(prev.endAt - currentTime) ? curr : prev
-			);
-			$currentCutIndex = $cuts.findIndex(
-				(cut) => cut.startAt === nearest.startAt && cut.endAt === nearest.endAt
+			$currentCutIndex = $cuts.reduce(
+				(closest, current, idx) =>
+					Math.abs(current.startAt - currentTime) < Math.abs($cuts[closest].endAt - currentTime)
+						? idx
+						: closest,
+				0
 			);
 			await tick();
 			currentTime = Math.max($videoStatus.currentTime, $currentCut?.startAt ?? -Infinity);
