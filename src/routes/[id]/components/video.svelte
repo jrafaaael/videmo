@@ -329,8 +329,16 @@
 				($cuts.at(0)?.startAt ?? 0) <= 0 ? Number.MIN_SAFE_INTEGER : $cuts.at(0)?.startAt ?? 0;
 			draw(videoRef, currentTime);
 		}}
-		on:play={() => {
+		on:play={async () => {
 			animationId = window?.requestAnimationFrame(animate);
+			const nearest = $cuts.reduce((prev, curr) =>
+				Math.abs(curr.startAt - currentTime) < Math.abs(prev.endAt - currentTime) ? curr : prev
+			);
+			$currentCutIndex = $cuts.findIndex(
+				(cut) => cut.startAt === nearest.startAt && cut.endAt === nearest.endAt
+			);
+			await tick();
+			currentTime = Math.max($videoStatus.currentTime, $currentCut?.startAt ?? -Infinity);
 
 			if (
 				ended ||
