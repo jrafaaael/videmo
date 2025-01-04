@@ -46,19 +46,13 @@
 					return;
 				}
 
-				cuts.update((list) =>
-					list.map((current, iidx) =>
-						idx === iidx
-							? {
-									...current,
-									endAt: Math.max(
-										Math.abs(cut.startAt + MIN_VIDEO_DURATION_IN_SECONDS),
-										!nextCut ? end : Math.min(end, +nextCut?.startAt.toFixed(2))
-									)
-							  }
-							: current
+				$cuts = $cuts.with(idx, {
+					...cut,
+					endAt: Math.max(
+						Math.abs(cut.startAt + MIN_VIDEO_DURATION_IN_SECONDS),
+						!nextCut ? end : Math.min(end, +nextCut?.startAt.toFixed(2))
 					)
-				);
+				});
 			} else if (direction === 'left') {
 				const start = +(
 					((zoomRect.left - delta - constrains.left) * currentRecordingDuration) /
@@ -69,19 +63,13 @@
 					return;
 				}
 
-				cuts.update((list) =>
-					list.map((current, iidx) =>
-						idx === iidx
-							? {
-									...current,
-									startAt: Math.min(
-										Math.abs(cut.endAt - MIN_VIDEO_DURATION_IN_SECONDS),
-										!prevCut ? start : Math.max(start, +prevCut?.endAt.toFixed(2))
-									)
-							  }
-							: current
+				$cuts = $cuts.with(idx, {
+					...cut,
+					startAt: Math.min(
+						Math.abs(cut.endAt - MIN_VIDEO_DURATION_IN_SECONDS),
+						!prevCut ? start : Math.max(start, +prevCut?.endAt.toFixed(2))
 					)
-				);
+				});
 			}
 		}}
 		on:resizeEnd={() => ($isEditingTrim = false)}
@@ -101,17 +89,11 @@
 				nextCut?.startAt ?? Infinity
 			).toFixed(2);
 
-			cuts.update((list) =>
-				list.map((current, iidx) =>
-					idx === iidx
-						? {
-								...current,
-								startAt: +Math.min(start, end - dif).toFixed(2),
-								endAt: end
-						  }
-						: current
-				)
-			);
+			$cuts = $cuts.with(idx, {
+				...cut,
+				startAt: +Math.min(start, end - dif).toFixed(2),
+				endAt: end
+			});
 		}}
 		on:dragEnd={() => ($isEditingTrim = false)}
 		on:mouseenter={({ detail }) => {
