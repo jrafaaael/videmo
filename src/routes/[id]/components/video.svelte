@@ -349,7 +349,7 @@
 				$currentCutIndex = 0;
 				$currentZoomIndex = 0;
 				currentZoomLevel = 1;
-				$videoStatus.currentTime = $cuts.startAt;
+				currentTime = $cuts.at(0)?.startAt ?? 0;
 			}
 		}}
 		on:pause={() => {
