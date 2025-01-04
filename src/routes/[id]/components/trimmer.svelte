@@ -10,43 +10,78 @@
 	$: currentRecordingDuration = $recording?.duration!;
 </script>
 
-{#each $cuts as cut}
+{#each $cuts as cut, idx}
 	{@const width = ((cut.endAt - cut.startAt) * 100) / currentRecordingDuration}
 	{@const left = (cut.startAt * 100) / currentRecordingDuration}
+	{@const nextCut = $cuts.at(idx + 1)}
+	{@const prevCut = idx === 0 ? null : $cuts.at(idx - 1)}
 	<Moveable
 		className={{
-			root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 cursor-grab active:cursor-grabbing [&.current-trim]:bg-blue-700/20 [&.current-trim]:border-blue-700/50 [&.current-trim]:focus-within:ring-blue-700/20 hover:bg-blue-700/20 hover:border-blue-700/50 has-[:active]:bg-blue-700/20 has-[:active]:border-blue-700/50 focus-within:ring-white/5 focus-within:hover:ring-blue-700/20 ${
+			root: `group h-10 bg-white/5 border-2 border-white/10 rounded-lg absolute ring ring-transparent ring-offset-0 cursor-grab active:cursor-grabbing [&.current-trim]:bg-blue-700/20 [&.current-trim]:border-blue-700/50 [&.current-trim]:focus-within:ring-blue-700/20 hover:bg-blue-700/20 hover:border-blue-700/50 has-[:active]:bg-blue-700/20 has-[:active]:border-blue-700/50 focus-within:ring-white/5 focus-within:hover:ring-blue-700/20 focus-within:active:ring-blue-700/20 ${
 				$videoStatus.currentTime >= cut.startAt && $videoStatus.currentTime <= cut.endAt
 					? 'current-trim'
 					: ''
 			}`,
 			handle:
-				'h-full absolute cursor-ew-resize hidden group-hover:block group-[.current-trim]:block group-has-[:active]:block',
+				'h-full absolute cursor-ew-resize opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-active:opacity-100 group-active:pointer-events-auto group-[.current-trim]:opacity-100 group-[.current-trim]:pointer-events-auto group-[.current-trim]:has-[:active]:!opacity-100 group-[.current-trim]:has-[:active]:!pointer-events-auto group-has-[:active]:opacity-100 group-has-[:active]:pointer-events-auto',
 			handleW: '-left-[12px]',
-			handleE: '-right-[12px]'
+			handleE: 'z-10 -right-[12px]'
 		}}
 		{width}
 		{left}
 		on:resizeStart={() => ($isEditingTrim = true)}
 		on:resize={({ detail }) => {
+			// BUG: when resizing to end, allow to set `end` time equals to `end` of trimming
 			const { direction, delta, refToElement } = detail;
 			const zoomRect = refToElement.getBoundingClientRect();
 			const constrains = refToElement.parentElement.getBoundingClientRect();
 
-			if (direction === 'left') {
-				const start = +(
-					((zoomRect.left - delta - constrains.left) * currentRecordingDuration) /
-					(constrains.right - constrains.left)
-				).toFixed(2);
-
-				cut.startAt = Math.min(start, Math.abs(cut.endAt - MIN_VIDEO_DURATION_IN_SECONDS));
-			} else if (direction === 'right') {
+			if (direction === 'right') {
 				const end = +(
 					((zoomRect.right + delta - constrains.left) * currentRecordingDuration) /
 					(constrains.right - constrains.left)
 				).toFixed(2);
 
-				cut.endAt = Math.max(end, Math.abs(cut.startAt + MIN_VIDEO_DURATION_IN_SECONDS));
+				if (end === cut.endAt) {
+					return;
+				}
+
+				cuts.update((list) =>
+					list.map((current, iidx) =>
+						idx === iidx
+							? {
+									...current,
+									endAt: Math.max(
+										Math.abs(cut.startAt + MIN_VIDEO_DURATION_IN_SECONDS),
+										!nextCut ? end : Math.min(end, +nextCut?.startAt.toFixed(2))
+									)
+							  }
+							: current
+					)
+				);
+			} else if (direction === 'left') {
+				const start = +(
+					((zoomRect.left - delta - constrains.left) * currentRecordingDuration) /
+					(constrains.right - constrains.left)
+				).toFixed(2);
+
+				if (start === cut.startAt) {
+					return;
+				}
+
+				cuts.update((list) =>
+					list.map((current, iidx) =>
+						idx === iidx
+							? {
+									...current,
+									startAt: Math.min(
+										Math.abs(cut.endAt - MIN_VIDEO_DURATION_IN_SECONDS),
+										!prevCut ? start : Math.max(start, +prevCut?.endAt.toFixed(2))
+									)
+							  }
+							: current
+					)
+				);
 			}
 		}}
 		on:resizeEnd={() => ($isEditingTrim = false)}
@@ -54,17 +89,51 @@
 		on:drag={({ detail }) => {
 			const { refToElement, left } = detail;
 			const constrains = refToElement.parentElement.getBoundingClientRect();
-			const diff = Math.max(MIN_VIDEO_DURATION_IN_SECONDS, cut.endAt - cut.startAt);
-			const start = Math.max(
+			const dif = cut.endAt - cut.startAt;
+			const start = +Math.max(
 				0,
-				(left * currentRecordingDuration) / (constrains.right - constrains.left)
-			);
-			const end = +Math.min(currentRecordingDuration, start + diff).toFixed(2);
+				(left * currentRecordingDuration) / (constrains.right - constrains.left),
+				prevCut?.endAt ?? -Infinity
+			).toFixed(2);
+			const end = +Math.min(
+				currentRecordingDuration ?? Infinity,
+				start + dif,
+				nextCut?.startAt ?? Infinity
+			).toFixed(2);
 
-			cut.startAt = +Math.min(start, end - diff).toFixed(2);
-			cut.endAt = end;
+			cuts.update((list) =>
+				list.map((current, iidx) =>
+					idx === iidx
+						? {
+								...current,
+								startAt: +Math.min(start, end - dif).toFixed(2),
+								endAt: end
+						  }
+						: current
+				)
+			);
 		}}
 		on:dragEnd={() => ($isEditingTrim = false)}
+		on:mouseenter={({ detail }) => {
+			const { e } = detail;
+
+			if (e.currentTarget?.classList.contains('current-trim')) return;
+
+			const currentTrim = document.querySelector('.current-trim');
+			const handles = currentTrim?.querySelectorAll('button');
+
+			handles?.forEach((e) => e.classList.add('!opacity-0', '!pointer-events-none'));
+		}}
+		on:mouseleave={({ detail }) => {
+			const { e } = detail;
+
+			if (e.currentTarget?.classList.contains('current-trim')) return;
+
+			const currentTrim = document.querySelector('.current-trim');
+			const handles = currentTrim?.querySelectorAll('button');
+
+			handles?.forEach((e) => e.classList.remove('!opacity-0', '!pointer-events-none'));
+		}}
 	>
 		<div
 			slot="w"
