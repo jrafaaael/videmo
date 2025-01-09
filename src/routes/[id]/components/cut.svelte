@@ -3,6 +3,7 @@
 	import { videoStatus } from '../stores/video-status.store';
 	import { cuts, currentCutIndex, currentCut } from '../stores/cuts.store';
 	import { recording } from '../stores/recording.store';
+	import { MIN_CUT_DURATION_IN_SECONDS } from '../utils/constants';
 	import Cut from './icons/cut.svelte';
 
 	async function handleCut() {
@@ -12,11 +13,17 @@
 
 		await tick();
 
-		cuts.set([
+		if (
+			$videoStatus.currentTime <= $currentCut?.startAt + MIN_CUT_DURATION_IN_SECONDS ||
+			$videoStatus.currentTime >= $currentCut?.endAt - MIN_CUT_DURATION_IN_SECONDS
+		)
+			return;
+
+		$cuts = [
 			...$cuts.toSpliced($currentCutIndex, 1),
 			{ startAt: $currentCut?.startAt ?? 0, endAt: $videoStatus.currentTime },
 			{ startAt: $videoStatus.currentTime, endAt: $currentCut?.endAt ?? $recording!.duration }
-		]);
+		];
 	}
 </script>
 

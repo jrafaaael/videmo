@@ -4,9 +4,9 @@
 	import { isEditingTrim } from '../stores/is-editing-trim.store';
 	import { recording } from '../stores/recording.store';
 	import { videoStatus } from '../stores/video-status.store';
+	import { MIN_CUT_DURATION_IN_SECONDS } from '../utils/constants';
 	import Moveable from './moveable.svelte';
 
-	const MIN_VIDEO_DURATION_IN_SECONDS = 1;
 	$: currentRecordingDuration = $recording?.duration!;
 </script>
 
@@ -49,7 +49,7 @@
 				$cuts = $cuts.with(idx, {
 					...cut,
 					endAt: Math.max(
-						Math.abs(cut.startAt + MIN_VIDEO_DURATION_IN_SECONDS),
+						Math.abs(cut.startAt + MIN_CUT_DURATION_IN_SECONDS),
 						!nextCut ? end : Math.min(end, +nextCut?.startAt.toFixed(2))
 					)
 				});
@@ -66,7 +66,7 @@
 				$cuts = $cuts.with(idx, {
 					...cut,
 					startAt: Math.min(
-						Math.abs(cut.endAt - MIN_VIDEO_DURATION_IN_SECONDS),
+						Math.abs(cut.endAt - MIN_CUT_DURATION_IN_SECONDS),
 						!prevCut ? start : Math.max(start, +prevCut?.endAt.toFixed(2))
 					)
 				});
