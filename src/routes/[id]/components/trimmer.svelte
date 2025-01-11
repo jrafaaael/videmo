@@ -1,4 +1,6 @@
 <script lang="ts">
+	import * as ContextMenu from '$lib/components/context-menu';
+	import Trash from '$lib/components/icons/trash.svelte';
 	import { secondsToTime } from '$lib/utils/seconds-to-time';
 	import { cuts } from '../stores/cuts.store';
 	import { isEditingTrim } from '../stores/is-editing-trim.store';
@@ -139,5 +141,21 @@
 			</output>
 			<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
 		</div>
+		<ContextMenu.Root>
+			<ContextMenu.Trigger class="w-full h-full absolute outline-none" />
+			<ContextMenu.Menu
+				class="bg-neutral-800/80 border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden outline-none backdrop-blur-sm z-20"
+			>
+				<ContextMenu.Item
+					class="w-36 py-1 px-2 text-red-500 flex items-center gap-2 outline-none hover:bg-red-600/15 focus:bg-red-600/15"
+					on:m-click={() => ($cuts = $cuts.toSpliced(idx, 1))}
+				>
+					<span class="w-4 aspect-square inline-block">
+						<Trash />
+					</span>
+					<span class="font-normal">Remove</span>
+				</ContextMenu.Item>
+			</ContextMenu.Menu>
+		</ContextMenu.Root>
 	</Moveable>
 {/each}
