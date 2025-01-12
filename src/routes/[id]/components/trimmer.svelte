@@ -147,8 +147,12 @@
 				class="bg-neutral-800/80 border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden outline-none backdrop-blur-sm z-20"
 			>
 				<ContextMenu.Item
-					class="w-36 py-1 px-2 text-red-500 flex items-center gap-2 outline-none hover:bg-red-600/15 focus:bg-red-600/15"
-					on:m-click={() => ($cuts = $cuts.toSpliced(idx, 1))}
+					class="min-w-36 py-1 px-2 text-red-500 flex items-center gap-2 outline-none hover:bg-red-600/15 focus:bg-red-600/15"
+					on:m-click={() => {
+						if ($cuts.length <= 1) return;
+
+						$cuts = $cuts.toSpliced(idx, 1);
+					}}
 				>
 					<span class="w-4 aspect-square inline-block">
 						<Trash />
