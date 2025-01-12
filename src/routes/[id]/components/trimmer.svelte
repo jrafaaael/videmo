@@ -7,6 +7,7 @@
 	import { recording } from '../stores/recording.store';
 	import { videoStatus } from '../stores/video-status.store';
 	import { MIN_CUT_DURATION_IN_SECONDS } from '../utils/constants';
+	import Merge from './icons/merge.svelte';
 	import Moveable from './moveable.svelte';
 
 	$: currentRecordingDuration = $recording?.duration!;
@@ -146,6 +147,42 @@
 			<ContextMenu.Menu
 				class="bg-neutral-800/80 border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden outline-none backdrop-blur-sm z-20"
 			>
+				<ContextMenu.Item
+					class="min-w-36 py-1 px-2 flex items-center gap-2 outline-none hover:bg-white/5 focus:bg-white/5"
+					on:m-click={() => {
+						if (!nextCut) return;
+
+						const newCut = {
+							...cut,
+							endAt: nextCut.endAt
+						};
+
+						$cuts = [...$cuts.toSpliced(idx, 2), newCut];
+					}}
+				>
+					<span class="w-4 aspect-square text-neutral-50/50 inline-block">
+						<Merge />
+					</span>
+					<span class="font-normal">Merge next</span>
+				</ContextMenu.Item>
+				<ContextMenu.Item
+					class="min-w-36 py-1 px-2 flex items-center gap-2 outline-none hover:bg-white/5 focus:bg-white/5"
+					on:m-click={() => {
+						if (!prevCut) return;
+
+						const newCut = {
+							...cut,
+							startAt: prevCut.startAt
+						};
+
+						$cuts = [...$cuts.toSpliced(idx - 1, 2), newCut];
+					}}
+				>
+					<span class="w-4 aspect-square text-neutral-50/50 inline-block rotate-180">
+						<Merge />
+					</span>
+					<span class="font-normal">Merge previous</span>
+				</ContextMenu.Item>
 				<ContextMenu.Item
 					class="min-w-36 py-1 px-2 text-red-500 flex items-center gap-2 outline-none hover:bg-red-600/15 focus:bg-red-600/15"
 					on:m-click={() => {
