@@ -29,10 +29,8 @@
 			Math.min(currentTime, $cuts.at(-1)?.endAt!)
 		);
 
-	$: if (currentTime > $currentCut.endAt) {
-		pause();
+	$: if (currentTime >= ($currentCut?.endAt ?? Infinity))
 		$currentCutIndex = Math.min($currentCutIndex + 1, $cuts.length - 1);
-	}
 
 	function roundCorners({
 		ctx,
@@ -296,8 +294,7 @@
 		});
 		const unsubscribeCutStore = currentCutIndex.subscribe(async () => {
 			await tick();
-			currentTime = $currentCut.startAt;
-			play();
+			currentTime = $currentCut!.startAt;
 		});
 		backgroundImageRef.addEventListener('load', () => draw(videoRef, $videoStatus.currentTime), {
 			signal

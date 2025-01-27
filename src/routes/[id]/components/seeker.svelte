@@ -39,15 +39,10 @@
 	}
 
 	onMount(() => {
-		const unsubscribe = cuts.subscribe(({ startAt, endAt }) => {
-			$videoStatus.currentTime = Math.max(startAt, Math.min($videoStatus.currentTime, endAt));
-		});
-
 		document.addEventListener('mousemove', (e) => handleSeeking(e));
 		document.addEventListener('mouseup', handleSeekEnd);
 
 		return () => {
-			unsubscribe();
 			document.removeEventListener('mousemove', handleSeeking);
 			document.removeEventListener('mouseup', handleSeekEnd);
 		};
