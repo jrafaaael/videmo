@@ -247,11 +247,16 @@
 
 	export async function exportMP4() {
 		$currentZoomIndex = 0;
+		$currentCutIndex = 0;
 
 		return await generateMP4({
 			url: $recording!.url,
-			renderer(frame, time) {
-				if (time <= $cuts.startAt || time >= $cuts.endAt) return null;
+			async renderer(frame, time) {
+				if (time >= $currentCut!.endAt) {
+					$currentCutIndex = Math.min($currentCutIndex + 1, $cuts.length - 1);
+					await tick();
+				}
+				if (time < $currentCut!.startAt || time > $currentCut!.endAt) return null;
 
 				draw(frame, time);
 
