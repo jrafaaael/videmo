@@ -142,7 +142,11 @@
 			</output>
 			<div class="w-[2px] h-[45%] bg-neutral-50/50 rounded-full" />
 		</div>
-		<ContextMenu.Root>
+		<ContextMenu.Root
+			positioning={{
+				placement: 'right'
+			}}
+		>
 			<ContextMenu.Trigger class="w-full h-full absolute outline-none" />
 			<ContextMenu.Menu
 				class="bg-neutral-800/80 border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden outline-none backdrop-blur-sm z-20"
@@ -183,6 +187,7 @@
 					</span>
 					<span class="font-normal">Merge previous</span>
 				</ContextMenu.Item>
+				<div class="w-full h-0.5 bg-white/5" />
 				<ContextMenu.Item
 					class="min-w-36 py-1 px-2 text-red-500 flex items-center gap-2 outline-none hover:bg-red-600/15 focus:bg-red-600/15"
 					on:m-click={() => {
