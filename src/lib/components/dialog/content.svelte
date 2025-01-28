@@ -2,24 +2,27 @@
 	import { melt } from '@melt-ui/svelte';
 	import { getDialogContext } from './context';
 
-	export let title: string;
+	export let useOverlay: boolean = false;
 	export let className: {
 		dialog?: string;
-		title?: string;
+		overlay?: string;
 	} = {};
 	const {
-		elements: { portalled, content, title: titleElement },
+		elements: { portalled, content, overlay },
 		states: { open }
 	} = getDialogContext();
 </script>
 
 <div use:melt={$portalled}>
 	{#if $open}
-		<slot name="overlay" />
+		{#if useOverlay}
+			<div
+				use:melt={$overlay}
+				{...$$restProps}
+				class={className.overlay ?? 'fixed inset-0 z-10 bg-black/50 backdrop-blur-sm'}
+			/>
+		{/if}
 		<div use:melt={$content} {...$$restProps} class={className.dialog ?? ''}>
-			<h2 use:melt={$titleElement} class={className?.title ?? 'text-lg font-medium'}>
-				{title}
-			</h2>
 			<slot />
 		</div>
 	{/if}

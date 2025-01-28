@@ -3,8 +3,10 @@
 	import { getDialogContext } from './context';
 
 	const {
-		elements: { overlay }
+		elements: { title }
 	} = getDialogContext();
 </script>
 
-<div use:melt={$overlay} {...$$restProps} />
+<h2 use:melt={$title} {...$$restProps}>
+	<slot />
+</h2>

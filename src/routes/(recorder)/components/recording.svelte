@@ -77,17 +77,13 @@
 							<span>Rename</span>
 						</Dialog.Trigger>
 						<Dialog.Content
+							useOverlay
 							className={{
 								dialog:
-									'max-h-[85vh] w-[90vw] max-w-[450px] p-6 bg-neutral-800 border border-white/5 rounded-xl fixed left-1/2 top-1/2 z-10 shadow-lg -translate-x-1/2 -translate-y-1/2',
-								title: 'mb-4 text-lg font-medium'
+									'max-h-[85vh] w-[90vw] max-w-[450px] p-6 bg-neutral-800 border border-white/5 rounded-xl fixed left-1/2 top-1/2 z-10 shadow-lg -translate-x-1/2 -translate-y-1/2'
 							}}
-							title="Rename recording"
 						>
-							<Dialog.Overlay
-								slot="overlay"
-								class="fixed inset-0 z-10 bg-black/50 backdrop-blur-sm"
-							/>
+							<Dialog.Title class="mb-4 text-lg font-medium">Rename recording</Dialog.Title>
 							<form
 								on:submit|preventDefault={() => {
 									handleRename();

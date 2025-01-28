@@ -17,14 +17,13 @@
 		<span>Crop</span>
 	</Dialog.Trigger>
 	<Dialog.Content
-		title="Crop recording"
+		useOverlay
 		className={{
 			dialog:
-				'w-[90vw] max-w-[1024px] h-fit p-6 bg-neutral-800 border border-white/5 rounded-xl flex flex-col gap-4 fixed left-1/2 top-1/2 z-20 shadow-lg -translate-x-1/2 -translate-y-1/2',
-			title: 'text-lg font-medium'
+				'w-[90vw] max-w-[1024px] h-fit p-6 bg-neutral-800 border border-white/5 rounded-xl flex flex-col gap-4 fixed left-1/2 top-1/2 z-20 shadow-lg -translate-x-1/2 -translate-y-1/2'
 		}}
 	>
-		<Dialog.Overlay slot="overlay" class="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm" />
+		<Dialog.Title class="text-lg font-medium">Crop recording</Dialog.Title>
 		<CropFrame on:crop={({ detail }) => (cropValue = detail)} />
 		<div class="flex justify-end gap-2">
 			<Dialog.Close
