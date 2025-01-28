@@ -4,7 +4,7 @@
 	import { goto, beforeNavigate } from '$app/navigation';
 	import { secondsToTime } from '$lib/utils/seconds-to-time';
 	import { recording } from './stores/recording.store';
-	import { edits } from './stores/edits.store';
+	import { cuts } from './stores/cuts.store';
 	import { videoStatus } from './stores/video-status.store';
 	import { DEFAULT_VALUE as DEFAULT_BACKGROUND, background } from './stores/background.store';
 	import {
@@ -23,6 +23,7 @@
 	import Trimmer from './components/trimmer.svelte';
 	import ZoomList from './components/zoom-list.svelte';
 	import CropDialog from './components/crop.dialog.svelte';
+	import Cut from './components/cut.svelte';
 
 	let videoRef: Video;
 	let paused = true;
@@ -39,10 +40,6 @@
 			$appearence = values?.appearence ?? DEFAULT_APPEARENCE;
 			$crop = values?.crop ? values?.crop : null;
 
-			if (values?.trimmings) {
-				$edits = values?.trimmings;
-			}
-
 			const root = await navigator.storage.getDirectory();
 			const folder = await root.getDirectoryHandle(folderName);
 
@@ -53,9 +50,9 @@
 				const duration = await getBlobDuration(mp4);
 
 				recording.set({ id: '1', url: mp4, duration });
-				if ($edits.endAt > duration) {
-					edits.set({ startAt: 0, endAt: duration });
-				}
+				$cuts =
+					values?.cuts ??
+					(values?.trimmings ? [values.trimmings] : [{ startAt: 0, endAt: duration }]);
 			}
 		} catch (error) {
 			console.error(error);
@@ -71,7 +68,7 @@
 			background: $background,
 			appearence: $appearence,
 			zooms: $zooms,
-			trimmings: $edits,
+			cuts: $cuts,
 			crop: $crop
 		};
 
@@ -79,7 +76,7 @@
 		URL.revokeObjectURL(url!);
 
 		recording.set(null);
-		edits.set({ startAt: 0, endAt: Number.MAX_SAFE_INTEGER });
+		cuts.reset();
 	});
 </script>
 
@@ -99,6 +96,7 @@
 			<div
 				class="h-12 px-4 border-b-2 border-b-white/5 flex justify-center items-center gap-12 relative"
 			>
+				<Cut />
 				<span
 					class="tabular-nums select-none"
 					title={secondsToTime($videoStatus.currentTime, { showMilliseconds: true })}

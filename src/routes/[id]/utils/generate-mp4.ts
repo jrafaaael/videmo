@@ -8,7 +8,7 @@ interface ExtractVideoFramesParams {
 }
 
 type GenerateVideoParams = ExtractVideoFramesParams & {
-	renderer: (frame: VideoFrame, time: number) => CanvasImageSource | null;
+	renderer: (frame: VideoFrame, time: number) => Promise<CanvasImageSource | null>;
 };
 
 const WIDTH = 1920;
@@ -71,7 +71,8 @@ export async function generateMP4({ url, renderer }: GenerateVideoParams) {
 			console.error(e);
 		}
 	});
-	let currentTime = 0;
+	let recordingTime = 0;
+	let finalVideoTime = 0;
 	let nextKeyFrameTimestamp = -Infinity;
 
 	encoder.configure({
@@ -84,16 +85,20 @@ export async function generateMP4({ url, renderer }: GenerateVideoParams) {
 
 	for await (const frames of extractor) {
 		for (const frame of frames) {
-			while (currentTime < frame.timestamp / MICROSECONDS_PER_SECOND) {
-				const canvas = renderer(frame, currentTime);
-				const time = currentTime;
+			while (recordingTime < frame.timestamp / MICROSECONDS_PER_SECOND) {
+				const canvas = await renderer(frame, recordingTime);
 
-				currentTime += TIME_STEP;
+				recordingTime += TIME_STEP;
 
-				if (!canvas) continue;
+				if (!canvas) {
+					frame.close();
+					continue;
+				}
+
+				finalVideoTime += TIME_STEP;
 
 				const finalFrame = new VideoFrame(canvas, {
-					timestamp: time * MICROSECONDS_PER_SECOND
+					timestamp: finalVideoTime * MICROSECONDS_PER_SECOND
 				});
 				let keyFrame = false;
 

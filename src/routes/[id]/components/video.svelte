@@ -2,7 +2,7 @@
 	import { onMount, tick } from 'svelte';
 	import { expoOut } from 'svelte/easing';
 	import { recording } from '../stores/recording.store';
-	import { edits } from '../stores/edits.store';
+	import { currentCut, currentCutIndex, cuts } from '../stores/cuts.store';
 	import { videoStatus } from '../stores/video-status.store';
 	import { background } from '../stores/background.store';
 	import { appearence } from '../stores/general-appearance.store';
@@ -24,7 +24,13 @@
 	let currentZoomLevel = 1;
 
 	$: if (!paused)
-		$videoStatus.currentTime = Math.max($edits.startAt, Math.min(currentTime, $edits.endAt));
+		$videoStatus.currentTime = Math.max(
+			$cuts.at(0)?.startAt!,
+			Math.min(currentTime, $cuts.at(-1)?.endAt!)
+		);
+
+	$: if (currentTime >= ($currentCut?.endAt ?? Infinity))
+		$currentCutIndex = Math.min($currentCutIndex + 1, $cuts.length - 1);
 
 	function roundCorners({
 		ctx,
@@ -239,11 +245,16 @@
 
 	export async function exportMP4() {
 		$currentZoomIndex = 0;
+		$currentCutIndex = 0;
 
 		return await generateMP4({
 			url: $recording!.url,
-			renderer(frame, time) {
-				if (time <= $edits.startAt || time >= $edits.endAt) return null;
+			async renderer(frame, time) {
+				if (time >= $currentCut!.endAt) {
+					$currentCutIndex = Math.min($currentCutIndex + 1, $cuts.length - 1);
+					await tick();
+				}
+				if (time < $currentCut!.startAt || time > $currentCut!.endAt) return null;
 
 				draw(frame, time);
 
@@ -281,11 +292,15 @@
 		const unsubscribeCropStore = crop.subscribe(() => {
 			draw(videoRef, $videoStatus.currentTime);
 		});
+		const unsubscribeCutStore = currentCutIndex.subscribe(async () => {
+			await tick();
+			currentTime = $currentCut!.startAt;
+		});
 		backgroundImageRef.addEventListener('load', () => draw(videoRef, $videoStatus.currentTime), {
 			signal
 		});
 
-		$videoStatus.currentTime = $edits.startAt;
+		$videoStatus.currentTime = $cuts.startAt;
 		$videoStatus.ref = videoRef;
 
 		return () => {
@@ -294,6 +309,7 @@
 			unsubscribeAppearenceStore();
 			unsubscribeZoomStore();
 			unsubscribeCropStore();
+			unsubscribeCutStore();
 			controller.abort();
 		};
 	});
@@ -311,20 +327,31 @@
 		bind:this={videoRef}
 		on:loadeddata={() => {
 			pause();
-			currentTime = $edits.startAt <= 0 ? Number.MIN_SAFE_INTEGER : $edits.startAt;
+			currentTime =
+				($cuts.at(0)?.startAt ?? 0) <= 0 ? Number.MIN_SAFE_INTEGER : $cuts.at(0)?.startAt ?? 0;
 			draw(videoRef, currentTime);
 		}}
-		on:play={() => {
+		on:play={async () => {
 			animationId = window?.requestAnimationFrame(animate);
+			$currentCutIndex = $cuts.reduce(
+				(closest, current, idx) =>
+					Math.abs(current.startAt - currentTime) < Math.abs($cuts[closest].endAt - currentTime)
+						? idx
+						: closest,
+				0
+			);
+			await tick();
+			currentTime = Math.max($videoStatus.currentTime, $currentCut?.startAt ?? -Infinity);
 
 			if (
 				ended ||
-				$videoStatus.currentTime >= $edits.endAt ||
-				$videoStatus.currentTime === $edits.startAt
+				$videoStatus.currentTime >= $cuts.at(-1)?.endAt ||
+				$videoStatus.currentTime === $cuts.at(0)?.startAt
 			) {
+				$currentCutIndex = 0;
 				$currentZoomIndex = 0;
 				currentZoomLevel = 1;
-				$videoStatus.currentTime = $edits.startAt;
+				currentTime = $cuts.at(0)?.startAt ?? 0;
 			}
 		}}
 		on:pause={() => {
@@ -333,7 +360,7 @@
 			}
 		}}
 		on:timeupdate={() => {
-			if ($videoStatus.currentTime >= $edits.endAt) {
+			if ($videoStatus.currentTime >= $cuts.at(-1)?.endAt) {
 				pause();
 			}
 		}}

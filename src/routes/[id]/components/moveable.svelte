@@ -177,5 +177,6 @@
 		>
 			<slot name="e" />
 		</button>
+		<slot />
 	</div>
 </div>
