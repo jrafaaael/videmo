@@ -9,13 +9,9 @@
 	import { crop } from '../stores/crop.store';
 	import { zooms, currentZoomIndex, currentZoom } from '../stores/zooms.store';
 	import { createMP4 } from '../utils/create-mp4';
+	import { generateMP4 } from '../utils/generate-mp4';
 	import { lerp } from '../utils/lerp';
-	import {
-		MICROSECONDS_PER_SECOND,
-		MAX_ZOOM_LEVEL,
-		MIN_ZOOM_LEVEL,
-		ZOOM_TRANSITION_DURATION
-	} from '../utils/constants';
+	import { MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, ZOOM_TRANSITION_DURATION } from '../utils/constants';
 
 	export let paused: boolean;
 	let videoRef: HTMLVideoElement;
@@ -241,27 +237,18 @@
 		return canvasRef.toDataURL('image/png');
 	}
 
-	export function exportMP4(): Promise<string> {
+	export async function exportMP4() {
 		$currentZoomIndex = 0;
 
-		return new Promise((resolve) => {
-			const { start } = createMP4({
-				videoUrl: $recording?.url ?? '',
-				startAt: $edits.startAt,
-				endAt: $edits.endAt,
-				renderer: (frame, time) => {
-					draw(frame, time);
+		return await generateMP4({
+			url: $recording!.url,
+			renderer(frame, time) {
+				if (time <= $edits.startAt || time >= $edits.endAt) return null;
 
-					return new VideoFrame(canvasRef, {
-						timestamp: time * MICROSECONDS_PER_SECOND
-					});
-				},
-				onResult({ result }) {
-					resolve(result);
-				}
-			});
+				draw(frame, time);
 
-			start();
+				return canvasRef;
+			}
 		});
 	}
 
