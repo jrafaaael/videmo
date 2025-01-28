@@ -2,7 +2,7 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { secondsToTime } from '$lib/utils/seconds-to-time';
 	import { recording } from '../stores/recording.store';
-	import { cuts } from '../stores/cuts.store';
+	import { currentCut, cuts } from '../stores/cuts.store';
 	import { videoStatus } from '../stores/video-status.store';
 	import { isEditingTrim } from '../stores/is-editing-trim.store';
 
