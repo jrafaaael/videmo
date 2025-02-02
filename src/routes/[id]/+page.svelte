@@ -110,7 +110,7 @@
 					}}
 				/>
 				<span
-					class="text-white/50 tabular-nums select-none"
+					class="text-neutral-50/50 tabular-nums select-none"
 					title={secondsToTime($recording?.duration ?? 0, { showMilliseconds: true })}
 				>
 					{secondsToTime(Math.floor($recording?.duration ?? 0))}

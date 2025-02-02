@@ -187,16 +187,16 @@
 					</span>
 					<span class="font-normal">Merge previous</span>
 				</ContextMenu.Item>
-				<div class="w-full h-0.5 bg-white/5" />
+				<div class="w-11/12 h-0.5 mx-auto bg-white/5" />
 				<ContextMenu.Item
-					class="min-w-36 py-1 px-2 text-red-500 flex items-center gap-2 outline-none hover:bg-red-600/15 focus:bg-red-600/15"
+					class="min-w-36 py-1 px-2 flex items-center gap-2 outline-none hover:bg-white/5 focus:bg-white/5"
 					on:m-click={() => {
 						if ($cuts.length <= 1) return;
 
 						$cuts = $cuts.toSpliced(idx, 1);
 					}}
 				>
-					<span class="w-4 aspect-square inline-block">
+					<span class="w-4 aspect-square inline-block text-neutral-50/50">
 						<Trash />
 					</span>
 					<span class="font-normal">Remove</span>

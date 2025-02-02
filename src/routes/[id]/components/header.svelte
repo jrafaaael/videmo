@@ -58,7 +58,7 @@
 >
 	<a
 		href="/"
-		class="p-2 bg-white/5 border border-white/5 rounded-md text-neutral-300 flex absolute left-10 transition-all hover:bg-white/10 hover:border-white/10 hover:text-neutral-200"
+		class="p-2 rounded-md text-neutral-300 flex justify-center items-center absolute left-10 transition-all hover:bg-white/5 hover:text-neutral-200"
 	>
 		<span class="w-4 aspect-square inline-block -scale-100">
 			<ArrowFat />

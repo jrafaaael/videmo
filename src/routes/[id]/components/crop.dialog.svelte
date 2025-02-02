@@ -20,19 +20,21 @@
 		useOverlay
 		className={{
 			dialog:
-				'w-[90vw] max-w-[1024px] h-fit p-6 bg-neutral-800 border border-white/5 rounded-xl flex flex-col gap-4 fixed left-1/2 top-1/2 z-20 shadow-lg -translate-x-1/2 -translate-y-1/2'
+				'w-[90vw] max-w-[1024px] h-fit bg-neutral-800 border border-white/5 rounded-xl fixed left-1/2 top-1/2 z-20 overflow-hidden shadow-lg -translate-x-1/2 -translate-y-1/2'
 		}}
 	>
-		<Dialog.Title class="text-lg font-medium">Crop recording</Dialog.Title>
-		<CropFrame on:crop={({ detail }) => (cropValue = detail)} />
-		<div class="flex justify-end gap-2">
+		<div class="px-4 py-5 pb-8 border-b border-b-white/10">
+			<Dialog.Title class="mb-4 text-base font-medium">Crop recording</Dialog.Title>
+			<CropFrame on:crop={({ detail }) => (cropValue = detail)} />
+		</div>
+		<div class="px-4 py-5 bg-white/[0.035] flex justify-end gap-2">
 			<Dialog.Close
-				class="w-20 py-1 bg-white/5 border border-white/5 rounded-md text-sm text-neutral-50 hover:bg-white/10 hover:border-white/10"
+				class="w-20 py-[5px] px-3 bg-transparent border-2 border-white/10 rounded-md text-sm text-neutral-50 hover:bg-white/5"
 			>
 				Cancel
 			</Dialog.Close>
 			<Dialog.Close
-				class="w-20 py-1 bg-purple-600 rounded-md text-sm text-neutral-50 hover:bg-purple-600/90"
+				class="w-20 py-[5px] px-3 bg-purple-600 rounded-md text-sm text-neutral-50 hover:bg-purple-600/80"
 				on:m-click={() => {
 					$crop = cropValue;
 					cropValue = null;

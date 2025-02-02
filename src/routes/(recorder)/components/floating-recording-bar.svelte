@@ -107,7 +107,7 @@
 					</span>
 				</Select.Trigger>
 				<Select.Menu
-					class="bg-neutral-800/80 backdrop-blur-lg border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden"
+					class="bg-white/5 backdrop-blur-lg border-2 border-white/5 rounded-md flex flex-col gap-1 overflow-hidden"
 				>
 					{#each [...COUNTDOWN_OPTIONS].reverse() as option}
 						<Select.Option

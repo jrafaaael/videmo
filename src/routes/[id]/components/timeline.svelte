@@ -32,7 +32,7 @@
 	{#each seconds as num}
 		{#if num % INDICATORS_PER_DURATION[indicator].big === 0}
 			<div class="flex flex-col items-center relative z-10">
-				<span class="text-xs text-white/40 absolute -top-4 select-none">
+				<span class="text-xs text-neutral-50/50 absolute -top-4 select-none">
 					{secondsToTime(num)}
 				</span>
 				<div class="w-0.5 h-4 bg-white/20 translate-y-1/2" />

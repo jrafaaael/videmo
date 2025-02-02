@@ -61,7 +61,7 @@
 				</span>
 			</Dropdown.Trigger>
 			<Dropdown.Menu
-				class="bg-neutral-800/80 border-2 border-white/5 rounded-md flex flex-col gap-1 outline-none overflow-hidden backdrop-blur-lg"
+				class="bg-white/5 border-2 border-white/5 rounded-md flex flex-col gap-1 outline-none overflow-hidden backdrop-blur-lg"
 			>
 				<Dropdown.Item
 					class="w-36 outline-none hover:bg-white/5 focus:bg-white/5"
@@ -80,37 +80,37 @@
 							useOverlay
 							className={{
 								dialog:
-									'max-h-[85vh] w-[90vw] max-w-[450px] p-6 bg-neutral-800 border border-white/5 rounded-xl fixed left-1/2 top-1/2 z-10 shadow-lg -translate-x-1/2 -translate-y-1/2'
+									'max-h-[85vh] w-[90vw] max-w-[450px] bg-neutral-800 border border-white/5 rounded-xl fixed left-1/2 top-1/2 z-10 overflow-hidden shadow-lg -translate-x-1/2 -translate-y-1/2'
 							}}
 						>
-							<Dialog.Title class="mb-4 text-lg font-medium">Rename recording</Dialog.Title>
-							<form
-								on:submit|preventDefault={() => {
-									handleRename();
-									$open = false;
-								}}
-							>
-								<label for="rename" class="mb-2 inline-block text-neutral-50 text-sm">
-									New name
-								</label>
-								<input
-									type="text"
-									name="rename"
-									id="rename"
-									autocomplete="off"
-									placeholder="name"
-									class="w-full p-1 px-2 bg-transparent border-2 border-white/10 rounded text-base outline-none ring ring-transparent focus:border-purple-600/80 focus:ring-purple-600/25"
-									bind:value={newName}
-								/>
-							</form>
-							<div class="mt-8 flex justify-end gap-2">
+							<div class="px-4 py-5 pb-8 border-b border-b-white/10">
+								<Dialog.Title class="mb-4 text-base font-medium">Rename recording</Dialog.Title>
+								<form
+									on:submit|preventDefault={() => {
+										handleRename();
+										$open = false;
+									}}
+								>
+									<label for="rename" class="mb-2 inline-block text-neutral-300"> New name </label>
+									<input
+										type="text"
+										name="rename"
+										id="rename"
+										autocomplete="off"
+										placeholder="name"
+										class="w-full p-1 px-3 bg-white/[0.035] border-2 border-white/[0.025] rounded-md text-base outline-none hover:bg-white/5 focus:border-white/5 placeholder:text-neutral-50/50"
+										bind:value={newName}
+									/>
+								</form>
+							</div>
+							<div class="px-4 py-5 bg-white/[0.035] flex justify-end gap-2">
 								<Dialog.Close
-									class="w-20 py-1 bg-white/5 border border-white/5 rounded-md text-sm text-neutral-50 hover:bg-white/10 hover:border-white/10"
+									class="w-20 py-[5px] px-3 bg-transparent border-2 border-white/10 rounded-md text-sm text-neutral-50 hover:bg-white/5"
 								>
 									Cancel
 								</Dialog.Close>
 								<Dialog.Close
-									class="w-20 py-1 bg-purple-600 rounded-md text-sm text-neutral-50 hover:bg-purple-600/90"
+									class="w-20 py-[5px] px-3 bg-purple-600 rounded-md text-sm text-neutral-50 hover:bg-purple-600/80"
 									on:m-click={handleRename}
 								>
 									Save
@@ -119,12 +119,13 @@
 						</Dialog.Content>
 					</Dialog.Root>
 				</Dropdown.Item>
-				<Dropdown.Item class="w-36 outline-none hover:bg-red-600/15 focus:bg-red-600/15">
+				<div class="w-11/12 h-0.5 mx-auto bg-white/5" />
+				<Dropdown.Item class="w-36 outline-none hover:bg-white/5 focus:bg-white/5">
 					<button
-						class="w-full py-1 px-2 text-red-500 flex items-center gap-2 cursor-pointer"
+						class="w-full py-1 px-2 flex items-center gap-2 cursor-pointer"
 						on:click={async () => await handleRemoveById(id)}
 					>
-						<span class="w-4 aspect-square inline-block">
+						<span class="w-4 aspect-square inline-block text-neutral-50/50">
 							<Trash />
 						</span>
 						<span>Remove</span>
