@@ -6,6 +6,8 @@ import montereyBlue from '$lib/assets/images/wallpapers/monterey-blue.webp';
 import montereyDark from '$lib/assets/images/wallpapers/monterey-dark.webp';
 import montereyGreen from '$lib/assets/images/wallpapers/monterey-green.webp';
 import montereyOrange from '$lib/assets/images/wallpapers/monterey-orange.webp';
+import sequoia from '$lib/assets/images/wallpapers/sequoia-light.webp';
+import sequoiaDark from '$lib/assets/images/wallpapers/sequoia-dark.webp';
 import sonoma from '$lib/assets/images/wallpapers/sonoma.webp';
 import sonomaDark from '$lib/assets/images/wallpapers/sonoma-dark.webp';
 import stock16 from '$lib/assets/images/wallpapers/stock-ipados-16.webp';
@@ -30,6 +32,8 @@ export const WALLPAPERS = [
 	{ name: 'montereyDark', url: montereyDark },
 	{ name: 'montereyGreen', url: montereyGreen },
 	{ name: 'montereyOrange', url: montereyOrange },
+	{ name: 'sequoia', url: sequoia },
+	{ name: 'sequoiaDark', url: sequoiaDark },
 	{ name: 'sonoma', url: sonoma },
 	{ name: 'sonomaDark', url: sonomaDark },
 	{ name: 'stock16', url: stock16 },
