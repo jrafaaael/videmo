@@ -1,17 +1,11 @@
 import bigSur from '$lib/assets/images/wallpapers/big-sur.webp';
 import bigSurDark from '$lib/assets/images/wallpapers/big-sur-dark.webp';
 import monterey from '$lib/assets/images/wallpapers/monterey.webp';
-import montereyBlack from '$lib/assets/images/wallpapers/monterey-black.webp';
 import montereyBlue from '$lib/assets/images/wallpapers/monterey-blue.webp';
-import montereyDark from '$lib/assets/images/wallpapers/monterey-dark.webp';
-import montereyGreen from '$lib/assets/images/wallpapers/monterey-green.webp';
-import montereyOrange from '$lib/assets/images/wallpapers/monterey-orange.webp';
 import sequoia from '$lib/assets/images/wallpapers/sequoia-light.webp';
 import sequoiaDark from '$lib/assets/images/wallpapers/sequoia-dark.webp';
 import sonoma from '$lib/assets/images/wallpapers/sonoma.webp';
 import sonomaDark from '$lib/assets/images/wallpapers/sonoma-dark.webp';
-import stock16 from '$lib/assets/images/wallpapers/stock-ipados-16.webp';
-import stock16Dark from '$lib/assets/images/wallpapers/stock-ipados-16-dark.webp';
 import stock17_1 from '$lib/assets/images/wallpapers/stock-ipados-17-1.webp';
 import stock17_2 from '$lib/assets/images/wallpapers/stock-ipados-17-2.webp';
 import ventura from '$lib/assets/images/wallpapers/ventura.webp';
@@ -27,17 +21,11 @@ export const WALLPAPERS = [
 	{ name: 'bigSur', url: bigSur },
 	{ name: 'bigSurDark', url: bigSurDark },
 	{ name: 'monterey', url: monterey },
-	{ name: 'montereyBlack', url: montereyBlack },
 	{ name: 'montereyBlue', url: montereyBlue },
-	{ name: 'montereyDark', url: montereyDark },
-	{ name: 'montereyGreen', url: montereyGreen },
-	{ name: 'montereyOrange', url: montereyOrange },
 	{ name: 'sequoia', url: sequoia },
 	{ name: 'sequoiaDark', url: sequoiaDark },
 	{ name: 'sonoma', url: sonoma },
 	{ name: 'sonomaDark', url: sonomaDark },
-	{ name: 'stock16', url: stock16 },
-	{ name: 'stock16Dark', url: stock16Dark },
 	{ name: 'stock17_1', url: stock17_1 },
 	{ name: 'stock17_2', url: stock17_2 },
 	{ name: 'ventura', url: ventura },
