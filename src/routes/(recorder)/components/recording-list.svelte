@@ -37,8 +37,8 @@
 		<Recording
 			name={folderName}
 			id={record}
-			on:remove={async () => (recordings = getRecordings())}
-			on:rename={async () => (recordings = getRecordings())}
+			on:remove={() => (recordings = getRecordings())}
+			on:rename={() => (recordings = getRecordings())}
 		/>
 	{:else}
 		<article class="flex flex-col gap-2">
