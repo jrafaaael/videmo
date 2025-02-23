@@ -28,9 +28,9 @@
 			);
 			const newTime = +((newPosition * totalVideoDuration) / 100).toFixed(2);
 
-			dispatcher('changeTime', {
-				newTime: Math.min($cuts.endAt, newTime)
-			});
+			$videoStatus.currentTime = Math.min($cuts.at(-1)!.endAt, newTime);
+
+			dispatcher('seek', { newTime: $videoStatus.currentTime });
 		}
 	}
 

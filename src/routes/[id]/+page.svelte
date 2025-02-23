@@ -122,12 +122,7 @@
 			</div>
 			<div class="w-full px-10 bg-neutral-950">
 				<div class="w-full py-8 flex flex-col gap-6 relative">
-					<Seeker
-						on:changeTime={({ detail }) => {
-							videoRef.pause();
-							$videoStatus.currentTime = detail.newTime;
-						}}
-					/>
+					<Seeker on:seek={() => videoRef.pause()} />
 					<div class="w-full h-10 relative">
 						<Trimmer />
 					</div>
